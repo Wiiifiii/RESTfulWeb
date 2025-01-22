@@ -30,6 +30,7 @@ public class Image {
     @Column(name = "owner", length = 255)
      private String owner;
 
+     
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "data", nullable = false)
