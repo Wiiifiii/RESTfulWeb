@@ -1,0 +1,48 @@
+/* Dark Theme */
+body.dark-theme {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+/* Card Styling */
+.card {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 10px;
+}
+
+.card-title {
+    color: #ffffff;
+}
+
+/* Button Styling */
+.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Centered Content */
+.text-center {
+    text-align: center;
+}
+
+/* List Styling */
+.list-unstyled {
+    list-style: none;
+    padding-left: 0;
+}

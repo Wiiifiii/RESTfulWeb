@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
+<head>
+    <title>Images</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">RESTful App</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/web/locations}">Locations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/web/measurements}">Measurements</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/web/images}">Images</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <!-- Page Title -->
+        <h1 class="text-center mb-4">Active Images</h1>
+
+        <!-- Success and Error Messages -->
+        <div th:if="${param.success}" class="alert alert-success" th:text="'Success: ' + ${param.success}"></div>
+        <div th:if="${param.error}" class="alert alert-danger" th:text="'Error: ' + ${param.error}"></div>
+
+        <!-- Image Upload Form -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Upload New Image</h5>
+                <form th:action="@{/web/images/upload}" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="owner" class="form-label">Owner</label>
+                        <input type="text" class="form-control" id="owner" name="owner" placeholder="Enter owner name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Choose Image</label>
+                        <input type="file" class="form-control" id="file" name="file" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Upload Image
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Search Field -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Search Images</h5>
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by owner or ID...">
+            </div>
+        </div>
+
+        <!-- Image List -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Image List</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="imageTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Owner</th>
+                                <th>Content Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="img : ${images}">
+                                <td th:text="${img.imageId}">ID</td>
+                                <td th:text="${img.owner}">Owner</td>
+                                <td th:text="${img.contentType}">Content Type</td>
+                                <td>
+                                    <!-- View Button with Modal Trigger -->
+                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewImageModal" th:data-image-url="@{/web/images/view/{id}(id=${img.imageId})}">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                    <a th:href="@{/web/images/edit/{id}(id=${img.imageId})}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a th:href="@{/web/images/delete/{id}(id=${img.imageId})}" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Link to Trash Bin -->
+        <div class="mt-4 text-center">
+            <a th:href="@{/web/images/trash}" class="btn btn-outline-secondary">
+                <i class="fas fa-trash-alt"></i> View Trash
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal for Viewing Image -->
+    <div class="modal fade" id="viewImageModal" tabindex="-1" aria-labelledby="viewImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewImageModalLabel">View Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" alt="Image" class="img-fluid">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <!-- Custom JS -->
+    <script th:src="@{/js/scripts.js}"></script>
+    <script>
+        // JavaScript to handle modal image display
+        document.addEventListener('DOMContentLoaded', function () {
+            const viewImageModal = document.getElementById('viewImageModal');
+            const modalImage = document.getElementById('modalImage');
+
+            viewImageModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget; // Button that triggered the modal
+                const imageUrl = button.getAttribute('data-image-url'); // Extract image URL
+                modalImage.src = imageUrl; // Set the image source
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            const imageTable = document.getElementById('imageTable').getElementsByTagName('tbody')[0];
+
+            searchInput.addEventListener('input', function () {
+                const searchTerm = searchInput.value.toLowerCase();
+                Array.from(imageTable.getElementsByTagName('tr')).forEach(function (row) {
+                    const id = row.getElementsByTagName('td')[0].textContent.toLowerCase();
+                    const owner = row.getElementsByTagName('td')[1].textContent.toLowerCase();
+                    if (id.includes(searchTerm) || owner.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
