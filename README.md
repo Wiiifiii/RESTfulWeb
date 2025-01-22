@@ -35,18 +35,6 @@ A web application for managing **locations**, **measurements**, and **images**. 
    - Used backticks for URLs (e.g., `/web/locations`).
 
 3. **Screenshots**:
-   - Added proper markdown syntax for displaying images.
+   - ![image](https://github.com/user-attachments/assets/7b5c1a5c-0ca9-4605-b786-55712e91c67a)
 
 ---
-
-### How to Use This README
-
-1. Copy the content above into a new file named `README.md` in the root of your project.
-2. Replace `your-username` and `your-repo-name` with your GitHub username and repository name.
-3. Add screenshots to a `screenshots` folder and update the paths in the README.
-4. Commit the `README.md` file to your repository:
-
-```bash
-git add README.md
-git commit -m "Add README file"
-git push origin main
