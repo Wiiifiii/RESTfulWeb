@@ -1,3 +1,4 @@
+<!-- locations.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
 <head>
@@ -8,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
@@ -16,7 +19,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">RESTful App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -48,35 +52,38 @@
     <div class="container py-5">
         <h2>Locations</h2>
 
+        <!-- Success and Error Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}"></div>
+
         <!-- Add New Location Button -->
         <div class="mb-4">
             <a th:href="@{/web/locations/new}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add New Location
             </a>
+            <a th:href="@{/web/locations/trash}" class="btn btn-secondary">
+                <i class="fas fa-trash-alt"></i> View Trash
+            </a>
         </div>
-<!-- Success Message -->
-<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
-<!-- Error Message -->
-<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
         <!-- Filter Form -->
-        <form th:action="@{/web/locations}" method="get" class="mb-4">
+        <form th:action="@{/web/locations}" method="get" class="mb-4" id="filterForm">
             <div class="row g-3">
                 <div class="col-md-3">
                     <label for="citySearch" class="form-label">City:</label>
-                    <input type="text" id="citySearch" name="citySearch" class="form-control" th:value="${param.citySearch}" />
+                    <input type="text" id="citySearch" name="citySearch" class="form-control" th:value="${param.citySearch}" placeholder="Enter city name"/>
                 </div>
                 <div class="col-md-3">
-                    <label for="postalSearch" class="form-label">Postal:</label>
-                    <input type="text" id="postalSearch" name="postalSearch" class="form-control" th:value="${param.postalSearch}" />
+                    <label for="postalSearch" class="form-label">Postal Code:</label>
+                    <input type="text" id="postalSearch" name="postalSearch" class="form-control" th:value="${param.postalSearch}" placeholder="Enter postal code"/>
                 </div>
                 <div class="col-md-3">
-                    <label for="latMin" class="form-label">Lat Min:</label>
-                    <input type="text" id="latMin" name="latMin" class="form-control" th:value="${param.latMin}" />
+                    <label for="latMin" class="form-label">Latitude Min:</label>
+                    <input type="number" step="0.0001" id="latMin" name="latMin" class="form-control" th:value="${param.latMin}" placeholder="Min Latitude"/>
                 </div>
                 <div class="col-md-3">
-                    <label for="latMax" class="form-label">Lat Max:</label>
-                    <input type="text" id="latMax" name="latMax" class="form-control" th:value="${param.latMax}" />
+                    <label for="latMax" class="form-label">Latitude Max:</label>
+                    <input type="number" step="0.0001" id="latMax" name="latMax" class="form-control" th:value="${param.latMax}" placeholder="Max Latitude"/>
                 </div>
             </div>
             <div class="mt-3">
@@ -89,37 +96,40 @@
             </div>
         </form>
 
-        <!-- Table of Results -->
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Postal Code</th>
-                        <th>City Name</th>
-                        <th>Latitude</th>
-                        <th>Longitude</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="loc : ${locations}">
-                        <td th:text="${loc.locationId}"></td>
-                        <td th:text="${loc.postalCode}"></td>
-                        <td th:text="${loc.cityName}"></td>
-                        <td th:text="${loc.latitude}"></td>
-                        <td th:text="${loc.longitude}"></td>
-                        <td>
-                            <a th:href="@{/web/locations/edit/{id}(id=${loc.locationId})}" class="btn btn-sm btn-warning">
+        <!-- Locations Grid -->
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col" th:each="loc : ${locations}">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${loc.cityName}">City Name</h5>
+                        <p class="card-text">
+                            <strong>Postal Code:</strong> <span th:text="${loc.postalCode}">12345</span><br/>
+                            <strong>Latitude:</strong> <span th:text="${loc.latitude}">00.0000</span><br/>
+                            <strong>Longitude:</strong> <span th:text="${loc.longitude}">00.0000</span>
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="btn-group" role="group" aria-label="Actions">
+                            <a th:href="@{/web/locations/edit/{id}(id=${loc.locationId})}" class="btn btn-warning btn-sm" 
+                               data-item-type="Location" 
+                               th:data-item-details="${loc.cityName}">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
-                            <a th:href="@{/web/locations/delete/{id}(id=${loc.locationId})}" class="btn btn-sm btn-danger">
+                            <button class="btn btn-danger btn-sm delete-button" 
+                                    th:data-delete-url="@{/web/locations/delete/{id}(id=${loc.locationId})}" 
+                                    data-item-type="Location" 
+                                    th:data-item-details="${loc.cityName}">
                                 <i class="fas fa-trash"></i> Delete
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Locations Found Message -->
+        <div th:if="${#lists.isEmpty(locations)}" class="mt-4">
+            <p class="text-center">No locations found.</p>
         </div>
     </div>
 
