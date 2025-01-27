@@ -1,13 +1,18 @@
+<!-- locationForm.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" class="dark-theme">
 <head>
-    <title>Location Form</title>
+    <title th:text="${mode} == 'edit' ? 'Edit Location' : 'New Location'">Location Form</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Flatpickr CSS (if needed for date fields) -->
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
@@ -16,7 +21,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">RESTful App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -46,16 +52,19 @@
     </nav>
 
     <div class="container py-5">
-        <h2 th:text="${mode} == 'edit' ? 'Edit Location' : 'New Location'"></h2>
+        <h2 th:text="${mode} == 'edit' ? 'Edit Location' : 'New Location'">Location Form</h2>
 
-        <!-- Edit Form -->
+        <!-- Success and Error Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}"></div>
+
+        <!-- Location Form -->
         <form th:action="@{/web/locations/save}" method="post">
-            <input type="hidden" name="locationId" th:value="${location.locationId}" />
+            <!-- CSRF Token -->
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-            <div class="mb-3">
-                <label for="postalCode" class="form-label">Postal Code:</label>
-                <input type="text" id="postalCode" name="postalCode" class="form-control" th:value="${location.postalCode}" required />
-            </div>
+            <!-- Hidden Field for Editing -->
+            <input type="hidden" name="locationId" th:value="${location.locationId}" />
 
             <div class="mb-3">
                 <label for="cityName" class="form-label">City Name:</label>
@@ -63,13 +72,18 @@
             </div>
 
             <div class="mb-3">
+                <label for="postalCode" class="form-label">Postal Code:</label>
+                <input type="text" id="postalCode" name="postalCode" class="form-control" th:value="${location.postalCode}" required />
+            </div>
+
+            <div class="mb-3">
                 <label for="latitude" class="form-label">Latitude:</label>
-                <input type="text" id="latitude" name="latitude" class="form-control" th:value="${location.latitude}" required />
+                <input type="number" step="0.0001" id="latitude" name="latitude" class="form-control" th:value="${location.latitude}" required />
             </div>
 
             <div class="mb-3">
                 <label for="longitude" class="form-label">Longitude:</label>
-                <input type="text" id="longitude" name="longitude" class="form-control" th:value="${location.longitude}" required />
+                <input type="number" step="0.0001" id="longitude" name="longitude" class="form-control" th:value="${location.longitude}" required />
             </div>
 
             <button type="submit" class="btn btn-primary">
@@ -84,6 +98,8 @@
         </div>
     </div>
 
+    <!-- Flatpickr JS (if needed for date fields) -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>

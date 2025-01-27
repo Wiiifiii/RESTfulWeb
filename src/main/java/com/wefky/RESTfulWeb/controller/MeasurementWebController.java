@@ -1,8 +1,6 @@
 package com.wefky.RESTfulWeb.controller;
 
-import com.wefky.RESTfulWeb.entity.Location;
 import com.wefky.RESTfulWeb.entity.Measurement;
-import com.wefky.RESTfulWeb.repository.LocationRepository;
 import com.wefky.RESTfulWeb.repository.MeasurementRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -14,14 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Controller for managing Measurements.
- */
 @Controller
 @RequestMapping("/web/measurements")
 @RequiredArgsConstructor
@@ -30,10 +23,9 @@ public class MeasurementWebController {
     private static final Logger logger = LoggerFactory.getLogger(MeasurementWebController.class);
 
     private final MeasurementRepository measurementRepository;
-    private final LocationRepository locationRepository;
 
     /**
-     * LIST Active Measurements with Filters
+     * LIST + FILTER Active Measurements
      */
     @GetMapping
     public String listMeasurements(
@@ -46,37 +38,33 @@ public class MeasurementWebController {
     ) {
         try {
             List<Measurement> measurements;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-            LocalDateTime start = null;
-            LocalDateTime end = null;
-
-            if (startDate != null && !startDate.isEmpty()) {
-                start = LocalDateTime.parse(startDate, formatter);
-            }
-            if (endDate != null && !endDate.isEmpty()) {
-                end = LocalDateTime.parse(endDate, formatter);
-            }
-
-            if ((unitSearch == null || unitSearch.isEmpty()) &&
-                (startDate == null || startDate.isEmpty()) &&
-                (endDate == null || endDate.isEmpty()) &&
-                (cityName == null || cityName.isEmpty())) {
+            if ((unitSearch == null || unitSearch.isBlank()) &&
+                (startDate == null || startDate.isBlank()) &&
+                (endDate == null || endDate.isBlank()) &&
+                (cityName == null || cityName.isBlank())) {
                 measurements = measurementRepository.findAllActive();
             } else {
-                measurements = measurementRepository.filterMeasurements(unitSearch, start, end, cityName);
+                LocalDateTime start = null;
+                LocalDateTime end = null;
+                if (startDate != null && !startDate.isBlank()) {
+                    start = LocalDateTime.parse(startDate);
+                }
+                if (endDate != null && !endDate.isBlank()) {
+                    end = LocalDateTime.parse(endDate);
+                }
+                measurements = measurementRepository.filterMeasurements(
+                        unitSearch == null || unitSearch.isBlank() ? null : unitSearch,
+                        start,
+                        end,
+                        cityName == null || cityName.isBlank() ? null : cityName
+                );
             }
-
             model.addAttribute("measurements", measurements);
             model.addAttribute("unitSearch", unitSearch);
             model.addAttribute("startDate", startDate);
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
-
-            return "measurements";
-        } catch (DateTimeParseException e) {
-            logger.error("Date parsing error: ", e);
-            redirectAttributes.addFlashAttribute("error", "Invalid date format.");
-            return "redirect:/web/measurements";
+            return "measurements"; // -> measurements.html
         } catch (Exception e) {
             logger.error("Error fetching measurements: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching measurements.");
@@ -85,72 +73,13 @@ public class MeasurementWebController {
     }
 
     /**
-     * LIST Deleted Measurements with Filters
-     */
-    @GetMapping("/trash")
-    public String viewTrash(
-            @RequestParam(required = false) String unitSearch,
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate,
-            @RequestParam(required = false) String cityName,
-            Model model,
-            RedirectAttributes redirectAttributes
-    ) {
-        try {
-            List<Measurement> deletedMeasurements;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-            LocalDateTime start = null;
-            LocalDateTime end = null;
-
-            if (startDate != null && !startDate.isEmpty()) {
-                start = LocalDateTime.parse(startDate, formatter);
-            }
-            if (endDate != null && !endDate.isEmpty()) {
-                end = LocalDateTime.parse(endDate, formatter);
-            }
-
-            if ((unitSearch == null || unitSearch.isEmpty()) &&
-                (startDate == null || startDate.isEmpty()) &&
-                (endDate == null || endDate.isEmpty()) &&
-                (cityName == null || cityName.isEmpty())) {
-                deletedMeasurements = measurementRepository.findAllDeleted();
-            } else {
-                deletedMeasurements = measurementRepository.filterDeletedMeasurements(unitSearch, start, end, cityName);
-            }
-
-            model.addAttribute("deletedMeasurements", deletedMeasurements);
-            model.addAttribute("unitSearch", unitSearch);
-            model.addAttribute("startDate", startDate);
-            model.addAttribute("endDate", endDate);
-            model.addAttribute("cityName", cityName);
-
-            return "measurementsTrash";
-        } catch (DateTimeParseException e) {
-            logger.error("Date parsing error: ", e);
-            redirectAttributes.addFlashAttribute("error", "Invalid date format.");
-            return "redirect:/web/measurements/trash";
-        } catch (Exception e) {
-            logger.error("Error fetching deleted measurements: ", e);
-            redirectAttributes.addFlashAttribute("error", "An error occurred while fetching deleted measurements.");
-            return "redirect:/web/measurements/trash";
-        }
-    }
-
-    /**
      * NEW Measurement Form
      */
     @GetMapping("/new")
-    public String newMeasurementForm(Model model, RedirectAttributes redirectAttributes) {
-        try {
-            model.addAttribute("measurement", new Measurement());
-            model.addAttribute("locations", locationRepository.findAllActive());
-            model.addAttribute("mode", "new");
-            return "measurementForm";
-        } catch (Exception e) {
-            logger.error("Error displaying new measurement form: ", e);
-            redirectAttributes.addFlashAttribute("error", "An error occurred while displaying the form.");
-            return "redirect:/web/measurements";
-        }
+    public String newMeasurementForm(Model model) {
+        model.addAttribute("measurement", new Measurement());
+        model.addAttribute("mode", "new");
+        return "measurementForm";
     }
 
     /**
@@ -166,7 +95,6 @@ public class MeasurementWebController {
             }
             Measurement measurement = opt.get();
             model.addAttribute("measurement", measurement);
-            model.addAttribute("locations", locationRepository.findAllActive());
             model.addAttribute("mode", "edit");
             return "measurementForm";
         } catch (Exception e) {
@@ -177,62 +105,30 @@ public class MeasurementWebController {
     }
 
     /**
-     * SAVE Measurement (New or Edit)
+     * SAVE Measurement (NEW OR EDIT)
      */
     @PostMapping("/save")
     public String saveMeasurement(
-            @RequestParam(required = false) Long measurementId,
-            @RequestParam String measurementUnit,
-            @RequestParam double amount,
-            @RequestParam String timestamp,
-            @RequestParam(required = false) Long locationId,
+            @ModelAttribute Measurement measurement,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            Measurement measurement;
-            if (measurementId != null && measurementRepository.existsById(measurementId)) {
-                measurement = measurementRepository.findById(measurementId).get();
-            } else {
-                measurement = new Measurement();
-            }
-
-            measurement.setMeasurementUnit(measurementUnit);
-            measurement.setAmount(amount);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-            try {
-                LocalDateTime parsedTimestamp = LocalDateTime.parse(timestamp, formatter);
-                measurement.setTimestamp(parsedTimestamp);
-            } catch (DateTimeParseException e) {
-                logger.error("Timestamp parsing error: ", e);
-                redirectAttributes.addFlashAttribute("error", "Invalid timestamp format.");
-                if (measurementId != null) {
-                    return "redirect:/web/measurements/edit/" + measurementId;
-                } else {
-                    return "redirect:/web/measurements/new";
+            // If editing, ensure the measurement exists
+            if (measurement.getMeasurementId() != null) {
+                Optional<Measurement> opt = measurementRepository.findById(measurement.getMeasurementId());
+                if (opt.isEmpty()) {
+                    redirectAttributes.addFlashAttribute("error", "Measurement not found.");
+                    return "redirect:/web/measurements";
                 }
             }
-
-            if (locationId != null) {
-                Optional<Location> locOpt = locationRepository.findById(locationId);
-                if (locOpt.isPresent()) {
-                    measurement.setLocation(locOpt.get());
-                } else {
-                    measurement.setLocation(null);
-                    logger.warn("Location ID {} not found. Setting location to null.", locationId);
-                }
-            } else {
-                measurement.setLocation(null);
-            }
-
             measurementRepository.save(measurement);
             redirectAttributes.addFlashAttribute("success", "Measurement saved successfully!");
             return "redirect:/web/measurements";
         } catch (Exception e) {
             logger.error("Error saving measurement: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while saving the measurement.");
-            if (measurementId != null) {
-                return "redirect:/web/measurements/edit/" + measurementId;
+            if (measurement.getMeasurementId() != null) {
+                return "redirect:/web/measurements/edit/" + measurement.getMeasurementId();
             } else {
                 return "redirect:/web/measurements/new";
             }
@@ -263,6 +159,22 @@ public class MeasurementWebController {
     }
 
     /**
+     * VIEW TRASH BIN for Measurements
+     */
+    @GetMapping("/trash")
+    public String viewTrash(Model model, RedirectAttributes redirectAttributes) {
+        try {
+            List<Measurement> deletedMeasurements = measurementRepository.findAllDeleted();
+            model.addAttribute("deletedMeasurements", deletedMeasurements);
+            return "measurementsTrash";
+        } catch (Exception e) {
+            logger.error("Error fetching deleted measurements: ", e);
+            redirectAttributes.addFlashAttribute("error", "An error occurred while fetching deleted measurements.");
+            return "redirect:/web/measurements";
+        }
+    }
+
+    /**
      * RESTORE Measurement
      */
     @GetMapping("/restore/{id}")
@@ -286,7 +198,7 @@ public class MeasurementWebController {
     }
 
     /**
-     * PERMANENTLY DELETE Measurement (Admin Only)
+     * PERMANENTLY DELETE Measurement. ADMIN ONLY.
      */
     @Secured("ROLE_ADMIN")
     @GetMapping("/delete-permanent/{id}")

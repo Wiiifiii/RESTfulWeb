@@ -1,8 +1,8 @@
 <!-- locations.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" class="dark-theme">
 <head>
-    <title>Locations List</title>
+    <title>Locations</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap CSS -->
@@ -11,8 +11,16 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Flatpickr CSS (if needed for future date fields) -->
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        /* Optional: Adjust table styling or form layout as needed */
+        .table-actions {
+            width: 150px;
+        }
+    </style>
 </head>
 
 <body>
@@ -51,14 +59,13 @@
     </nav>
 
     <div class="container py-5">
-         <!-- Page Title -->
         <h2>Locations</h2>
 
         <!-- Success and Error Messages -->
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}"></div>
 
-        <!-- Add New Location Button -->
+        <!-- Add New Location and View Trash Buttons -->
         <div class="mb-4">
             <a th:href="@{/web/locations/new}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add New Location
@@ -73,19 +80,19 @@
             <div class="row g-3">
                 <div class="col-md-3">
                     <label for="citySearch" class="form-label">City:</label>
-                    <input type="text" id="citySearch" name="citySearch" class="form-control" th:value="${param.citySearch}" placeholder="Enter city name"/>
+                    <input type="text" id="citySearch" name="citySearch" class="form-control" th:value="${citySearch}" placeholder="Enter city name"/>
                 </div>
                 <div class="col-md-3">
                     <label for="postalSearch" class="form-label">Postal Code:</label>
-                    <input type="text" id="postalSearch" name="postalSearch" class="form-control" th:value="${param.postalSearch}" placeholder="Enter postal code"/>
+                    <input type="text" id="postalSearch" name="postalSearch" class="form-control" th:value="${postalSearch}" placeholder="Enter postal code"/>
                 </div>
                 <div class="col-md-3">
                     <label for="latMin" class="form-label">Latitude Min:</label>
-                    <input type="number" step="0.0001" id="latMin" name="latMin" class="form-control" th:value="${param.latMin}" placeholder="Min Latitude"/>
+                    <input type="number" step="0.0001" id="latMin" name="latMin" class="form-control" th:value="${latMin}" placeholder="Min Latitude"/>
                 </div>
                 <div class="col-md-3">
                     <label for="latMax" class="form-label">Latitude Max:</label>
-                    <input type="number" step="0.0001" id="latMax" name="latMax" class="form-control" th:value="${param.latMax}" placeholder="Max Latitude"/>
+                    <input type="number" step="0.0001" id="latMax" name="latMax" class="form-control" th:value="${latMax}" placeholder="Max Latitude"/>
                 </div>
             </div>
             <div class="mt-3">
@@ -98,35 +105,45 @@
             </div>
         </form>
 
-        <!-- Locations Grid -->
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <div class="col" th:each="loc : ${locations}">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${loc.cityName}">City Name</h5>
-                        <p class="card-text">
-                            <strong>Postal Code:</strong> <span th:text="${loc.postalCode}">12345</span><br/>
-                            <strong>Latitude:</strong> <span th:text="${loc.latitude}">00.0000</span><br/>
-                            <strong>Longitude:</strong> <span th:text="${loc.longitude}">00.0000</span>
-                        </p>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0">
-                        <div class="btn-group" role="group" aria-label="Actions">
-                            <a th:href="@{/web/locations/edit/{id}(id=${loc.locationId})}" class="btn btn-warning btn-sm" 
-                               data-item-type="Location" 
-                               th:data-item-details="${loc.cityName}">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                            <button class="btn btn-danger btn-sm delete-button" 
-                                    th:data-delete-url="@{/web/locations/delete/{id}(id=${loc.locationId})}" 
-                                    data-item-type="Location" 
-                                    th:data-item-details="${loc.cityName}">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Locations Table -->
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Location ID</th>
+                        <th scope="col">City Name</th>
+                        <th scope="col">Postal Code</th>
+                        <th scope="col">Latitude</th>
+                        <th scope="col">Longitude</th>
+                        <th scope="col" class="table-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="loc : ${locations}">
+                        <td th:text="${loc.locationId}">ID</td>
+                        <td th:text="${loc.cityName}">City Name</td>
+                        <td th:text="${loc.postalCode}">Postal Code</td>
+                        <td th:text="${loc.latitude}">Latitude</td>
+                        <td th:text="${loc.longitude}">Longitude</td>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="Actions">
+                                <!-- Edit Button -->
+                                <a th:href="@{/web/locations/edit/{id}(id=${loc.locationId})}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                
+                                <!-- Delete Button -->
+                                <button class="btn btn-danger btn-sm delete-button" 
+                                        th:data-delete-url="@{/web/locations/delete/{id}(id=${loc.locationId})}" 
+                                        data-item-type="Location" 
+                                        th:data-item-details="'City: ' + ${loc.cityName}">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <!-- No Locations Found Message -->
@@ -135,6 +152,8 @@
         </div>
     </div>
 
+    <!-- Flatpickr JS (if needed for future date fields) -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>

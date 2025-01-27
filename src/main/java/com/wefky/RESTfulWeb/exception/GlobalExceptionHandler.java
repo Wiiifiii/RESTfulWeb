@@ -1,4 +1,4 @@
-package com.wefky.RESTfulWeb.controller;
+package com.wefky.RESTfulWeb.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

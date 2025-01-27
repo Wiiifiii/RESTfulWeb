@@ -1,70 +1,124 @@
 package com.wefky.RESTfulWeb.controller;
 
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import com.wefky.RESTfulWeb.entity.Image;
 import com.wefky.RESTfulWeb.repository.ImageRepository;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * REST Controller for managing Images via API.
+ */
 @RestController
-@RequestMapping("/images")
+@RequestMapping("/api/images")
+@RequiredArgsConstructor
 public class ImageRestController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ImageRestController.class);
 
     private final ImageRepository imageRepository;
 
-    public ImageRestController(ImageRepository imageRepository) {
-        this.imageRepository = imageRepository;
-    }
-
-    // 1) GET all
+    /**
+     * GET all active images with optional filters.
+     */
     @GetMapping
-    public List<Image> getAllImages() {
-        return imageRepository.findAll();
+    public List<Image> getAllImages(
+            @RequestParam(required = false) String owner
+    ) {
+        if (owner == null || owner.isEmpty()) {
+            return imageRepository.findAllActive();
+        } else {
+            return imageRepository.filterImages(owner);
+        }
     }
 
-    // 2) GET by id (for example, just returning the entire entity with the byte[] - in practice you might stream or separate the metadata)
+    /**
+     * GET image by ID.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Image> getImageById(@PathVariable Long id) {
-        return imageRepository.findById(id)
-                .map(image -> ResponseEntity.ok(image))
-                .orElse(ResponseEntity.notFound().build());
+        Optional<Image> opt = imageRepository.findById(id);
+        if (opt.isEmpty() || opt.get().isDeleted()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(opt.get());
     }
 
-    // 3) POST (create new - upload)
+    /**
+     * POST create new image.
+     */
     @PostMapping
     public ResponseEntity<Image> uploadImage(@RequestBody Image image) {
-        // In a real scenario, you'd likely handle MultiPartFile & validations
+        // Ensure that the ID is not set for new entities
+        image.setImageId(null);
+        image.setDeleted(false);
         Image saved = imageRepository.save(image);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+        return ResponseEntity.status(201).body(saved);
     }
 
-    // 4) PUT (update - for example updating the owner or even replacing the data)
+    /**
+     * PUT update existing image.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Image> updateImage(@PathVariable Long id, @RequestBody Image imageDetails) {
-        return imageRepository.findById(id)
-                .map(img -> {
-                    img.setOwner(imageDetails.getOwner());
-                    img.setData(imageDetails.getData());
-                    Image updated = imageRepository.save(img);
-                    return ResponseEntity.ok(updated);
-                })
-                .orElse(ResponseEntity.notFound().build());
+        Optional<Image> opt = imageRepository.findById(id);
+        if (opt.isEmpty() || opt.get().isDeleted()) {
+            return ResponseEntity.notFound().build();
+        }
+        Image existing = opt.get();
+        existing.setOwner(imageDetails.getOwner());
+        existing.setData(imageDetails.getData());
+        // Prevent updating the deleted flag via REST API
+        imageRepository.save(existing);
+        return ResponseEntity.ok(existing);
     }
 
-    // 5) DELETE
+    /**
+     * DELETE (Soft Delete) image.
+     */
     @DeleteMapping("/{id}")
-public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
-    var imageOpt = imageRepository.findById(id);
-    if (imageOpt.isPresent()) {
-        imageRepository.delete(imageOpt.get());
+    public ResponseEntity<Void> softDeleteImage(@PathVariable Long id) {
+        Optional<Image> opt = imageRepository.findById(id);
+        if (opt.isEmpty() || opt.get().isDeleted()) {
+            return ResponseEntity.notFound().build();
+        }
+        Image image = opt.get();
+        image.setDeleted(true);
+        imageRepository.save(image);
         return ResponseEntity.noContent().build();
-    } else {
-        return ResponseEntity.notFound().build();
-    }
     }
 
-    
+    /**
+     * RESTORE image (Soft Delete Inversion).
+     */
+    @PostMapping("/{id}/restore")
+    public ResponseEntity<Image> restoreImage(@PathVariable Long id) {
+        Optional<Image> opt = imageRepository.findById(id);
+        if (opt.isEmpty() || !opt.get().isDeleted()) {
+            return ResponseEntity.notFound().build();
+        }
+        Image image = opt.get();
+        image.setDeleted(false);
+        imageRepository.save(image);
+        return ResponseEntity.ok(image);
+    }
+
+    /**
+     * DELETE (Hard Delete) image. ADMIN ONLY.
+     */
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/{id}/permanent")
+    public ResponseEntity<Void> permanentlyDeleteImage(@PathVariable Long id) {
+        if (!imageRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        imageRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }

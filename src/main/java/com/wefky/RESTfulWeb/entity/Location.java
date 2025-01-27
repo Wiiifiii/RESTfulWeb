@@ -1,15 +1,15 @@
 package com.wefky.RESTfulWeb.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity representing a Location.
+ */
 @Entity
 @Table(name = "locations")
 @Data
@@ -22,19 +22,26 @@ public class Location {
     @Column(name = "location_id")
     private Long locationId;
 
-    @Column(name = "postal_code")
+    @NotBlank(message = "Postal Code is required.")
+    @Column(name = "postal_code", nullable = false)
     private String postalCode;
 
-    @Column(name = "city_name")
+    @NotBlank(message = "City Name is required.")
+    @Column(name = "city_name", nullable = false)
     private String cityName;
 
-    @Column(name = "latitude")
-    private float latitude;
+    @NotNull(message = "Latitude is required.")
+    @DecimalMin(value = "-90.0", message = "Latitude must be between -90 and 90.")
+    @DecimalMax(value = "90.0", message = "Latitude must be between -90 and 90.")
+    @Column(name = "latitude", nullable = false)
+    private Float latitude;
 
-    @Column(name = "longitude")
-    private float longitude;
+    @NotNull(message = "Longitude is required.")
+    @DecimalMin(value = "-180.0", message = "Longitude must be between -180 and 180.")
+    @DecimalMax(value = "180.0", message = "Longitude must be between -180 and 180.")
+    @Column(name = "longitude", nullable = false)
+    private Float longitude;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-
 }

@@ -6,6 +6,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Set;
+
 @Controller
 public class RegistrationController {
 
@@ -26,20 +30,23 @@ public class RegistrationController {
     @PostMapping("/saveUser")
     public String saveUser(@RequestParam String username,
                            @RequestParam String password,
-                           @RequestParam(defaultValue = "ROLE_USER") String role) {
+                           @RequestParam(defaultValue = "ROLE_USER") String role,
+                           RedirectAttributes redirectAttributes) {
         // Check if user already exists
-        if (userRepository.findByUsername(username) != null) {
-            // In a real app, show an error message
+        if (userRepository.findByUsername(username).isPresent()) {
+            // Add flash attribute for error
+            redirectAttributes.addFlashAttribute("error", "User already exists.");
             return "redirect:/register?error=UserExists";
         }
 
         User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(passwordEncoder.encode(password)); // Hash the password
-        newUser.setRole(role);
+        newUser.setRoles(Set.of(role));
         newUser.setEnabled(true);
 
         userRepository.save(newUser);
+        redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
         return "redirect:/login?registered"; // redirect to login page
     }
 }

@@ -1,6 +1,6 @@
 <!-- locationsTrash.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" class="dark-theme">
 <head>
     <title>Deleted Locations</title>
     <meta charset="UTF-8">
@@ -13,6 +13,12 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        /* Optional: Adjust table styling as needed */
+        .table-actions {
+            width: 220px;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -28,8 +34,8 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/">Home</a>
                     </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" th:href="@{/web/locations/trash}">Locations Trash</a>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/web/locations}">Locations</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/web/measurements}">Measurements</a>
@@ -63,30 +69,50 @@
             </a>
         </div>
 
-        <!-- Deleted Locations Grid -->
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <div class="col" th:each="loc : ${deletedLocations}">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${loc.cityName}">City Name</h5>
-                        <p class="card-text">
-                            <strong>Postal Code:</strong> <span th:text="${loc.postalCode}">12345</span><br/>
-                            <strong>Latitude:</strong> <span th:text="${loc.latitude}">00.0000</span><br/>
-                            <strong>Longitude:</strong> <span th:text="${loc.longitude}">00.0000</span>
-                        </p>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0">
-                        <div class="btn-group" role="group" aria-label="Actions">
-                            <button class="btn btn-success btn-sm restore-button" 
-                                    th:data-restore-url="@{/web/locations/restore/{id}(id=${loc.locationId})}" 
-                                    data-item-type="Location" 
-                                    th:data-item-details="${loc.cityName}">
-                                <i class="fas fa-undo"></i> Restore
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Deleted Locations Table -->
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Location ID</th>
+                        <th scope="col">City Name</th>
+                        <th scope="col">Postal Code</th>
+                        <th scope="col">Latitude</th>
+                        <th scope="col">Longitude</th>
+                        <th scope="col" class="table-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="loc : ${deletedLocations}">
+                        <td th:text="${loc.locationId}">ID</td>
+                        <td th:text="${loc.cityName}">City Name</td>
+                        <td th:text="${loc.postalCode}">Postal Code</td>
+                        <td th:text="${loc.latitude}">Latitude</td>
+                        <td th:text="${loc.longitude}">Longitude</td>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="Actions">
+                                <!-- Restore Button -->
+                                <button class="btn btn-success btn-sm restore-button" 
+                                        th:data-restore-url="@{/web/locations/restore/{id}(id=${loc.locationId})}" 
+                                        data-item-type="Location" 
+                                        th:data-item-details="'City: ' + ${loc.cityName}">
+                                    <i class="fas fa-undo"></i> Restore
+                                </button>
+                                
+                                <!-- Permanently Delete Button (Visible only to Admins) -->
+                                <sec:authorize access="hasRole('ADMIN')">
+                                    <button class="btn btn-danger btn-sm delete-permanent-button" 
+                                            th:data-delete-url="@{/web/locations/delete-permanent/{id}(id=${loc.locationId})}" 
+                                            data-item-type="Location" 
+                                            th:data-item-details="'City: ' + ${loc.cityName}">
+                                        <i class="fas fa-trash"></i> Delete Permanently
+                                    </button>
+                                </sec:authorize>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <!-- No Deleted Locations Found Message -->

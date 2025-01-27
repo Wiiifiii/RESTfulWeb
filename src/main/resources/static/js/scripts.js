@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Handle Alerts from URL parameters
+    // Handle Alerts from URL parameters (Optional: If using flash attributes)
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('success')) {
         Swal.fire({
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Initialize Flatpickr if the library is loaded
+    // Initialize Flatpickr if the library is loaded (Optional: For date fields)
     if (typeof flatpickr !== 'undefined') {
         flatpickr("#startDate", {
             enableTime: true,

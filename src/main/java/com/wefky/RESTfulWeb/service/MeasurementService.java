@@ -1,55 +1,77 @@
 package com.wefky.RESTfulWeb.service;
 
-import com.wefky.RESTfulWeb.entity.Location;
 import com.wefky.RESTfulWeb.entity.Measurement;
-import com.wefky.RESTfulWeb.repository.LocationRepository;
 import com.wefky.RESTfulWeb.repository.MeasurementRepository;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class MeasurementService {
 
+    private static final Logger logger = LoggerFactory.getLogger(MeasurementService.class);
+
     private final MeasurementRepository measurementRepository;
-    private final LocationRepository locationRepository;
 
-    public MeasurementService(MeasurementRepository measurementRepository,
-                              LocationRepository locationRepository) {
-        this.measurementRepository = measurementRepository;
-        this.locationRepository = locationRepository;
-    }
-
-    // Basic CRUD from the service perspective
+    /**
+     * Retrieves all active measurements.
+     */
     public List<Measurement> getAllMeasurements() {
-        // If you have a soft-delete approach, call measurementRepository.findAllActive()
-        return measurementRepository.findAll();
+        return measurementRepository.findAllActive();
     }
 
+    /**
+     * Filters measurements based on criteria.
+     */
+    public List<Measurement> filterMeasurements(String measurementUnit, LocalDateTime start, LocalDateTime end, String cityName) {
+        return measurementRepository.filterMeasurements(measurementUnit, start, end, cityName);
+    }
+
+    /**
+     * Retrieves a measurement by ID.
+     */
     public Measurement getMeasurementById(Long id) {
-        return measurementRepository.findById(id).orElse(null);
+        Optional<Measurement> opt = measurementRepository.findById(id);
+        return opt.orElse(null);
     }
 
-    public Measurement saveMeasurement(Measurement m) {
-        return measurementRepository.save(m);
+    /**
+     * Saves a measurement.
+     */
+    public Measurement saveMeasurement(Measurement measurement) {
+        return measurementRepository.save(measurement);
     }
 
+    /**
+     * Soft deletes a measurement.
+     */
     public void deleteMeasurement(Long id) {
-        measurementRepository.deleteById(id);
+        Optional<Measurement> opt = measurementRepository.findById(id);
+        if (opt.isPresent()) {
+            Measurement measurement = opt.get();
+            measurement.setDeleted(true);
+            measurementRepository.save(measurement);
+            logger.info("Measurement with ID {} soft deleted.", id);
+        } else {
+            logger.warn("Attempted to delete non-existent Measurement with ID {}.", id);
+        }
     }
 
-    // Example advanced query:
-    // Filter by measurementUnit, start/end date, optional cityName for location
-    public List<Measurement> filterMeasurements(String unit, LocalDateTime start, LocalDateTime end, String cityName) {
-        // your measurementRepository might have a query like
-        // measurementRepository.filterMeasurements(unit, start, end, cityName)
-        // If you do 2-step city filtering via locationRepository, you can do that here.
-        return measurementRepository.filterMeasurements(unit, start, end, cityName);
-    }
-
-    // If you want to load a location by name or ID and set it
-    public Location getLocationById(Long locId) {
-        return locationRepository.findById(locId).orElse(null);
+    /**
+     * Permanently deletes a measurement.
+     */
+    public void permanentlyDeleteMeasurement(Long id) {
+        if (measurementRepository.existsById(id)) {
+            measurementRepository.deleteById(id);
+            logger.info("Measurement with ID {} permanently deleted.", id);
+        } else {
+            logger.warn("Attempted to permanently delete non-existent Measurement with ID {}.", id);
+        }
     }
 }

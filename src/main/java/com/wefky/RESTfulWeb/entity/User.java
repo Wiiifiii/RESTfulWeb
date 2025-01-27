@@ -1,29 +1,35 @@
 package com.wefky.RESTfulWeb.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Entity
-@Table(name = "users") // Will create a 'users' table
+@Table(name = "users")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
-
-    // Getters and setters
-    @Setter
-    @Getter
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)  // Ensure usernames are unique
+    @Column(unique = true, nullable = false)
     private String username;
 
-    private String password; // Will be stored in hashed form
+    @Column(nullable = false)
+    private String password;
 
-    private String role;     // e.g., "ROLE_USER" or "ROLE_ADMIN"
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles",
+                     joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private Set<String> roles;
 
-    private boolean enabled = true; // If you want to enable/disable accounts
-
+    @Column(nullable = false)
+    private boolean enabled = true;
 }
