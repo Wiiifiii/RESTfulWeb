@@ -8,15 +8,26 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        .table-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+    </style>
 </head>
+
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">RESTful App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -30,8 +41,8 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/web/measurements}">Measurements</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/web/images}">Images</a>
+                    <li class="nav-item active">
+                        <a class="nav-link" th:href="@{/web/images}">Images</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -46,42 +57,112 @@
     </nav>
 
     <div class="container py-5">
-        <h1>Deleted Images</h1>
+        <!-- Page Title -->
+        <h2>Deleted Images</h2>
 
         <!-- Success and Error Messages -->
-        <div th:if="${param.success}" class="alert alert-success" th:text="'Success: ' + ${param.success}"></div>
-        <div th:if="${param.error}" class="alert alert-danger" th:text="'Error: ' + ${param.error}"></div>
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}"></div>
 
-        <!-- Deleted Image List -->
+        <!-- Back to Active Images Button -->
+        <div class="mb-4">
+            <a th:href="@{/web/images}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Active Images
+            </a>
+        </div>
+
+        <!-- Filter Form -->
+        <form th:action="@{/web/images/trash}" method="get" class="mb-4" id="filterTrashForm">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="idSearch" class="form-label">Image ID:</label>
+                    <input type="number" id="idSearch" name="idSearch" class="form-control" th:value="${idSearch}" placeholder="Enter image ID"/>
+                </div>
+                <div class="col-md-3">
+                    <label for="ownerSearch" class="form-label">Owner:</label>
+                    <input type="text" id="ownerSearch" name="ownerSearch" class="form-control" th:value="${ownerSearch}" placeholder="Enter owner name"/>
+                </div>
+                <div class="col-md-3">
+                    <label for="contentTypeSearch" class="form-label">Content Type:</label>
+                    <input type="text" id="contentTypeSearch" name="contentTypeSearch" class="form-control" th:value="${contentTypeSearch}" placeholder="Enter content type"/>
+                </div>
+                <div class="col-md-3 align-self-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/web/images/trash'">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Deleted Images Table -->
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-striped align-middle">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Owner</th>
-                        <th>Content Type</th>
-                        <th>Actions</th>
+                        <th scope="col">Image ID</th>
+                        <th scope="col">Thumbnail</th>
+                        <th scope="col">Owner</th>
+                        <th scope="col">Content Type</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="img : ${deletedImages}">
-                        <td th:text="${img.imageId}"></td>
-                        <td th:text="${img.owner}"></td>
-                        <td th:text="${img.contentType}"></td>
+                        <td th:text="${img.imageId}">ID</td>
                         <td>
-                            <a th:href="@{/web/images/restore/{id}(id=${img.imageId})}" class="btn btn-sm btn-success">
-                                <i class="fas fa-undo"></i> Restore
-                            </a>
+                            <img th:src="@{/web/images/view/{id}(id=${img.imageId})}" alt="Image of [[${img.owner}]]" class="table-img">
+                        </td>
+                        <td th:text="${img.owner}">Owner</td>
+                        <td th:text="${img.contentType}">Content Type</td>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="Actions">
+                                <!-- Restore Button -->
+                                <a th:href="@{/web/images/restore/{id}(id=${img.imageId})}" class="btn btn-success btn-sm restore-button" 
+                                   th:data-image-url="@{/web/images/view/{id}(id=${img.imageId})}">
+                                    <i class="fas fa-undo"></i> Restore
+                                </a>
+                                <!-- Permanently Delete Button (Optional) -->
+                                
+                                <button class="btn btn-danger btn-sm delete-permanent-button" 
+                                        th:data-delete-url="@{/web/images/delete-permanent/{id}(id=${img.imageId})}" 
+                                        data-item-type="Image" 
+                                        th:data-item-details="${img.owner}">
+                                    <i class="fas fa-trash-alt"></i> Delete Permanently
+                                </button>
+                                
+                            </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="mt-3">
-            <a th:href="@{/web/images}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Active Images
-            </a>
+        <!-- No Deleted Images Found Message -->
+        <div th:if="${#lists.isEmpty(deletedImages)}" class="mt-4">
+            <p class="text-center">No deleted images found.</p>
+        </div>
+    </div>
+
+    <!-- Modal for Viewing Image -->
+    <div class="modal fade" id="viewImageModal" tabindex="-1" aria-labelledby="viewImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewImageModalLabel">View Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" alt="Image" class="img-fluid">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -90,5 +171,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <!-- Custom JS -->
     <script th:src="@{/js/scripts.js}"></script>
+    <!-- Remove inline script since it's moved to scripts.js -->
 </body>
 </html>

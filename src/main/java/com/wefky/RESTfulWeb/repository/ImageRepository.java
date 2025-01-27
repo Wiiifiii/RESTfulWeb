@@ -18,15 +18,33 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     @Query("SELECT i.imageId AS imageId, i.owner AS owner, i.deleted AS deleted, i.contentType AS contentType FROM Image i WHERE i.deleted = true")
     List<ImageMetadata> findAllDeleted();
 
-    // Custom filter method returning metadata
+    // Custom filter method for active images returning metadata
     @Query("""
            SELECT i.imageId AS imageId, i.owner AS owner, i.deleted AS deleted, i.contentType AS contentType
            FROM Image i
            WHERE i.deleted = false
-             AND (
-               :ownerSearch IS NULL
-               OR LOWER(i.owner) LIKE LOWER(CONCAT('%', :ownerSearch, '%'))
-             )
+             AND (:ownerSearch IS NULL OR LOWER(i.owner) LIKE LOWER(CONCAT('%', :ownerSearch, '%')))
+             AND (:idSearch IS NULL OR i.imageId = :idSearch)
+             AND (:contentTypeSearch IS NULL OR LOWER(i.contentType) LIKE LOWER(CONCAT('%', :contentTypeSearch, '%')))
            """)
-    List<ImageMetadata> filterImages(@Param("ownerSearch") String ownerSearch);
+    List<ImageMetadata> filterImages(
+            @Param("ownerSearch") String ownerSearch,
+            @Param("idSearch") Long idSearch,
+            @Param("contentTypeSearch") String contentTypeSearch
+    );
+
+    // Custom filter method for deleted images returning metadata
+    @Query("""
+           SELECT i.imageId AS imageId, i.owner AS owner, i.deleted AS deleted, i.contentType AS contentType
+           FROM Image i
+           WHERE i.deleted = true
+             AND (:ownerSearch IS NULL OR LOWER(i.owner) LIKE LOWER(CONCAT('%', :ownerSearch, '%')))
+             AND (:idSearch IS NULL OR i.imageId = :idSearch)
+             AND (:contentTypeSearch IS NULL OR LOWER(i.contentType) LIKE LOWER(CONCAT('%', :contentTypeSearch, '%')))
+           """)
+    List<ImageMetadata> filterDeletedImages(
+            @Param("ownerSearch") String ownerSearch,
+            @Param("idSearch") Long idSearch,
+            @Param("contentTypeSearch") String contentTypeSearch
+    );
 }

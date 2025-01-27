@@ -1,46 +1,48 @@
 package com.wefky.RESTfulWeb.repository;
 
 import com.wefky.RESTfulWeb.entity.Measurement;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Repository interface for managing Measurement entities.
+ */
 public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
 
-    @Query("""
-           SELECT m 
-           FROM Measurement m 
-           WHERE m.deleted = false
-           """)
+    /**
+     * Retrieves all active measurements (not deleted).
+     *
+     * @return List of active Measurement entities.
+     */
+    @Query("SELECT m FROM Measurement m WHERE m.deleted = false")
     List<Measurement> findAllActive();
 
-    @Query("""
-           SELECT m 
-           FROM Measurement m
-           WHERE m.deleted = false
-             AND (
-               :unit IS NULL
-               OR LOWER(m.measurementUnit) LIKE LOWER(CONCAT('%', :unit, '%'))
-             )
-             AND (
-               :start IS NULL 
-               OR m.timestamp >= :start
-             )
-             AND (
-               :end IS NULL 
-               OR m.timestamp <= :end
-             )
-             AND (
-               :cityName IS NULL
-               OR (
-                 m.location != null 
-                 AND LOWER(m.location.cityName) LIKE LOWER(CONCAT('%', :cityName, '%'))
-               )
-             )
-           """)
+    /**
+     * Retrieves all deleted measurements.
+     *
+     * @return List of deleted Measurement entities.
+     */
+    @Query("SELECT m FROM Measurement m WHERE m.deleted = true")
+    List<Measurement> findAllDeleted();
+
+    /**
+     * Filters active measurements based on optional criteria.
+     *
+     * @param unit      Optional search term for measurement unit.
+     * @param start     Optional start timestamp for filtering.
+     * @param end       Optional end timestamp for filtering.
+     * @param cityName  Optional search term for city name.
+     * @return List of filtered active Measurement entities.
+     */
+    @Query("SELECT m FROM Measurement m WHERE m.deleted = false " +
+           "AND (:unit IS NULL OR LOWER(m.measurementUnit) LIKE LOWER(CONCAT('%', :unit, '%'))) " +
+           "AND (:start IS NULL OR m.timestamp >= :start) " +
+           "AND (:end IS NULL OR m.timestamp <= :end) " +
+           "AND (:cityName IS NULL OR (m.location IS NOT NULL AND LOWER(m.location.cityName) LIKE LOWER(CONCAT('%', :cityName, '%'))))")
     List<Measurement> filterMeasurements(
             @Param("unit") String unit,
             @Param("start") LocalDateTime start,
@@ -48,6 +50,52 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
             @Param("cityName") String cityName
     );
 
-    @Query("SELECT m FROM Measurement m WHERE m.deleted = true")
-    List<Measurement> findAllDeleted();
+    /**
+     * Filters deleted measurements based on optional criteria.
+     *
+     * @param unit      Optional search term for measurement unit.
+     * @param start     Optional start timestamp for filtering.
+     * @param end       Optional end timestamp for filtering.
+     * @param cityName  Optional search term for city name.
+     * @return List of filtered deleted Measurement entities.
+     */
+    @Query("SELECT m FROM Measurement m WHERE m.deleted = true " +
+           "AND (:unit IS NULL OR LOWER(m.measurementUnit) LIKE LOWER(CONCAT('%', :unit, '%'))) " +
+           "AND (:start IS NULL OR m.timestamp >= :start) " +
+           "AND (:end IS NULL OR m.timestamp <= :end) " +
+           "AND (:cityName IS NULL OR (m.location IS NOT NULL AND LOWER(m.location.cityName) LIKE LOWER(CONCAT('%', :cityName, '%'))))")
+    List<Measurement> filterDeletedMeasurements(
+            @Param("unit") String unit,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("cityName") String cityName
+    );
+
+    /**
+     * Optional Enhancement:
+     * Implement pagination for active measurements.
+     *
+     * Uncomment and use the following method if pagination is needed.
+     *
+     * @param unit      Optional search term for measurement unit.
+     * @param start     Optional start timestamp for filtering.
+     * @param end       Optional end timestamp for filtering.
+     * @param cityName  Optional search term for city name.
+     * @param pageable  Pagination information.
+     * @return Page of filtered active Measurement entities.
+     */
+    /*
+    @Query("SELECT m FROM Measurement m WHERE m.deleted = false " +
+           "AND (:unit IS NULL OR LOWER(m.measurementUnit) LIKE LOWER(CONCAT('%', :unit, '%'))) " +
+           "AND (:start IS NULL OR m.timestamp >= :start) " +
+           "AND (:end IS NULL OR m.timestamp <= :end) " +
+           "AND (:cityName IS NULL OR (m.location IS NOT NULL AND LOWER(m.location.cityName) LIKE LOWER(CONCAT('%', :cityName, '%'))))")
+    Page<Measurement> filterMeasurements(
+            @Param("unit") String unit,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("cityName") String cityName,
+            Pageable pageable
+    );
+    */
 }
