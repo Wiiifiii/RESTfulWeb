@@ -70,32 +70,4 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
             @Param("end") LocalDateTime end,
             @Param("cityName") String cityName
     );
-
-    /**
-     * Optional Enhancement:
-     * Implement pagination for active measurements.
-     *
-     * Uncomment and use the following method if pagination is needed.
-     *
-     * @param unit      Optional search term for measurement unit.
-     * @param start     Optional start timestamp for filtering.
-     * @param end       Optional end timestamp for filtering.
-     * @param cityName  Optional search term for city name.
-     * @param pageable  Pagination information.
-     * @return Page of filtered active Measurement entities.
-     */
-    /*
-    @Query("SELECT m FROM Measurement m WHERE m.deleted = false " +
-           "AND (:unit IS NULL OR LOWER(m.measurementUnit) LIKE LOWER(CONCAT('%', :unit, '%'))) " +
-           "AND (:start IS NULL OR m.timestamp >= :start) " +
-           "AND (:end IS NULL OR m.timestamp <= :end) " +
-           "AND (:cityName IS NULL OR (m.location IS NOT NULL AND LOWER(m.location.cityName) LIKE LOWER(CONCAT('%', :cityName, '%'))))")
-    Page<Measurement> filterMeasurements(
-            @Param("unit") String unit,
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end,
-            @Param("cityName") String cityName,
-            Pageable pageable
-    );
-    */
 }

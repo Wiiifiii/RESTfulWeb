@@ -85,7 +85,7 @@
             <div class="mb-3">
                 <label for="timestamp" class="form-label">Timestamp:</label>
                 <input type="text" id="timestamp" name="timestamp" class="form-control" 
-                       th:value="${#temporals.format(measurement.timestamp, 'yyyy-MM-dd\'T\'HH:mm:ss')}" 
+                       th:value="${measurement.timestamp != null ? #temporals.format(measurement.timestamp, 'yyyy-MM-dd\'T\'HH:mm:ss') : ''}" 
                        placeholder="yyyy-MM-ddTHH:mm:ss" required />
             </div>
 

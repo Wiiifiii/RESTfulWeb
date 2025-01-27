@@ -88,26 +88,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Handle Image View Modal (if applicable)
-    const viewImageModal = document.getElementById('viewImageModal');
-    if (viewImageModal) {
-        const modalImage = viewImageModal.querySelector('#modalImage');
-        viewImageModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            const imageUrl = button.getAttribute('data-image-url');
-            if (modalImage) {
-                modalImage.src = imageUrl;
-            }
-        });
-
-        // Clear the image src when modal is hidden
-        viewImageModal.addEventListener('hidden.bs.modal', function () {
-            if (modalImage) {
-                modalImage.src = '';
-            }
-        });
-    }
-
     // Handle Alerts from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('success')) {
