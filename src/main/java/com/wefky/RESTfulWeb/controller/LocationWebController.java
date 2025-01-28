@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,14 +24,12 @@ public class LocationWebController {
     private final LocationService locationService;
 
     @GetMapping
-    public String listLocations(
-            @RequestParam(required = false) String cityNameSearch,
-            @RequestParam(required = false) String postalCodeSearch,
-            @RequestParam(required = false) Float latMin,
-            @RequestParam(required = false) Float latMax,
-            Model model,
-            RedirectAttributes redirectAttributes
-    ) {
+    public String listLocations(@RequestParam(required = false) String cityNameSearch,
+                                @RequestParam(required = false) String postalCodeSearch,
+                                @RequestParam(required = false) Float latMin,
+                                @RequestParam(required = false) Float latMax,
+                                Model model,
+                                RedirectAttributes redirectAttributes) {
         try {
             List<Location> locations;
             if ((cityNameSearch == null || cityNameSearch.isBlank()) &&
@@ -61,15 +60,16 @@ public class LocationWebController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editLocationForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String editLocationForm(@PathVariable Long id,
+                                   Model model,
+                                   RedirectAttributes redirectAttributes) {
         try {
             Optional<Location> opt = locationService.getLocationById(id);
             if (opt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Location not found.");
                 return "redirect:/web/locations";
             }
-            Location location = opt.get();
-            model.addAttribute("location", location);
+            model.addAttribute("location", opt.get());
             model.addAttribute("mode", "edit");
             return "locationForm";
         } catch (Exception e) {
@@ -80,14 +80,12 @@ public class LocationWebController {
     }
 
     @PostMapping("/save")
-    public String saveLocation(
-            @ModelAttribute Location location,
-            RedirectAttributes redirectAttributes
-    ) {
+    public String saveLocation(@ModelAttribute Location location,
+                               RedirectAttributes redirectAttributes) {
         try {
             if (location.getLocationId() != null) {
-                Optional<Location> opt = locationService.getLocationById(location.getLocationId());
-                if (opt.isEmpty()) {
+                Optional<Location> existing = locationService.getLocationById(location.getLocationId());
+                if (existing.isEmpty()) {
                     redirectAttributes.addFlashAttribute("error", "Location not found.");
                     return "redirect:/web/locations";
                 }
@@ -107,27 +105,26 @@ public class LocationWebController {
     }
 
     @GetMapping("/delete/{id}")
-    public String softDeleteLocation(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String softDeleteLocation(@PathVariable Long id,
+                                     RedirectAttributes redirectAttributes) {
         try {
             locationService.softDeleteLocation(id);
             redirectAttributes.addFlashAttribute("success", "Location deleted successfully!");
             return "redirect:/web/locations";
         } catch (Exception e) {
-            logger.error("Error soft deleting location: ", e);
+            logger.error("Error deleting location: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while deleting the location.");
             return "redirect:/web/locations";
         }
     }
 
     @GetMapping("/trash")
-    public String viewTrash(
-            @RequestParam(required = false) String cityNameSearch,
-            @RequestParam(required = false) String postalCodeSearch,
-            @RequestParam(required = false) Float latMin,
-            @RequestParam(required = false) Float latMax,
-            Model model,
-            RedirectAttributes redirectAttributes
-    ) {
+    public String viewTrash(@RequestParam(required = false) String cityNameSearch,
+                            @RequestParam(required = false) String postalCodeSearch,
+                            @RequestParam(required = false) Float latMin,
+                            @RequestParam(required = false) Float latMax,
+                            Model model,
+                            RedirectAttributes redirectAttributes) {
         try {
             List<Location> deletedLocations;
             if ((cityNameSearch == null || cityNameSearch.isBlank()) &&
@@ -154,7 +151,8 @@ public class LocationWebController {
     }
 
     @PostMapping("/restore/{id}")
-    public String restoreLocation(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String restoreLocation(@PathVariable Long id,
+                                  RedirectAttributes redirectAttributes) {
         try {
             locationService.restoreLocation(id);
             redirectAttributes.addFlashAttribute("success", "Location restored successfully!");
@@ -168,7 +166,8 @@ public class LocationWebController {
 
     @Secured("ROLE_ADMIN")
     @PostMapping("/delete-permanent/{id}")
-    public String permanentlyDeleteLocation(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String permanentlyDeleteLocation(@PathVariable Long id,
+                                            RedirectAttributes redirectAttributes) {
         try {
             locationService.permanentlyDeleteLocation(id);
             redirectAttributes.addFlashAttribute("success", "Location permanently deleted!");

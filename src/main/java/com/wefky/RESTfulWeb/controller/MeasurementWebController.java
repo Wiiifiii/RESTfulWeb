@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,19 +22,18 @@ import java.util.Optional;
 public class MeasurementWebController {
 
     private static final Logger logger = LoggerFactory.getLogger(MeasurementWebController.class);
-
     private final MeasurementService measurementService;
 
     @GetMapping
-    public String listMeasurements(
-            @RequestParam(required = false) String measurementUnit,
-            @RequestParam(required = false) LocalDateTime startDate,
-            @RequestParam(required = false) LocalDateTime endDate,
-            @RequestParam(required = false) String cityName,
-            Model model,
-            RedirectAttributes redirectAttributes
-    ) {
+    public String listMeasurements(@RequestParam(required = false) String measurementUnit,
+                                   @RequestParam(required = false) LocalDateTime startDate,
+                                   @RequestParam(required = false) LocalDateTime endDate,
+                                   @RequestParam(required = false) String cityName,
+                                   HttpServletRequest request,
+                                   Model model,
+                                   RedirectAttributes redirectAttributes) {
         try {
+            model.addAttribute("currentUri", request.getRequestURI());
             List<Measurement> measurements;
             if ((measurementUnit == null || measurementUnit.isBlank()) &&
                 startDate == null && endDate == null &&
@@ -56,22 +56,26 @@ public class MeasurementWebController {
     }
 
     @GetMapping("/new")
-    public String newMeasurementForm(Model model) {
+    public String newMeasurementForm(HttpServletRequest request, Model model) {
+        model.addAttribute("currentUri", request.getRequestURI());
         model.addAttribute("measurement", new Measurement());
         model.addAttribute("mode", "new");
         return "measurementForm";
     }
 
     @GetMapping("/edit/{id}")
-    public String editMeasurementForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String editMeasurementForm(@PathVariable Long id,
+                                      HttpServletRequest request,
+                                      Model model,
+                                      RedirectAttributes redirectAttributes) {
         try {
+            model.addAttribute("currentUri", request.getRequestURI());
             Optional<Measurement> opt = measurementService.getMeasurementById(id);
             if (opt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Measurement not found.");
                 return "redirect:/web/measurements";
             }
-            Measurement measurement = opt.get();
-            model.addAttribute("measurement", measurement);
+            model.addAttribute("measurement", opt.get());
             model.addAttribute("mode", "edit");
             return "measurementForm";
         } catch (Exception e) {
@@ -82,14 +86,12 @@ public class MeasurementWebController {
     }
 
     @PostMapping("/save")
-    public String saveMeasurement(
-            @ModelAttribute Measurement measurement,
-            RedirectAttributes redirectAttributes
-    ) {
+    public String saveMeasurement(@ModelAttribute Measurement measurement,
+                                  RedirectAttributes redirectAttributes) {
         try {
             if (measurement.getMeasurementId() != null) {
-                Optional<Measurement> opt = measurementService.getMeasurementById(measurement.getMeasurementId());
-                if (opt.isEmpty()) {
+                Optional<Measurement> existing = measurementService.getMeasurementById(measurement.getMeasurementId());
+                if (existing.isEmpty()) {
                     redirectAttributes.addFlashAttribute("error", "Measurement not found.");
                     return "redirect:/web/measurements";
                 }
@@ -109,28 +111,29 @@ public class MeasurementWebController {
     }
 
     @GetMapping("/delete/{id}")
-    public String softDeleteMeasurement(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String softDeleteMeasurement(@PathVariable Long id,
+                                        RedirectAttributes redirectAttributes) {
         try {
             measurementService.softDeleteMeasurement(id);
             redirectAttributes.addFlashAttribute("success", "Measurement deleted successfully!");
             return "redirect:/web/measurements";
         } catch (Exception e) {
-            logger.error("Error soft deleting measurement: ", e);
+            logger.error("Error deleting measurement: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while deleting the measurement.");
             return "redirect:/web/measurements";
         }
     }
 
     @GetMapping("/trash")
-    public String viewTrash(
-            @RequestParam(required = false) String measurementUnit,
-            @RequestParam(required = false) LocalDateTime startDate,
-            @RequestParam(required = false) LocalDateTime endDate,
-            @RequestParam(required = false) String cityName,
-            Model model,
-            RedirectAttributes redirectAttributes
-    ) {
+    public String viewTrash(@RequestParam(required = false) String measurementUnit,
+                            @RequestParam(required = false) LocalDateTime startDate,
+                            @RequestParam(required = false) LocalDateTime endDate,
+                            @RequestParam(required = false) String cityName,
+                            HttpServletRequest request,
+                            Model model,
+                            RedirectAttributes redirectAttributes) {
         try {
+            model.addAttribute("currentUri", request.getRequestURI());
             List<Measurement> deletedMeasurements;
             if ((measurementUnit == null || measurementUnit.isBlank()) &&
                 startDate == null && endDate == null &&
@@ -156,7 +159,8 @@ public class MeasurementWebController {
     }
 
     @PostMapping("/restore/{id}")
-    public String restoreMeasurement(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String restoreMeasurement(@PathVariable Long id,
+                                     RedirectAttributes redirectAttributes) {
         try {
             measurementService.restoreMeasurement(id);
             redirectAttributes.addFlashAttribute("success", "Measurement restored successfully!");
@@ -170,7 +174,8 @@ public class MeasurementWebController {
 
     @Secured("ROLE_ADMIN")
     @PostMapping("/delete-permanent/{id}")
-    public String permanentlyDeleteMeasurement(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String permanentlyDeleteMeasurement(@PathVariable Long id,
+                                               RedirectAttributes redirectAttributes) {
         try {
             measurementService.permanentlyDeleteMeasurement(id);
             redirectAttributes.addFlashAttribute("success", "Measurement permanently deleted!");
