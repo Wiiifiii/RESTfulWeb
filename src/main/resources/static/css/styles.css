@@ -5,6 +5,8 @@ body {
     background-color: #604daf;
     color: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 /* Buttons */
@@ -14,11 +16,18 @@ body {
     border: none;
     padding: 8px 16px;
     border-radius: 5px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
 }
 
 .btn:hover {
     background-color: #1a1a5c;
+    transform: translateY(-2px);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .btn-danger {
@@ -54,6 +63,21 @@ body {
     background-color: #e0a800;
 }
 
+/* Form Elements */
+.form-control {
+    background-color: #404045;
+    color: #ffffff;
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 8px;
+}
+
+.form-control:focus {
+    border-color: #131346;
+    box-shadow: 0 0 5px rgba(19, 19, 70, 0.5);
+    outline: none;
+}
+
 /* Search Input with Icon */
 .search-container {
     position: relative;
@@ -83,6 +107,12 @@ body {
     border: 1px solid #555;
     border-radius: 10px;
     color: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.image-grid .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
 .image-grid .card img {
@@ -131,6 +161,7 @@ body {
 .table thead th {
     vertical-align: bottom;
     border-bottom: 2px solid #dee2e6;
+    text-align: left;
 }
 
 .table tbody tr {
@@ -182,15 +213,38 @@ body {
     color: #ffffff !important;
 }
 
-/* Additional Styling for Tables in Locations and Measurements */
-.table td a.btn,
-.table td button.btn {
-    margin-right: 5px;
+/* Error Messages */
+.error-message {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Dropdown */
+.dropdown-menu {
+    background-color: #404045;
+    border: 1px solid #555;
+    color: #ffffff;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #131346;
+    color: #ffffff;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .image-grid {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .btn {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .table th,
+    .table td {
+        font-size: 12px;
     }
 }

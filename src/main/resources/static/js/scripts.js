@@ -1,94 +1,87 @@
-// scripts.js
-
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialize SweetAlert2
     const Swal = window.Swal;
 
-    // Function to handle delete confirmation
+    // Confirmation dialogs
+    function confirmAction(title, html, icon, confirmText, confirmColor, cancelColor, actionUrl) {
+        Swal.fire({
+            title: title,
+            html: html,
+            icon: icon,
+            showCancelButton: true,
+            confirmButtonColor: confirmColor,
+            cancelButtonColor: cancelColor,
+            confirmButtonText: confirmText
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = actionUrl;
+            }
+        });
+    }
+
     function confirmDelete(deleteUrl, itemType, itemDetails) {
-        Swal.fire({
-            title: `Delete ${itemType}?`,
-            html: `Are you sure you want to delete <strong>${itemDetails}</strong>?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = deleteUrl;
-            }
-        });
+        confirmAction(
+            `Delete ${itemType}?`,
+            `Are you sure you want to delete <strong>${itemDetails}</strong>?`,
+            'warning',
+            'Yes, delete it!',
+            '#dc3545',
+            '#6c757d',
+            deleteUrl
+        );
     }
 
-    // Function to handle restore confirmation
     function confirmRestore(restoreUrl, itemType, itemDetails) {
-        Swal.fire({
-            title: `Restore ${itemType}?`,
-            html: `Are you sure you want to restore <strong>${itemDetails}</strong>?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#28a745',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Yes, restore it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = restoreUrl;
-            }
-        });
+        confirmAction(
+            `Restore ${itemType}?`,
+            `Are you sure you want to restore <strong>${itemDetails}</strong>?`,
+            'question',
+            'Yes, restore it!',
+            '#28a745',
+            '#6c757d',
+            restoreUrl
+        );
     }
 
-    // Function to handle permanently delete confirmation
     function confirmDeletePermanent(deleteUrl, itemType, itemDetails) {
-        Swal.fire({
-            title: `Permanently Delete ${itemType}?`,
-            html: `Are you sure you want to permanently delete <strong>${itemDetails}</strong>? This action cannot be undone.`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Yes, permanently delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = deleteUrl;
-            }
-        });
+        confirmAction(
+            `Permanently Delete ${itemType}?`,
+            `Are you sure you want to permanently delete <strong>${itemDetails}</strong>? This action cannot be undone.`,
+            'warning',
+            'Yes, permanently delete it!',
+            '#dc3545',
+            '#6c757d',
+            deleteUrl
+        );
     }
 
-    // Handle Delete Buttons
-    const deleteButtons = document.querySelectorAll('.delete-button');
-    deleteButtons.forEach(button => {
+    // Initialize button actions
+    document.querySelectorAll('.delete-button').forEach(button => {
         button.addEventListener('click', function () {
-            const deleteUrl = this.getAttribute('data-delete-url');
-            const itemType = this.getAttribute('data-item-type') || 'Item';
-            const itemDetails = this.getAttribute('data-item-details') || 'this item';
-            confirmDelete(deleteUrl, itemType, itemDetails);
+            confirmDelete(this.dataset.deleteUrl, 'Image', this.dataset.itemDetails || 'this item');
         });
     });
 
-    // Handle Restore Buttons
-    const restoreButtons = document.querySelectorAll('.restore-button');
-    restoreButtons.forEach(button => {
+    document.querySelectorAll('.restore-button').forEach(button => {
         button.addEventListener('click', function () {
-            const restoreUrl = this.getAttribute('data-restore-url');
-            const itemType = this.getAttribute('data-item-type') || 'Item';
-            const itemDetails = this.getAttribute('data-item-details') || 'this item';
-            confirmRestore(restoreUrl, itemType, itemDetails);
+            confirmRestore(this.dataset.restoreUrl, 'Image', this.dataset.itemDetails || 'this item');
         });
     });
 
-    // Handle Permanently Delete Buttons (Admin Only)
-    const deletePermanentButtons = document.querySelectorAll('.delete-permanent-button');
-    deletePermanentButtons.forEach(button => {
+    document.querySelectorAll('.delete-permanent-button').forEach(button => {
         button.addEventListener('click', function () {
-            const deleteUrl = this.getAttribute('data-delete-url');
-            const itemType = this.getAttribute('data-item-type') || 'Item';
-            const itemDetails = this.getAttribute('data-item-details') || 'this item';
-            confirmDeletePermanent(deleteUrl, itemType, itemDetails);
+            confirmDeletePermanent(this.dataset.deleteUrl, 'Image', this.dataset.itemDetails || 'this item');
         });
     });
 
-    // Handle Alerts from URL parameters (Optional: If using flash attributes)
+    // Handle View Image modal
+    document.querySelectorAll('.view-button').forEach(button => {
+        button.addEventListener('click', function () {
+            const imageUrl = this.dataset.imageUrl;
+            document.getElementById('modalImage').setAttribute('src', imageUrl);
+        });
+    });
+
+    // Flash messages
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('success')) {
         Swal.fire({
@@ -106,19 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
             icon: 'error',
             timer: 3000,
             showConfirmButton: false
-        });
-    }
-
-    // Initialize Flatpickr if the library is loaded (Optional: For date fields)
-    if (typeof flatpickr !== 'undefined') {
-        flatpickr("#startDate", {
-            enableTime: true,
-            dateFormat: "Y-m-d\\TH:i:S",
-        });
-
-        flatpickr("#endDate", {
-            enableTime: true,
-            dateFormat: "Y-m-d\\TH:i:S",
         });
     }
 });

@@ -32,4 +32,7 @@ public class User {
 
     @Column(nullable = false)
     private boolean enabled = true;
+
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Image> images;
 }

@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
 
@@ -15,19 +15,16 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
      *
      * @return List of active measurements.
      */
-    @Query("""
-           SELECT m FROM Measurement m
-           WHERE m.deleted = false
-           """)
+    @Query("SELECT m FROM Measurement m WHERE m.deleted = false")
     List<Measurement> findAllActive();
 
     /**
-     * Filters active measurements based on optional criteria.
+     * Filters active measurements based on optional parameters.
      *
      * @param measurementUnit Optional measurement unit.
-     * @param start           Optional start timestamp.
-     * @param end             Optional end timestamp.
-     * @param cityName        Optional city name.
+     * @param start Optional start timestamp (formatted as ISO_LOCAL_DATE_TIME).
+     * @param end Optional end timestamp (formatted as ISO_LOCAL_DATE_TIME).
+     * @param cityName Optional city name (through Location).
      * @return List of filtered active measurements.
      */
     @Query("""
@@ -52,4 +49,14 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
      */
     @Query("SELECT m FROM Measurement m WHERE m.deleted = true")
     List<Measurement> findAllDeleted();
+
+    /**
+     * Notes:
+     * - Ensure that `LocalDateTime` is formatted properly when calling filter methods.
+     * - Use ISO_LOCAL_DATE_TIME format (e.g., "2023-01-27T12:34:56") for consistent parsing.
+     * - If issues arise with date-time parsing in the application, check:
+     *     1. Controller endpoints for proper date-time handling.
+     *     2. Frontend or API clients for sending date-time in ISO format.
+     *     3. Database schema to ensure `timestamp` columns match `LocalDateTime` expectations.
+     */
 }

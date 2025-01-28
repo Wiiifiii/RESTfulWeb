@@ -1,7 +1,7 @@
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Location;
-import com.wefky.RESTfulWeb.repository.LocationRepository;
+import com.wefky.RESTfulWeb.service.LocationService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Controller for managing Locations via web interface.
- */
 @Controller
 @RequestMapping("/web/locations")
 @RequiredArgsConstructor
@@ -24,15 +21,12 @@ public class LocationWebController {
 
     private static final Logger logger = LoggerFactory.getLogger(LocationWebController.class);
 
-    private final LocationRepository locationRepository;
+    private final LocationService locationService;
 
-    /**
-     * LIST Active Locations with Filters
-     */
     @GetMapping
     public String listLocations(
-            @RequestParam(required = false) String citySearch,
-            @RequestParam(required = false) String postalSearch,
+            @RequestParam(required = false) String cityNameSearch,
+            @RequestParam(required = false) String postalCodeSearch,
             @RequestParam(required = false) Float latMin,
             @RequestParam(required = false) Float latMax,
             Model model,
@@ -40,21 +34,17 @@ public class LocationWebController {
     ) {
         try {
             List<Location> locations;
-            if ((citySearch == null || citySearch.isBlank()) &&
-                (postalSearch == null || postalSearch.isBlank()) &&
-                latMin == null && latMax == null) {
-                locations = locationRepository.findAllActive();
+            if ((cityNameSearch == null || cityNameSearch.isBlank()) &&
+                (postalCodeSearch == null || postalCodeSearch.isBlank()) &&
+                latMin == null &&
+                latMax == null) {
+                locations = locationService.getAllActiveLocations();
             } else {
-                locations = locationRepository.filterLocations(
-                        citySearch == null || citySearch.isBlank() ? null : citySearch,
-                        postalSearch == null || postalSearch.isBlank() ? null : postalSearch,
-                        latMin,
-                        latMax
-                );
+                locations = locationService.filterLocations(cityNameSearch, postalCodeSearch, latMin, latMax);
             }
             model.addAttribute("locations", locations);
-            model.addAttribute("citySearch", citySearch);
-            model.addAttribute("postalSearch", postalSearch);
+            model.addAttribute("cityNameSearch", cityNameSearch);
+            model.addAttribute("postalCodeSearch", postalCodeSearch);
             model.addAttribute("latMin", latMin);
             model.addAttribute("latMax", latMax);
             return "locations"; // -> locations.html
@@ -65,9 +55,6 @@ public class LocationWebController {
         }
     }
 
-    /**
-     * NEW LOCATION FORM
-     */
     @GetMapping("/new")
     public String newLocationForm(Model model) {
         model.addAttribute("location", new Location());
@@ -75,13 +62,10 @@ public class LocationWebController {
         return "locationForm";
     }
 
-    /**
-     * EDIT LOCATION FORM
-     */
     @GetMapping("/edit/{id}")
     public String editLocationForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
-            Optional<Location> opt = locationRepository.findById(id);
+            Optional<Location> opt = locationService.getLocationById(id);
             if (opt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Location not found.");
                 return "redirect:/web/locations";
@@ -97,9 +81,6 @@ public class LocationWebController {
         }
     }
 
-    /**
-     * SAVE LOCATION (NEW OR EDIT)
-     */
     @PostMapping("/save")
     public String saveLocation(
             @ModelAttribute Location location,
@@ -108,13 +89,14 @@ public class LocationWebController {
         try {
             // If editing, ensure the location exists
             if (location.getLocationId() != null) {
-                Optional<Location> opt = locationRepository.findById(location.getLocationId());
+                Optional<Location> opt = locationService.getLocationById(location.getLocationId());
                 if (opt.isEmpty()) {
                     redirectAttributes.addFlashAttribute("error", "Location not found.");
                     return "redirect:/web/locations";
                 }
             }
-            locationRepository.save(location);
+
+            locationService.saveLocation(location);
             redirectAttributes.addFlashAttribute("success", "Location saved successfully!");
             return "redirect:/web/locations";
         } catch (Exception e) {
@@ -128,21 +110,11 @@ public class LocationWebController {
         }
     }
 
-    /**
-     * SOFT DELETE LOCATION
-     */
     @GetMapping("/delete/{id}")
-    public String softDelete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String softDeleteLocation(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            Optional<Location> opt = locationRepository.findById(id);
-            if (opt.isPresent()) {
-                Location location = opt.get();
-                location.setDeleted(true);
-                locationRepository.save(location);
-                redirectAttributes.addFlashAttribute("success", "Location deleted successfully!");
-            } else {
-                redirectAttributes.addFlashAttribute("error", "Location not found.");
-            }
+            locationService.softDeleteLocation(id);
+            redirectAttributes.addFlashAttribute("success", "Location deleted successfully!");
             return "redirect:/web/locations";
         } catch (Exception e) {
             logger.error("Error soft deleting location: ", e);
@@ -151,15 +123,34 @@ public class LocationWebController {
         }
     }
 
-    /**
-     * VIEW TRASH BIN
-     */
     @GetMapping("/trash")
-    public String viewTrash(Model model, RedirectAttributes redirectAttributes) {
+    public String viewTrash(
+            @RequestParam(required = false) String cityNameSearch,
+            @RequestParam(required = false) String postalCodeSearch,
+            @RequestParam(required = false) Float latMin,
+            @RequestParam(required = false) Float latMax,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) {
         try {
-            List<Location> deletedLocations = locationRepository.findAllDeleted();
-            model.addAttribute("deletedLocations", deletedLocations);
-            return "locationsTrash";
+            List<Location> deletedLocations;
+            if ((cityNameSearch == null || cityNameSearch.isBlank()) &&
+                (postalCodeSearch == null || postalCodeSearch.isBlank()) &&
+                latMin == null &&
+                latMax == null) {
+                deletedLocations = locationService.getAllDeletedLocations();
+            } else {
+                // Filter and ensure only deleted locations are shown
+                deletedLocations = locationService.filterLocations(cityNameSearch, postalCodeSearch, latMin, latMax).stream()
+                        .filter(Location::isDeleted)
+                        .toList();
+            }
+            model.addAttribute("locations", deletedLocations);
+            model.addAttribute("cityNameSearch", cityNameSearch);
+            model.addAttribute("postalCodeSearch", postalCodeSearch);
+            model.addAttribute("latMin", latMin);
+            model.addAttribute("latMax", latMax);
+            return "locationsTrash"; // -> locationsTrash.html
         } catch (Exception e) {
             logger.error("Error fetching deleted locations: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching deleted locations.");
@@ -167,21 +158,11 @@ public class LocationWebController {
         }
     }
 
-    /**
-     * RESTORE LOCATION
-     */
-    @GetMapping("/restore/{id}")
+    @PostMapping("/restore/{id}")
     public String restoreLocation(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            Optional<Location> opt = locationRepository.findById(id);
-            if (opt.isPresent()) {
-                Location location = opt.get();
-                location.setDeleted(false);
-                locationRepository.save(location);
-                redirectAttributes.addFlashAttribute("success", "Location restored successfully!");
-            } else {
-                redirectAttributes.addFlashAttribute("error", "Location not found.");
-            }
+            locationService.restoreLocation(id);
+            redirectAttributes.addFlashAttribute("success", "Location restored successfully!");
             return "redirect:/web/locations/trash";
         } catch (Exception e) {
             logger.error("Error restoring location: ", e);
@@ -190,24 +171,27 @@ public class LocationWebController {
         }
     }
 
-    /**
-     * PERMANENTLY DELETE LOCATION (ADMIN ONLY)
-     */
     @Secured("ROLE_ADMIN")
-    @GetMapping("/delete-permanent/{id}")
+    @PostMapping("/delete-permanent/{id}")
     public String permanentlyDeleteLocation(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            if (locationRepository.existsById(id)) {
-                locationRepository.deleteById(id);
-                redirectAttributes.addFlashAttribute("success", "Location permanently deleted!");
-            } else {
-                redirectAttributes.addFlashAttribute("error", "Location not found.");
-            }
-            return "redirect:/web/locations/trash";
+            locationService.permanentlyDeleteLocation(id);
+            redirectAttributes.addFlashAttribute("success", "Location permanently deleted!");
+            return "redirect:/"; // Redirect to home page
         } catch (Exception e) {
             logger.error("Error permanently deleting location: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while permanently deleting the location.");
-            return "redirect:/web/locations/trash";
+            return "redirect:/"; // Redirect to home page
         }
     }
+
+    /**
+     * Helper method to provide location type options.
+     * Removed as 'type' is not a field in Location entity.
+     */
+    /*
+    private List<String> getTypes() {
+        return List.of("Urban", "Rural", "Industrial", "Commercial"); // Add more types as needed
+    }
+    */
 }

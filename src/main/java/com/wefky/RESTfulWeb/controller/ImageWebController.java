@@ -1,7 +1,7 @@
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Image;
-import com.wefky.RESTfulWeb.repository.ImageRepository;
+import com.wefky.RESTfulWeb.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +9,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -21,26 +22,29 @@ public class ImageWebController {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageWebController.class);
 
-    private final ImageRepository imageRepository;
+    private final ImageService imageService;
 
     /**
      * LIST + FILTER Active Images
      */
     @GetMapping
     public String listImages(
-            @RequestParam(required = false) String ownerSearch,
+            @RequestParam(required = false) Long ownerId,
+            @RequestParam(required = false) String contentTypeSearch,
             Model model,
             RedirectAttributes redirectAttributes
     ) {
         try {
             List<Image> images;
-            if (ownerSearch == null || ownerSearch.isBlank()) {
-                images = imageRepository.findAllActive();
+            if (ownerId == null && (contentTypeSearch == null || contentTypeSearch.isBlank())) {
+                images = imageService.getAllActiveImages();
             } else {
-                images = imageRepository.filterImages(ownerSearch);
+                images = imageService.filterImages(ownerId, contentTypeSearch, "active");
             }
             model.addAttribute("images", images);
-            model.addAttribute("ownerSearch", ownerSearch);
+            model.addAttribute("ownerId", ownerId);
+            model.addAttribute("contentTypeSearch", contentTypeSearch);
+            model.addAttribute("contentTypes", getContentTypes());
             return "images"; // -> images.html
         } catch (Exception e) {
             logger.error("Error fetching images: ", e);
@@ -56,6 +60,7 @@ public class ImageWebController {
     public String newImageForm(Model model) {
         model.addAttribute("image", new Image());
         model.addAttribute("mode", "new");
+        model.addAttribute("contentTypes", getContentTypes());
         return "imageForm";
     }
 
@@ -65,7 +70,7 @@ public class ImageWebController {
     @GetMapping("/edit/{id}")
     public String editImageForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
-            Optional<Image> opt = imageRepository.findById(id);
+            Optional<Image> opt = imageService.getImageById(id);
             if (opt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Image not found.");
                 return "redirect:/web/images";
@@ -73,6 +78,7 @@ public class ImageWebController {
             Image image = opt.get();
             model.addAttribute("image", image);
             model.addAttribute("mode", "edit");
+            model.addAttribute("contentTypes", getContentTypes());
             return "imageForm";
         } catch (Exception e) {
             logger.error("Error displaying edit image form: ", e);
@@ -87,18 +93,38 @@ public class ImageWebController {
     @PostMapping("/save")
     public String saveImage(
             @ModelAttribute Image image,
+            @RequestParam("file") MultipartFile file,
             RedirectAttributes redirectAttributes
     ) {
         try {
             // If editing, ensure the image exists
             if (image.getImageId() != null) {
-                Optional<Image> opt = imageRepository.findById(image.getImageId());
+                Optional<Image> opt = imageService.getImageById(image.getImageId());
                 if (opt.isEmpty()) {
                     redirectAttributes.addFlashAttribute("error", "Image not found.");
                     return "redirect:/web/images";
                 }
             }
-            imageRepository.save(image);
+
+            // Handle file upload
+            if (file != null && !file.isEmpty()) {
+                image.setData(file.getBytes());
+                image.setContentType(file.getContentType());
+            } else {
+                if (image.getImageId() == null) { // New Image: File upload is required
+                    redirectAttributes.addFlashAttribute("error", "Please upload an image file.");
+                    return "redirect:/web/images/new";
+                }
+                // Edit Mode: Retain existing image data if no new file is uploaded
+                Optional<Image> existingImageOpt = imageService.getImageById(image.getImageId());
+                if (existingImageOpt.isPresent()) {
+                    Image existingImage = existingImageOpt.get();
+                    image.setData(existingImage.getData());
+                    image.setContentType(existingImage.getContentType());
+                }
+            }
+
+            imageService.saveImage(image);
             redirectAttributes.addFlashAttribute("success", "Image saved successfully!");
             return "redirect:/web/images";
         } catch (Exception e) {
@@ -118,15 +144,8 @@ public class ImageWebController {
     @GetMapping("/delete/{id}")
     public String softDeleteImage(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            Optional<Image> opt = imageRepository.findById(id);
-            if (opt.isPresent()) {
-                Image image = opt.get();
-                image.setDeleted(true);
-                imageRepository.save(image);
-                redirectAttributes.addFlashAttribute("success", "Image deleted successfully!");
-            } else {
-                redirectAttributes.addFlashAttribute("error", "Image not found.");
-            }
+            imageService.softDeleteImage(id);
+            redirectAttributes.addFlashAttribute("success", "Image deleted successfully!");
             return "redirect:/web/images";
         } catch (Exception e) {
             logger.error("Error soft deleting image: ", e);
@@ -139,10 +158,26 @@ public class ImageWebController {
      * VIEW TRASH BIN for Images
      */
     @GetMapping("/trash")
-    public String viewTrash(Model model, RedirectAttributes redirectAttributes) {
+    public String viewTrash(
+            @RequestParam(required = false) Long ownerId,
+            @RequestParam(required = false) String contentTypeSearch,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) {
         try {
-            List<Image> deletedImages = imageRepository.findAllDeleted();
-            model.addAttribute("deletedImages", deletedImages);
+            List<Image> deletedImages;
+            if (ownerId == null && (contentTypeSearch == null || contentTypeSearch.isBlank())) {
+                deletedImages = imageService.getAllDeletedImages();
+            } else {
+                // For trash, filter by owner and content type
+                deletedImages = imageService.filterImages(ownerId, contentTypeSearch, "deleted").stream()
+                        .filter(Image::isDeleted)
+                        .toList();
+            }
+            model.addAttribute("images", deletedImages);
+            model.addAttribute("ownerId", ownerId);
+            model.addAttribute("contentTypeSearch", contentTypeSearch);
+            model.addAttribute("contentTypes", getContentTypes());
             return "imagesTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted images: ", e);
@@ -154,18 +189,11 @@ public class ImageWebController {
     /**
      * RESTORE Image
      */
-    @GetMapping("/restore/{id}")
+    @PostMapping("/restore/{id}")
     public String restoreImage(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            Optional<Image> opt = imageRepository.findById(id);
-            if (opt.isPresent()) {
-                Image image = opt.get();
-                image.setDeleted(false);
-                imageRepository.save(image);
-                redirectAttributes.addFlashAttribute("success", "Image restored successfully!");
-            } else {
-                redirectAttributes.addFlashAttribute("error", "Image not found.");
-            }
+            imageService.restoreImage(id);
+            redirectAttributes.addFlashAttribute("success", "Image restored successfully!");
             return "redirect:/web/images/trash";
         } catch (Exception e) {
             logger.error("Error restoring image: ", e);
@@ -178,20 +206,23 @@ public class ImageWebController {
      * PERMANENTLY DELETE Image. ADMIN ONLY.
      */
     @Secured("ROLE_ADMIN")
-    @GetMapping("/delete-permanent/{id}")
+    @PostMapping("/delete-permanent/{id}")
     public String permanentlyDeleteImage(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            if (imageRepository.existsById(id)) {
-                imageRepository.deleteById(id);
-                redirectAttributes.addFlashAttribute("success", "Image permanently deleted!");
-            } else {
-                redirectAttributes.addFlashAttribute("error", "Image not found.");
-            }
-            return "redirect:/web/images/trash";
+            imageService.permanentlyDeleteImage(id);
+            redirectAttributes.addFlashAttribute("success", "Image permanently deleted!");
+            return "redirect:/"; // Redirect to home page
         } catch (Exception e) {
             logger.error("Error permanently deleting image: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while permanently deleting the image.");
-            return "redirect:/web/images/trash";
+            return "redirect:/"; // Redirect to home page
         }
+    }
+
+    /**
+     * Helper method to provide content type options.
+     */
+    private List<String> getContentTypes() {
+        return List.of("Image", "Document", "PDF", "Video", "Audio"); // Add more types as needed
     }
 }

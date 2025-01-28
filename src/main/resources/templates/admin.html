@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" class="dark-theme">
 <head>
-    <title>Admin Page</title>
+    <title>Admin Portal</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap CSS -->
@@ -13,7 +13,7 @@
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">RESTful App</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
@@ -23,7 +23,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link" th:href="@{/}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/web/locations}">Locations</a>
@@ -46,33 +46,34 @@
         </div>
     </nav>
 
+    <!-- Admin Portal Content -->
     <div class="container py-5">
         <!-- Page Title -->
-        <h2 class="text-center mb-4">Admin Portal</h2>
+        <h2 class="text-center text-white mb-4"><i class="fas fa-user-shield"></i> Admin Portal</h2>
 
         <!-- Description -->
-        <p class="text-center mb-4 text-muted">Only admins should see this.</p>
+        <p class="text-center text-muted mb-5">Manage deleted entities and perform administrative actions.</p>
 
         <!-- Trash Links -->
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title mb-4">Deleted Entities</h5>
+                <div class="card shadow-lg border-0">
+                    <div class="card-body">
+                        <h5 class="card-title text-center mb-4">Deleted Entities</h5>
                         <ul class="list-unstyled">
                             <li class="mb-3">
                                 <a th:href="@{/web/locations/trash}" class="btn btn-danger w-100">
-                                    <i class="fas fa-trash"></i> View Deleted Locations
+                                    <i class="fas fa-map-marker-alt"></i> View Deleted Locations
                                 </a>
                             </li>
                             <li class="mb-3">
                                 <a th:href="@{/web/measurements/trash}" class="btn btn-danger w-100">
-                                    <i class="fas fa-trash"></i> View Deleted Measurements
+                                    <i class="fas fa-ruler"></i> View Deleted Measurements
                                 </a>
                             </li>
                             <li class="mb-3">
                                 <a th:href="@{/web/images/trash}" class="btn btn-danger w-100">
-                                    <i class="fas fa-trash"></i> View Deleted Images
+                                    <i class="fas fa-image"></i> View Deleted Images
                                 </a>
                             </li>
                         </ul>
@@ -81,6 +82,11 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-center text-white py-3 mt-5">
+        <p>&copy; 2025 RESTful App. All rights reserved.</p>
+    </footer>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

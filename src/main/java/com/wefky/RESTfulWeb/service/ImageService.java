@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,28 +22,36 @@ public class ImageService {
     /**
      * Retrieves all active images.
      */
-    public List<Image> getAllImages() {
+    @Transactional(readOnly = true)
+    public List<Image> getAllActiveImages() {
         return imageRepository.findAllActive();
     }
 
     /**
-     * Filters images based on owner.
+     * Filters active images based on optional criteria.
+     *
+     * @param id          Optional image ID.
+     * @param owner       Optional owner name.
+     * @param contentType Optional content type.
+     * @return List of filtered active images.
      */
-    public List<Image> filterImages(String owner) {
-        return imageRepository.filterImages(owner);
+    @Transactional(readOnly = true)
+    public List<Image> filterImages(Long id, String owner, String contentType) {
+        return imageRepository.filterImages(id, owner, contentType);
     }
 
     /**
      * Retrieves an image by ID.
      */
-    public Image getImageById(Long id) {
-        Optional<Image> opt = imageRepository.findById(id);
-        return opt.orElse(null);
+    @Transactional(readOnly = true)
+    public Optional<Image> getImageById(Long id) {
+        return imageRepository.findById(id);
     }
 
     /**
      * Saves an image.
      */
+    @Transactional
     public Image saveImage(Image image) {
         return imageRepository.save(image);
     }
@@ -50,21 +59,19 @@ public class ImageService {
     /**
      * Soft deletes an image.
      */
-    public void deleteImage(Long id) {
-        Optional<Image> opt = imageRepository.findById(id);
-        if (opt.isPresent()) {
-            Image image = opt.get();
+    @Transactional
+    public void softDeleteImage(Long id) {
+        imageRepository.findById(id).ifPresent(image -> {
             image.setDeleted(true);
             imageRepository.save(image);
             logger.info("Image with ID {} soft deleted.", id);
-        } else {
-            logger.warn("Attempted to delete non-existent Image with ID {}.", id);
-        }
+        });
     }
 
     /**
      * Permanently deletes an image.
      */
+    @Transactional
     public void permanentlyDeleteImage(Long id) {
         if (imageRepository.existsById(id)) {
             imageRepository.deleteById(id);
@@ -72,5 +79,25 @@ public class ImageService {
         } else {
             logger.warn("Attempted to permanently delete non-existent Image with ID {}.", id);
         }
+    }
+
+    /**
+     * Retrieves all deleted images.
+     */
+    @Transactional(readOnly = true)
+    public List<Image> getAllDeletedImages() {
+        return imageRepository.findAllDeleted();
+    }
+
+    /**
+     * Restores a soft-deleted image.
+     */
+    @Transactional
+    public void restoreImage(Long id) {
+        imageRepository.findById(id).ifPresent(image -> {
+            image.setDeleted(false);
+            imageRepository.save(image);
+            logger.info("Image with ID {} restored.", id);
+        });
     }
 }

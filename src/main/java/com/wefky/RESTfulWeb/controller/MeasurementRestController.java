@@ -44,10 +44,10 @@ public class MeasurementRestController {
         } else {
             // filter
             return measurementRepository.filterMeasurements(
-                measurementUnit == null || measurementUnit.isEmpty() ? null : measurementUnit,
+                (measurementUnit == null || measurementUnit.isEmpty()) ? null : measurementUnit,
                 start,
                 end,
-                cityName == null || cityName.isEmpty() ? null : cityName
+                (cityName == null || cityName.isEmpty()) ? null : cityName
             );
         }
     }
@@ -73,7 +73,7 @@ public class MeasurementRestController {
         measurement.setMeasurementId(null);
         measurement.setDeleted(false);
         Measurement saved = measurementRepository.save(measurement);
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.status(201).body(saved);
     }
 
     /**

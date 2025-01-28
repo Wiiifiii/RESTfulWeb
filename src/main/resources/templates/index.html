@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" class="dark-theme">
 <head>
-    <title>Home Page</title>
+    <title>Home - RESTful App</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap CSS -->
@@ -23,19 +23,27 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/">Home</a>
+                        <a class="nav-link" th:href="@{/}" th:classappend="${#request.requestURI == '/' ? 'active' : ''}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/locations}">Locations</a>
+                        <a class="nav-link" th:href="@{/web/locations}" th:classappend="${#request.requestURI.startsWith('/web/locations') ? 'active' : ''}">Locations</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/measurements}">Measurements</a>
+                        <a class="nav-link" th:href="@{/web/measurements}" th:classappend="${#request.requestURI.startsWith('/web/measurements') ? 'active' : ''}">Measurements</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/images}">Images</a>
+                        <a class="nav-link" th:href="@{/web/images}" th:classappend="${#request.requestURI.startsWith('/web/images') ? 'active' : ''}">Images</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
+                    <!-- Admin Dashboard Button Visible Only to Admins -->
+                    <sec:authorize access="hasRole('ADMIN')">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/dashboard}" th:classappend="${#request.requestURI.startsWith('/admin') ? 'active' : ''}">
+                                <i class="fas fa-user-shield"></i> Admin Dashboard
+                            </a>
+                        </li>
+                    </sec:authorize>
                     <li class="nav-item">
                         <a class="nav-link" href="/logout">
                             <i class="fas fa-sign-out-alt"></i> Sign Out
@@ -46,53 +54,23 @@
         </div>
     </nav>
 
-    <div class="container py-5">
-        <!-- Page Title -->
-        <h1 class="text-center mb-4">Welcome to the RESTful Web Application!</h1>
+  <!-- Main Content -->
+<main class="container text-center py-5">
+    <h1>Welcome to RESTful App</h1>
+    <p class="lead">Manage your images, locations, and measurements efficiently.</p>
+</main>
 
-        <!-- Description -->
-        <p class="text-center mb-4">Choose an entity below to get started:</p>
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3">
+    <p>&copy; 2025 RESTful App. All rights reserved.</p>
+</footer>
 
-        <!-- Entity Links -->
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title mb-4">Entities</h5>
-                        <ul class="list-unstyled">
-                            <li class="mb-3">
-                                <a th:href="@{/web/locations}" class="btn btn-primary w-100">
-                                    <i class="fas fa-map-marker-alt"></i> Locations
-                                </a>
-                            </li>
-                            <li class="mb-3">
-                                <a th:href="@{/web/measurements}" class="btn btn-primary w-100">
-                                    <i class="fas fa-ruler"></i> Measurements
-                                </a>
-                            </li>
-                            <li class="mb-3">
-                                <a th:href="@{/web/images}" class="btn btn-primary w-100">
-                                    <i class="fas fa-image"></i> Images
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Admin Link - Visible Only to Admins -->
-        <div class="text-center mt-4" sec:authorize="hasRole('ADMIN')">
-            <p>Admin access? <a th:href="@{/admin}" class="btn btn-outline-secondary">
-                <i class="fas fa-user-shield"></i> Admin Page
-            </a></p>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <!-- Custom JS -->
-    <script th:src="@{/js/scripts.js}"></script>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<!-- FontAwesome -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+<!-- Custom JS -->
+<script th:src="@{/js/scripts.js}"></script>
 </body>
 </html>

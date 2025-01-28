@@ -7,8 +7,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -60,7 +60,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/**").authenticated()
 
                 // Allow these without login
-                .requestMatchers("/login", "/register", "/saveUser", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/login", "/register", "/saveUser", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
 
                 // Everything else requires authentication
                 .anyRequest().authenticated()

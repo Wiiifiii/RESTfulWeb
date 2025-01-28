@@ -23,7 +23,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link" th:href="@{/}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/web/locations}">Locations</a>
@@ -46,51 +46,65 @@
         </div>
     </nav>
 
+    <!-- Registration Form Section -->
     <div class="container py-5">
-        <h2>Register</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow border-0">
+                    <div class="card-body">
+                        <h2 class="text-center mb-4"><i class="fas fa-user-plus"></i> Register</h2>
 
-        <!-- Display Error and Success Messages -->
-        <div th:if="${param.error}" class="alert alert-danger" role="alert">
-            User already exists.
-        </div>
-        <div th:if="${param.success}" class="alert alert-success" role="alert">
-            Registration successful! Please login.
-        </div>
+                        <!-- Display Error and Success Messages -->
+                        <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i> User already exists.
+                        </div>
+                        <div th:if="${param.success}" class="alert alert-success" role="alert">
+                            <i class="fas fa-check-circle"></i> Registration successful! Please login.
+                        </div>
 
-        <!-- Registration Form -->
-        <form method="post" action="/saveUser">
-            <!-- CSRF Token -->
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            
-            <div class="mb-3">
-                <label for="username" class="form-label">Username:</label>
-                <input type="text" id="username" name="username" class="form-control" required />
+                        <!-- Registration Form -->
+                        <form method="post" action="/saveUser">
+                            <!-- CSRF Token -->
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            
+                            <div class="mb-3">
+                                <label for="username" class="form-label"><i class="fas fa-user"></i> Username</label>
+                                <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required autofocus>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label"><i class="fas fa-lock"></i> Password</label>
+                                <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="role" class="form-label"><i class="fas fa-user-tag"></i> Role</label>
+                                <select id="role" name="role" class="form-select">
+                                    <option value="ROLE_USER" selected>User</option>
+                                    <option value="ROLE_ADMIN">Admin</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-user-plus"></i> Register
+                            </button>
+                        </form>
+
+                        <div class="text-center mt-3">
+                            <a th:href="@{/login}" class="btn btn-link text-muted">
+                                <i class="fas fa-sign-in-alt"></i> Already have an account? Login here
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
-                <input type="password" id="password" name="password" class="form-control" required />
-            </div>
-
-            <div class="mb-3">
-                <label for="role" class="form-label">Role:</label>
-                <select id="role" name="role" class="form-control">
-                    <option value="ROLE_USER" selected>User</option>
-                    <option value="ROLE_ADMIN">Admin</option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-user-plus"></i> Register
-            </button>
-        </form>
-
-        <div class="mt-3">
-            <a href="/login" class="btn btn-secondary">
-                <i class="fas fa-sign-in-alt"></i> Already have an account? Login here
-            </a>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-center text-white py-3 mt-5">
+        <p>&copy; 2025 RESTful App. All rights reserved.</p>
+    </footer>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
