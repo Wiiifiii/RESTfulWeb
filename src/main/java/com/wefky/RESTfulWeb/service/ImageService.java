@@ -11,8 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service for managing Image entities, with @Transactional
+ * to ensure Postgres LOB usage won't fail in auto-commit mode.
+ */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ImageService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageService.class);
@@ -33,12 +38,10 @@ public class ImageService {
         return imageRepository.findById(id);
     }
 
-    @Transactional
     public Image saveImage(Image image) {
         return imageRepository.save(image);
     }
 
-    @Transactional
     public void softDeleteImage(Long id) {
         imageRepository.findById(id).ifPresent(image -> {
             image.setDeleted(true);
@@ -47,7 +50,6 @@ public class ImageService {
         });
     }
 
-    @Transactional
     public void permanentlyDeleteImage(Long id) {
         if (imageRepository.existsById(id)) {
             imageRepository.deleteById(id);
@@ -62,7 +64,6 @@ public class ImageService {
         return imageRepository.findAllDeleted();
     }
 
-    @Transactional
     public void restoreImage(Long id) {
         imageRepository.findById(id).ifPresent(image -> {
             image.setDeleted(false);

@@ -12,16 +12,18 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body class="d-flex flex-column min-vh-100">
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">RESTful App</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                aria-label="Toggle navigation">
+                data-bs-target="#navbarNav" aria-controls="navbarNav"
+                aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
+                <!-- Home link -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/}"
@@ -29,24 +31,28 @@
                        <i class="fas fa-home"></i> Home
                     </a>
                 </li>
+                <!-- Locations -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/web/locations}">
                        <i class="fas fa-map-marker-alt"></i> Locations
                     </a>
                 </li>
+                <!-- Measurements -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/web/measurements}">
                        <i class="fas fa-ruler"></i> Measurements
                     </a>
                 </li>
+                <!-- Images (active) -->
                 <li class="nav-item active">
                     <a class="nav-link"
                        th:href="@{/web/images}">
                        <i class="fas fa-image"></i> Images
                     </a>
                 </li>
+                <!-- Admin Dashboard -->
                 <sec:authorize access="hasRole('ADMIN')">
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/admin}">
@@ -55,10 +61,12 @@
                     </li>
                 </sec:authorize>
             </ul>
+            <!-- Sign Out -->
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="/logout">
-                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    <a class="nav-link"
+                       href="/logout">
+                       <i class="fas fa-sign-out-alt"></i> Sign Out
                     </a>
                 </li>
             </ul>
@@ -69,6 +77,7 @@
 <div class="container py-5">
     <h2>Images</h2>
 
+    <!-- Success / Error alerts -->
     <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
     <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
 
@@ -76,27 +85,45 @@
         <a th:href="@{/web/images/trash}" class="btn btn-secondary">
             <i class="fas fa-trash-alt"></i> View Trash
         </a>
-        <!-- Example: If you want "New Image" button -->
-        <!-- <a th:href="@{/web/images/new}" class="btn btn-primary">
-             <i class="fas fa-plus"></i> Add New Image
-        </a> -->
+        <!-- If you have a route to upload new images:
+        <a th:href="@{/web/images/new}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New Image
+        </a>
+        -->
     </div>
 
+    <!-- If you have a 'title' or 'description' field, reference them. 
+         Otherwise, let's just show an icon or something. -->
     <div class="row row-cols-1 row-cols-md-3 g-4" th:if="${!#lists.isEmpty(images)}">
         <div class="col" th:each="img : ${images}">
             <div class="card text-white bg-dark h-100">
-                <img th:src="${'/uploads/' + img.fileName}" class="card-img-top" alt="Image" />
+                <!-- If you do NOT have fileName, remove or replace below line 
+                     Or if you want a generic placeholder: 
+                     <img src="/images/placeholder.jpg" ... /> 
+                -->
+                <img src="/images/placeholder.jpg" class="card-img-top" alt="Image Placeholder" />
+
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${img.title}"></h5>
-                    <p class="card-text" th:text="${img.description}"></p>
+                    <!-- Example if you add 'title' in your entity: 
+                    <h5 class="card-title" th:text="${img.title}">No Title</h5>
+                    -->
+                    <h5 class="card-title">Image #<span th:text="${img.imageId}"></span></h5>
+
+                    <!-- If you have description: 
+                    <p class="card-text" th:text="${img.description}"></p> 
+                    -->
+                    <p class="card-text">
+                        <strong>Content Type: </strong>
+                        <span th:text="${img.contentType != null ? img.contentType : 'N/A'}"></span>
+                    </p>
                 </div>
                 <div class="card-footer">
-                    <!-- Soft delete button with SweetAlert2 confirmation -->
+                    <!-- Soft-delete with sweetalert2 -->
                     <button type="button"
                             class="btn btn-danger btn-sm delete-button"
-                            th:data-delete-url="@{'/web/images/delete/' + ${img.id}}"
+                            th:data-delete-url="@{'/web/images/delete/' + ${img.imageId}}"
                             data-item-type="Image"
-                            th:data-item-details="${img.title != null ? img.title : 'this image'}">
+                            th:data-item-details="${img.contentType != null ? img.contentType : 'this image'}">
                         <i class="fas fa-trash"></i> Delete
                     </button>
                 </div>
@@ -113,7 +140,7 @@
     <p>&copy; 2025 RESTful App. All rights reserved.</p>
 </footer>
 
-<!-- Bootstrap JS & SweetAlert2 & scripts.js for confirmations -->
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script th:src="@{/js/scripts.js}"></script>

@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST Controller for images (/api/images).
+ */
 @RestController
 @RequestMapping("/api/images")
 @RequiredArgsConstructor
@@ -32,8 +35,7 @@ public class ImageRestController {
             @RequestParam(required = false) String owner,
             @RequestParam(required = false) String contentType
     ) {
-        // If no filters, we could return findAllActive(),
-        // otherwise use filterImages. Using a single approach:
+        // Single approach: filterImages
         return imageRepository.filterImages(id, owner, contentType);
     }
 
@@ -50,7 +52,7 @@ public class ImageRestController {
     }
 
     /**
-     * DELETE (Soft Delete) image.
+     * DELETE (Soft Delete) image by ID.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteImage(@PathVariable Long id) {

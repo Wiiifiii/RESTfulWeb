@@ -23,6 +23,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
+                <!-- Active if currentUri == "/" -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/}"
@@ -30,6 +31,7 @@
                        <i class="fas fa-home"></i> Home
                     </a>
                 </li>
+                <!-- Active if route starts with /web/locations -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/web/locations}"
@@ -37,6 +39,7 @@
                        <i class="fas fa-map-marker-alt"></i> Locations
                     </a>
                 </li>
+                <!-- Active if route starts with /web/measurements -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/web/measurements}"
@@ -44,6 +47,7 @@
                        <i class="fas fa-ruler"></i> Measurements
                     </a>
                 </li>
+                <!-- Active if route starts with /web/images -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/web/images}"
@@ -51,6 +55,7 @@
                        <i class="fas fa-image"></i> Images
                     </a>
                 </li>
+                <!-- Admin Dashboard for admin only -->
                 <sec:authorize access="hasRole('ADMIN')">
                     <li class="nav-item">
                         <a class="nav-link"
@@ -61,6 +66,7 @@
                 </sec:authorize>
             </ul>
             <ul class="navbar-nav">
+                <!-- Sign Out -->
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">
                         <i class="fas fa-sign-out-alt"></i> Sign Out
@@ -71,9 +77,9 @@
     </div>
 </nav>
 
-<!-- Cards with icons -->
 <main class="container py-5 flex-grow-1">
     <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Card: Locations -->
         <div class="col">
             <div class="card bg-dark text-white h-100">
                 <div class="card-body">
@@ -91,6 +97,7 @@
                 </div>
             </div>
         </div>
+        <!-- Card: Measurements -->
         <div class="col">
             <div class="card bg-dark text-white h-100">
                 <div class="card-body">
@@ -108,6 +115,7 @@
                 </div>
             </div>
         </div>
+        <!-- Card: Images -->
         <div class="col">
             <div class="card bg-dark text-white h-100">
                 <div class="card-body">

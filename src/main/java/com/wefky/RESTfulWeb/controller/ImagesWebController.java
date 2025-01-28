@@ -1,7 +1,8 @@
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Image;
-import com.wefky.RESTfulWeb.repository.ImageRepository; // or your ImageService
+import com.wefky.RESTfulWeb.repository.ImageRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,16 +12,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * A controller that serves Thymeleaf views for Images.
+ * If you prefer to use an ImageService, swap that in place of ImageRepository.
+ */
 @Controller
 @RequestMapping("/web/images")
 @RequiredArgsConstructor
 public class ImagesWebController {
 
     private static final Logger logger = LoggerFactory.getLogger(ImagesWebController.class);
+
     private final ImageRepository imageRepository; // or an ImageService
 
     @GetMapping
@@ -28,14 +33,14 @@ public class ImagesWebController {
                              Model model,
                              RedirectAttributes redirectAttributes) {
         try {
-            // Provide current URI
+            // Provide currentUri for the navbar active logic
             model.addAttribute("currentUri", request.getRequestURI());
 
-            // Query active images
+            // Query all active images
             List<Image> images = imageRepository.findAllActive();
             model.addAttribute("images", images);
 
-            return "images";
+            return "images"; // -> images.html
         } catch (Exception e) {
             logger.error("Error fetching images: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching images.");
@@ -54,7 +59,7 @@ public class ImagesWebController {
             List<Image> deletedImages = imageRepository.findAllDeleted();
             model.addAttribute("images", deletedImages);
 
-            return "imagesTrash";
+            return "imagesTrash"; // -> imagesTrash.html
         } catch (Exception e) {
             logger.error("Error fetching deleted images: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching deleted images.");
@@ -71,7 +76,6 @@ public class ImagesWebController {
                 redirectAttributes.addFlashAttribute("error", "Image not found.");
                 return "redirect:/web/images/trash";
             }
-
             Image img = opt.get();
             img.setDeleted(false);
             imageRepository.save(img);
@@ -95,8 +99,8 @@ public class ImagesWebController {
                 redirectAttributes.addFlashAttribute("error", "Image not found.");
                 return "redirect:/web/images/trash";
             }
-
             imageRepository.deleteById(id);
+
             redirectAttributes.addFlashAttribute("success", "Image permanently deleted!");
             return "redirect:/";
         } catch (Exception e) {

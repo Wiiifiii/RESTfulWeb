@@ -22,6 +22,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
+                <!-- Home -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/}"
@@ -29,28 +30,33 @@
                        <i class="fas fa-home"></i> Home
                     </a>
                 </li>
+                <!-- Locations -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/web/locations}">
                        <i class="fas fa-map-marker-alt"></i> Locations
                     </a>
                 </li>
+                <!-- Measurements -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/web/measurements}">
                        <i class="fas fa-ruler"></i> Measurements
                     </a>
                 </li>
+                <!-- Images -->
                 <li class="nav-item active">
                     <a class="nav-link"
                        th:href="@{/web/images}">
                        <i class="fas fa-image"></i> Images
                     </a>
                 </li>
+                <!-- Admin Dashboard -->
                 <sec:authorize access="hasRole('ADMIN')">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin}">
-                            <i class="fas fa-user-shield"></i> Admin Dashboard
+                        <a class="nav-link"
+                           th:href="@{/admin}">
+                           <i class="fas fa-user-shield"></i> Admin Dashboard
                         </a>
                     </li>
                 </sec:authorize>
@@ -81,27 +87,33 @@
     <div class="row row-cols-1 row-cols-md-3 g-4" th:if="${!#lists.isEmpty(images)}">
         <div class="col" th:each="img : ${images}">
             <div class="card text-white bg-dark h-100">
-                <img th:src="${'/uploads/' + img.fileName}" class="card-img-top" alt="Image" />
+                <!-- Same approach: remove fileName references, use a placeholder if needed -->
+                <img src="/images/placeholder.jpg" class="card-img-top" alt="Deleted Image Placeholder" />
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${img.title}"></h5>
-                    <p class="card-text" th:text="${img.description}"></p>
+                    <!-- If you had 'title' or 'imageId', show them -->
+                    <h5 class="card-title">Image #<span th:text="${img.imageId}"></span></h5>
+                    <!-- If you had 'description', show it -->
+                    <p class="card-text">
+                        <strong>Content Type: </strong>
+                        <span th:text="${img.contentType != null ? img.contentType : 'N/A'}"></span>
+                    </p>
                 </div>
                 <div class="card-footer">
                     <!-- Restore -->
                     <button type="button"
                             class="btn btn-success btn-sm restore-button"
-                            th:data-restore-url="@{'/web/images/restore/' + ${img.id}}"
+                            th:data-restore-url="@{'/web/images/restore/' + ${img.imageId}}"
                             data-item-type="Image"
-                            th:data-item-details="${img.title != null ? img.title : 'this image'}">
+                            th:data-item-details="${img.contentType != null ? img.contentType : 'this image'}">
                         <i class="fas fa-undo"></i> Restore
                     </button>
                     <sec:authorize access="hasRole('ADMIN')">
                         <!-- Perm Delete -->
                         <button type="button"
                                 class="btn btn-danger btn-sm delete-permanent-button"
-                                th:data-delete-url="@{'/web/images/delete-permanent/' + ${img.id}}"
+                                th:data-delete-url="@{'/web/images/delete-permanent/' + ${img.imageId}}"
                                 data-item-type="Image"
-                                th:data-item-details="${img.title != null ? img.title : 'this image'}">
+                                th:data-item-details="${img.contentType != null ? img.contentType : 'this image'}">
                             <i class="fas fa-trash-alt"></i> Delete Permanently
                         </button>
                     </sec:authorize>
