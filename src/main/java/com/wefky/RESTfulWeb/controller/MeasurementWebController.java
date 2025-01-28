@@ -35,15 +35,17 @@ public class MeasurementWebController {
             @RequestParam(required = false) String cityName,
             HttpServletRequest request,
             Model model,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes
+    ) {
         try {
             model.addAttribute("currentUri", request.getRequestURI());
-            List<Measurement> measurements;
+
             boolean noFilters = (measurementUnit == null || measurementUnit.isBlank())
                                 && startDate == null
                                 && endDate == null
                                 && (cityName == null || cityName.isBlank());
 
+            List<Measurement> measurements;
             if (noFilters) {
                 measurements = measurementService.getAllActiveMeasurements();
             } else {
@@ -56,7 +58,7 @@ public class MeasurementWebController {
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
 
-            return "measurements";
+            return "measurements"; // -> measurements.html
         } catch (Exception e) {
             logger.error("Error fetching measurements: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching measurements.");
@@ -143,15 +145,17 @@ public class MeasurementWebController {
             @RequestParam(required = false) String cityName,
             HttpServletRequest request,
             Model model,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes
+    ) {
         try {
             model.addAttribute("currentUri", request.getRequestURI());
-            List<Measurement> deletedMeasurements;
+
             boolean noFilters = (measurementUnit == null || measurementUnit.isBlank())
                                 && startDate == null
                                 && endDate == null
                                 && (cityName == null || cityName.isBlank());
 
+            List<Measurement> deletedMeasurements;
             if (noFilters) {
                 deletedMeasurements = measurementService.getAllDeletedMeasurements();
             } else {
@@ -160,11 +164,13 @@ public class MeasurementWebController {
                         .filter(Measurement::isDeleted)
                         .toList();
             }
+
             model.addAttribute("deletedMeasurements", deletedMeasurements);
             model.addAttribute("measurementUnit", measurementUnit);
             model.addAttribute("startDate", startDate);
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
+
             return "measurementsTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted measurements: ", e);
@@ -174,7 +180,8 @@ public class MeasurementWebController {
     }
 
     @PostMapping("/restore/{id}")
-    public String restoreMeasurement(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String restoreMeasurement(@PathVariable Long id,
+                                     RedirectAttributes redirectAttributes) {
         try {
             measurementService.restoreMeasurement(id);
             redirectAttributes.addFlashAttribute("success", "Measurement restored successfully!");

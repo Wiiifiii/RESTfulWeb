@@ -26,16 +26,23 @@ public class MeasurementRestController {
 
     private final MeasurementRepository measurementRepository;
 
+    /**
+     * GET active measurements with optional filters.
+     */
     @GetMapping
     public List<Measurement> getAllMeasurements(
             @RequestParam(required = false) String measurementUnit,
-            @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime start,
-            @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime end,
+            @RequestParam(required = false)
+            @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime start,
+            @RequestParam(required = false)
+            @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime end,
             @RequestParam(required = false) String cityName
     ) {
-        if ((measurementUnit == null || measurementUnit.isEmpty()) &&
-            start == null && end == null &&
-            (cityName == null || cityName.isEmpty())) {
+        boolean noFilters = (measurementUnit == null || measurementUnit.isEmpty())
+                            && start == null
+                            && end == null
+                            && (cityName == null || cityName.isEmpty());
+        if (noFilters) {
             return measurementRepository.findAllActive();
         } else {
             return measurementRepository.filterMeasurements(
@@ -47,6 +54,9 @@ public class MeasurementRestController {
         }
     }
 
+    /**
+     * GET measurement by ID.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Measurement> getMeasurement(@PathVariable Long id) {
         Optional<Measurement> opt = measurementRepository.findById(id);
@@ -56,6 +66,9 @@ public class MeasurementRestController {
         return ResponseEntity.ok(opt.get());
     }
 
+    /**
+     * POST create new measurement.
+     */
     @PostMapping
     public ResponseEntity<Measurement> createMeasurement(@RequestBody Measurement measurement) {
         measurement.setMeasurementId(null);
@@ -64,6 +77,9 @@ public class MeasurementRestController {
         return ResponseEntity.status(201).body(saved);
     }
 
+    /**
+     * PUT update existing measurement.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Measurement> updateMeasurement(@PathVariable Long id, @RequestBody Measurement updated) {
         Optional<Measurement> opt = measurementRepository.findById(id);
@@ -79,6 +95,9 @@ public class MeasurementRestController {
         return ResponseEntity.ok(existing);
     }
 
+    /**
+     * DELETE (Soft Delete) measurement.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteMeasurement(@PathVariable Long id) {
         Optional<Measurement> opt = measurementRepository.findById(id);
@@ -91,6 +110,9 @@ public class MeasurementRestController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * RESTORE measurement.
+     */
     @PostMapping("/{id}/restore")
     public ResponseEntity<Measurement> restoreMeasurement(@PathVariable Long id) {
         Optional<Measurement> opt = measurementRepository.findById(id);
@@ -103,6 +125,9 @@ public class MeasurementRestController {
         return ResponseEntity.ok(measurement);
     }
 
+    /**
+     * DELETE (Hard Delete) measurement. ADMIN ONLY.
+     */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}/permanent")
     public ResponseEntity<Void> permanentlyDeleteMeasurement(@PathVariable Long id) {

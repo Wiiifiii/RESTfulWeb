@@ -40,10 +40,20 @@ public class SecurityConfig {
         http.authenticationProvider(authenticationProvider());
 
         http.authorizeHttpRequests(auth -> auth
+                // ADMIN routes
                 .requestMatchers("/api/locations/*/permanent", "/api/measurements/*/permanent", "/api/images/*/permanent").hasRole("ADMIN")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                // API routes require auth
                 .requestMatchers("/api/**").authenticated()
+
+                // Web routes require auth
+                .requestMatchers("/web/**").authenticated()
+
+                // Public routes
                 .requestMatchers("/login", "/register", "/saveUser", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+
+                // Everything else
                 .anyRequest().authenticated()
         );
 
@@ -62,6 +72,7 @@ public class SecurityConfig {
                 .accessDeniedHandler(accessDeniedHandler())
         );
 
+        // Disable CSRF for API endpoints
         http.csrf(csrf -> csrf
                 .ignoringRequestMatchers("/api/**")
         );

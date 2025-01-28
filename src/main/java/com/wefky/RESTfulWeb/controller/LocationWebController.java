@@ -35,9 +35,11 @@ public class LocationWebController {
             model.addAttribute("currentUri", request.getRequestURI());
 
             List<Location> locations;
-            if ((cityNameSearch == null || cityNameSearch.isBlank()) &&
-                (postalCodeSearch == null || postalCodeSearch.isBlank()) &&
-                latMin == null && latMax == null) {
+            boolean noFilters = (cityNameSearch == null || cityNameSearch.isBlank())
+                                && (postalCodeSearch == null || postalCodeSearch.isBlank())
+                                && latMin == null
+                                && latMax == null;
+            if (noFilters) {
                 locations = locationService.getAllActiveLocations();
             } else {
                 locations = locationService.filterLocations(cityNameSearch, postalCodeSearch, latMin, latMax);
@@ -48,7 +50,8 @@ public class LocationWebController {
             model.addAttribute("postalCodeSearch", postalCodeSearch);
             model.addAttribute("latMin", latMin);
             model.addAttribute("latMax", latMax);
-            return "locations";
+
+            return "locations"; // -> locations.html
         } catch (Exception e) {
             logger.error("Error fetching locations: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching locations.");
@@ -135,22 +138,28 @@ public class LocationWebController {
                             RedirectAttributes redirectAttributes) {
         try {
             model.addAttribute("currentUri", request.getRequestURI());
+
             List<Location> deletedLocations;
-            if ((cityNameSearch == null || cityNameSearch.isBlank()) &&
-                (postalCodeSearch == null || postalCodeSearch.isBlank()) &&
-                latMin == null && latMax == null) {
+            boolean noFilters = (cityNameSearch == null || cityNameSearch.isBlank())
+                                && (postalCodeSearch == null || postalCodeSearch.isBlank())
+                                && latMin == null
+                                && latMax == null;
+
+            if (noFilters) {
                 deletedLocations = locationService.getAllDeletedLocations();
             } else {
                 deletedLocations = locationService.filterLocations(cityNameSearch, postalCodeSearch, latMin, latMax)
-                        .stream()
-                        .filter(Location::isDeleted)
-                        .toList();
+                    .stream()
+                    .filter(Location::isDeleted)
+                    .toList();
             }
+
             model.addAttribute("locations", deletedLocations);
             model.addAttribute("cityNameSearch", cityNameSearch);
             model.addAttribute("postalCodeSearch", postalCodeSearch);
             model.addAttribute("latMin", latMin);
             model.addAttribute("latMax", latMax);
+
             return "locationsTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted locations: ", e);

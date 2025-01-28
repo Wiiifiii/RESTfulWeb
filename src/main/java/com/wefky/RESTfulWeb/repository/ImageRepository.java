@@ -1,5 +1,3 @@
-// File: src/main/java/com/wefky/RESTfulWeb/repository/ImageRepository.java
-
 package com.wefky.RESTfulWeb.repository;
 
 import com.wefky.RESTfulWeb.entity.Image;

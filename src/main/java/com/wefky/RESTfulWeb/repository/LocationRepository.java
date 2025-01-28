@@ -8,18 +8,9 @@ import java.util.List;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
-    /**
-     * Retrieves all active locations (not deleted).
-     */
-    @Query("""
-           SELECT l FROM Location l
-           WHERE l.deleted = false
-           """)
+    @Query("SELECT l FROM Location l WHERE l.deleted = false")
     List<Location> findAllActive();
 
-    /**
-     * Filters active locations based on optional criteria.
-     */
     @Query("""
            SELECT l FROM Location l
            WHERE l.deleted = false
@@ -35,9 +26,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             @Param("latMax") Float latMax
     );
 
-    /**
-     * Retrieves all deleted locations (soft-deleted).
-     */
     @Query("SELECT l FROM Location l WHERE l.deleted = true")
     List<Location> findAllDeleted();
 }

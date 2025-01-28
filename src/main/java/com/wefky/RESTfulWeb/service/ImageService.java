@@ -1,5 +1,3 @@
-// File: src/main/java/com/wefky/RESTfulWeb/service/ImageService.java
-
 package com.wefky.RESTfulWeb.service;
 
 import com.wefky.RESTfulWeb.entity.Image;
@@ -18,49 +16,28 @@ import java.util.Optional;
 public class ImageService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageService.class);
-
     private final ImageRepository imageRepository;
 
-    /**
-     * Retrieves all active images.
-     */
     @Transactional(readOnly = true)
     public List<Image> getAllActiveImages() {
         return imageRepository.findAllActive();
     }
 
-    /**
-     * Filters active images based on optional criteria.
-     *
-     * @param id          Optional image ID.
-     * @param owner       Optional owner name.
-     * @param contentType Optional content type.
-     * @return List of filtered active images.
-     */
     @Transactional(readOnly = true)
     public List<Image> filterImages(Long id, String owner, String contentType) {
         return imageRepository.filterImages(id, owner, contentType);
     }
 
-    /**
-     * Retrieves an image by ID.
-     */
     @Transactional(readOnly = true)
     public Optional<Image> getImageById(Long id) {
         return imageRepository.findById(id);
     }
 
-    /**
-     * Saves an image.
-     */
     @Transactional
     public Image saveImage(Image image) {
         return imageRepository.save(image);
     }
 
-    /**
-     * Soft deletes an image.
-     */
     @Transactional
     public void softDeleteImage(Long id) {
         imageRepository.findById(id).ifPresent(image -> {
@@ -70,9 +47,6 @@ public class ImageService {
         });
     }
 
-    /**
-     * Permanently deletes an image.
-     */
     @Transactional
     public void permanentlyDeleteImage(Long id) {
         if (imageRepository.existsById(id)) {
@@ -83,17 +57,11 @@ public class ImageService {
         }
     }
 
-    /**
-     * Retrieves all deleted images.
-     */
     @Transactional(readOnly = true)
     public List<Image> getAllDeletedImages() {
         return imageRepository.findAllDeleted();
     }
 
-    /**
-     * Restores a soft-deleted image.
-     */
     @Transactional
     public void restoreImage(Long id) {
         imageRepository.findById(id).ifPresent(image -> {

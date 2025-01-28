@@ -1,7 +1,7 @@
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Image;
-import com.wefky.RESTfulWeb.repository.ImageRepository; // or service, whichever you use
+import com.wefky.RESTfulWeb.repository.ImageRepository; // or your ImageService
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +21,20 @@ import java.util.Optional;
 public class ImagesWebController {
 
     private static final Logger logger = LoggerFactory.getLogger(ImagesWebController.class);
-    private final ImageRepository imageRepository; // or an ImageService if you have that
+    private final ImageRepository imageRepository; // or an ImageService
 
     @GetMapping
-    public String listImages(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+    public String listImages(HttpServletRequest request,
+                             Model model,
+                             RedirectAttributes redirectAttributes) {
         try {
+            // Provide current URI
             model.addAttribute("currentUri", request.getRequestURI());
-            List<Image> images = imageRepository.findAllActive(); // adjust if you have a custom query
+
+            // Query active images
+            List<Image> images = imageRepository.findAllActive();
             model.addAttribute("images", images);
+
             return "images";
         } catch (Exception e) {
             logger.error("Error fetching images: ", e);
@@ -38,11 +44,16 @@ public class ImagesWebController {
     }
 
     @GetMapping("/trash")
-    public String viewTrash(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+    public String viewTrash(HttpServletRequest request,
+                            Model model,
+                            RedirectAttributes redirectAttributes) {
         try {
             model.addAttribute("currentUri", request.getRequestURI());
-            List<Image> deletedImages = imageRepository.findAllDeleted(); // or a custom query
+
+            // Query deleted images
+            List<Image> deletedImages = imageRepository.findAllDeleted();
             model.addAttribute("images", deletedImages);
+
             return "imagesTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted images: ", e);
@@ -52,16 +63,19 @@ public class ImagesWebController {
     }
 
     @PostMapping("/restore/{id}")
-    public String restoreImage(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String restoreImage(@PathVariable Long id,
+                               RedirectAttributes redirectAttributes) {
         try {
             Optional<Image> opt = imageRepository.findById(id);
             if (opt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Image not found.");
                 return "redirect:/web/images/trash";
             }
+
             Image img = opt.get();
             img.setDeleted(false);
             imageRepository.save(img);
+
             redirectAttributes.addFlashAttribute("success", "Image restored successfully!");
             return "redirect:/web/images/trash";
         } catch (Exception e) {
@@ -73,13 +87,15 @@ public class ImagesWebController {
 
     @Secured("ROLE_ADMIN")
     @PostMapping("/delete-permanent/{id}")
-    public String permanentlyDeleteImage(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String permanentlyDeleteImage(@PathVariable Long id,
+                                         RedirectAttributes redirectAttributes) {
         try {
             Optional<Image> opt = imageRepository.findById(id);
             if (opt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Image not found.");
                 return "redirect:/web/images/trash";
             }
+
             imageRepository.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Image permanently deleted!");
             return "redirect:/";

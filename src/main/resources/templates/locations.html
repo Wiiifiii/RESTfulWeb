@@ -17,8 +17,8 @@
     <div class="container-fluid">
         <a class="navbar-brand" href="/">RESTful App</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                aria-label="Toggle navigation">
+                data-bs-target="#navbarNav" aria-controls="navbarNav"
+                aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -83,7 +83,7 @@
         </a>
     </div>
 
-    <!-- Filter Form -->
+    <!-- Filter Form with placeholders -->
     <form th:action="@{/web/locations}" method="get" class="mb-4">
         <div class="row g-3">
             <div class="col-md-3">
@@ -136,18 +136,17 @@
         </div>
     </form>
 
-    <!-- Table -->
     <div class="table-responsive">
         <table class="table table-striped align-middle">
             <thead>
-            <tr>
-                <th>ID</th>
-                <th>Postal Code</th>
-                <th>City Name</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                <th>Actions</th>
-            </tr>
+                <tr>
+                    <th>ID</th>
+                    <th>Postal Code</th>
+                    <th>City Name</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Actions</th>
+                </tr>
             </thead>
             <tbody>
             <tr th:each="location : ${locations}">
@@ -158,17 +157,17 @@
                 <td th:text="${location.longitude}"></td>
                 <td>
                     <div class="btn-group">
-                        <!-- Edit with SweetAlert confirm? We'll do normal link, or see scripts.js for sweetalert. -->
+                        <!-- Edit -->
                         <a th:href="@{/web/locations/edit/{id}(id=${location.locationId})}"
                            class="btn btn-warning btn-sm">
                            <i class="fas fa-edit"></i> Edit
                         </a>
-                        <!-- Soft Delete -->
+                        <!-- Soft Delete with sweetalert confirm -->
                         <button type="button"
                                 class="btn btn-danger btn-sm delete-button"
                                 th:data-delete-url="@{'/web/locations/delete/' + ${location.locationId}}"
                                 data-item-type="Location"
-                                th:data-item-details="${'City: ' + location.cityName}">
+                                th:data-item-details="${location.cityName != null ? location.cityName : 'this location'}">
                             <i class="fas fa-trash"></i> Delete
                         </button>
                     </div>
@@ -189,9 +188,7 @@
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- Custom JS for confirmations -->
 <script th:src="@{/js/scripts.js}"></script>
 </body>
 </html>

@@ -4,7 +4,11 @@
     <title>Deleted Images</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -12,26 +16,44 @@
     <div class="container-fluid">
         <a class="navbar-brand" href="/">RESTful App</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                aria-label="Toggle navigation">
+                data-bs-target="#navbarNav" aria-controls="navbarNav"
+                aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}" th:classappend="${currentUri == '/' ? 'active' : ''}">
-                        Home
+                    <a class="nav-link"
+                       th:href="@{/}"
+                       th:classappend="${currentUri == '/' ? 'active' : ''}">
+                       <i class="fas fa-home"></i> Home
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/web/locations}">Locations</a>
+                    <a class="nav-link"
+                       th:href="@{/web/locations}">
+                       <i class="fas fa-map-marker-alt"></i> Locations
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/web/measurements}">Measurements</a>
+                    <a class="nav-link"
+                       th:href="@{/web/measurements}">
+                       <i class="fas fa-ruler"></i> Measurements
+                    </a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/web/images}">Images</a>
+                    <a class="nav-link"
+                       th:href="@{/web/images}">
+                       <i class="fas fa-image"></i> Images
+                    </a>
                 </li>
+                <sec:authorize access="hasRole('ADMIN')">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin}">
+                            <i class="fas fa-user-shield"></i> Admin Dashboard
+                        </a>
+                    </li>
+                </sec:authorize>
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -51,7 +73,9 @@
     <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
 
     <div class="mb-4">
-        <a th:href="@{/web/images}" class="btn btn-secondary">Back to Active Images</a>
+        <a th:href="@{/web/images}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Active Images
+        </a>
     </div>
 
     <div class="row row-cols-1 row-cols-md-3 g-4" th:if="${!#lists.isEmpty(images)}">
@@ -63,20 +87,23 @@
                     <p class="card-text" th:text="${img.description}"></p>
                 </div>
                 <div class="card-footer">
-                    <form th:action="@{/web/images/restore/{id}(id=${img.id})}" method="post" class="d-inline">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                        <button type="submit" class="btn btn-success btn-sm">
-                            Restore
-                        </button>
-                    </form>
+                    <!-- Restore -->
+                    <button type="button"
+                            class="btn btn-success btn-sm restore-button"
+                            th:data-restore-url="@{'/web/images/restore/' + ${img.id}}"
+                            data-item-type="Image"
+                            th:data-item-details="${img.title != null ? img.title : 'this image'}">
+                        <i class="fas fa-undo"></i> Restore
+                    </button>
                     <sec:authorize access="hasRole('ADMIN')">
-                        <form th:action="@{/web/images/delete-permanent/{id}(id=${img.id})}" method="post" class="d-inline">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                            <button type="submit" class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Are you sure you want to permanently delete this image?');">
-                                Delete Permanently
-                            </button>
-                        </form>
+                        <!-- Perm Delete -->
+                        <button type="button"
+                                class="btn btn-danger btn-sm delete-permanent-button"
+                                th:data-delete-url="@{'/web/images/delete-permanent/' + ${img.id}}"
+                                data-item-type="Image"
+                                th:data-item-details="${img.title != null ? img.title : 'this image'}">
+                            <i class="fas fa-trash-alt"></i> Delete Permanently
+                        </button>
                     </sec:authorize>
                 </div>
             </div>
@@ -92,6 +119,9 @@
     <p>&copy; 2025 RESTful App. All rights reserved.</p>
 </footer>
 
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:src="@{/js/scripts.js}"></script>
 </body>
 </html>

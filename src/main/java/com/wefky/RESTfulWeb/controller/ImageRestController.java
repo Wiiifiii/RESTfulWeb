@@ -1,5 +1,3 @@
-// File: src/main/java/com/wefky/RESTfulWeb/controller/ImageRestController.java
-
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Image;
@@ -34,6 +32,8 @@ public class ImageRestController {
             @RequestParam(required = false) String owner,
             @RequestParam(required = false) String contentType
     ) {
+        // If no filters, we could return findAllActive(),
+        // otherwise use filterImages. Using a single approach:
         return imageRepository.filterImages(id, owner, contentType);
     }
 

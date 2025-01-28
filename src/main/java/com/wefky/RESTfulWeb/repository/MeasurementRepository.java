@@ -10,15 +10,9 @@ import java.util.List;
 
 public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
 
-    /**
-     * Retrieves all active (non-deleted) measurements.
-     */
     @Query("SELECT m FROM Measurement m WHERE m.deleted = false")
     List<Measurement> findAllActive();
 
-    /**
-     * Filters active measurements based on optional parameters.
-     */
     @Query("""
            SELECT m FROM Measurement m
            WHERE m.deleted = false
@@ -34,9 +28,6 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
             @Param("cityName") String cityName
     );
 
-    /**
-     * Retrieves all deleted (soft-deleted) measurements.
-     */
     @Query("SELECT m FROM Measurement m WHERE m.deleted = true")
     List<Measurement> findAllDeleted();
 }

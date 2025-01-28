@@ -16,7 +16,6 @@ import java.util.Optional;
 public class LocationService {
 
     private static final Logger logger = LoggerFactory.getLogger(LocationService.class);
-
     private final LocationRepository locationRepository;
 
     @Transactional(readOnly = true)

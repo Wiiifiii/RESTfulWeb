@@ -17,7 +17,6 @@ import java.util.Optional;
 public class MeasurementService {
 
     private static final Logger logger = LoggerFactory.getLogger(MeasurementService.class);
-
     private final MeasurementRepository measurementRepository;
 
     @Transactional(readOnly = true)
