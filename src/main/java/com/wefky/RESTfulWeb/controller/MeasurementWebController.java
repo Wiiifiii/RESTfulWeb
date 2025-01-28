@@ -2,16 +2,17 @@ package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Measurement;
 import com.wefky.RESTfulWeb.service.MeasurementService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,28 +26,36 @@ public class MeasurementWebController {
     private final MeasurementService measurementService;
 
     @GetMapping
-    public String listMeasurements(@RequestParam(required = false) String measurementUnit,
-                                   @RequestParam(required = false) LocalDateTime startDate,
-                                   @RequestParam(required = false) LocalDateTime endDate,
-                                   @RequestParam(required = false) String cityName,
-                                   HttpServletRequest request,
-                                   Model model,
-                                   RedirectAttributes redirectAttributes) {
+    public String listMeasurements(
+            @RequestParam(required = false) String measurementUnit,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(required = false) String cityName,
+            HttpServletRequest request,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         try {
             model.addAttribute("currentUri", request.getRequestURI());
             List<Measurement> measurements;
-            if ((measurementUnit == null || measurementUnit.isBlank()) &&
-                startDate == null && endDate == null &&
-                (cityName == null || cityName.isBlank())) {
+            boolean noFilters = (measurementUnit == null || measurementUnit.isBlank())
+                                && startDate == null
+                                && endDate == null
+                                && (cityName == null || cityName.isBlank());
+
+            if (noFilters) {
                 measurements = measurementService.getAllActiveMeasurements();
             } else {
                 measurements = measurementService.filterMeasurements(measurementUnit, startDate, endDate, cityName);
             }
+
             model.addAttribute("measurements", measurements);
             model.addAttribute("measurementUnit", measurementUnit);
             model.addAttribute("startDate", startDate);
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
+
             return "measurements";
         } catch (Exception e) {
             logger.error("Error fetching measurements: ", e);
@@ -125,19 +134,25 @@ public class MeasurementWebController {
     }
 
     @GetMapping("/trash")
-    public String viewTrash(@RequestParam(required = false) String measurementUnit,
-                            @RequestParam(required = false) LocalDateTime startDate,
-                            @RequestParam(required = false) LocalDateTime endDate,
-                            @RequestParam(required = false) String cityName,
-                            HttpServletRequest request,
-                            Model model,
-                            RedirectAttributes redirectAttributes) {
+    public String viewTrash(
+            @RequestParam(required = false) String measurementUnit,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(required = false) String cityName,
+            HttpServletRequest request,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         try {
             model.addAttribute("currentUri", request.getRequestURI());
             List<Measurement> deletedMeasurements;
-            if ((measurementUnit == null || measurementUnit.isBlank()) &&
-                startDate == null && endDate == null &&
-                (cityName == null || cityName.isBlank())) {
+            boolean noFilters = (measurementUnit == null || measurementUnit.isBlank())
+                                && startDate == null
+                                && endDate == null
+                                && (cityName == null || cityName.isBlank());
+
+            if (noFilters) {
                 deletedMeasurements = measurementService.getAllDeletedMeasurements();
             } else {
                 deletedMeasurements = measurementService.filterMeasurements(measurementUnit, startDate, endDate, cityName)
@@ -159,8 +174,7 @@ public class MeasurementWebController {
     }
 
     @PostMapping("/restore/{id}")
-    public String restoreMeasurement(@PathVariable Long id,
-                                     RedirectAttributes redirectAttributes) {
+    public String restoreMeasurement(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             measurementService.restoreMeasurement(id);
             redirectAttributes.addFlashAttribute("success", "Measurement restored successfully!");

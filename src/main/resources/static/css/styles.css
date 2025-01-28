@@ -248,3 +248,21 @@ body {
         font-size: 12px;
     }
 }
+.card.bg-dark {
+    background-color: #404045 !important;
+}
+
+.card {
+    border: 1px solid #555;
+}
+
+.btn {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.table tbody tr:hover {
+    background-color: #555;
+}

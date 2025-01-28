@@ -2,6 +2,7 @@ package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Location;
 import com.wefky.RESTfulWeb.service.LocationService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,9 +28,12 @@ public class LocationWebController {
                                 @RequestParam(required = false) String postalCodeSearch,
                                 @RequestParam(required = false) Float latMin,
                                 @RequestParam(required = false) Float latMax,
+                                HttpServletRequest request,
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
         try {
+            model.addAttribute("currentUri", request.getRequestURI());
+
             List<Location> locations;
             if ((cityNameSearch == null || cityNameSearch.isBlank()) &&
                 (postalCodeSearch == null || postalCodeSearch.isBlank()) &&
@@ -39,6 +42,7 @@ public class LocationWebController {
             } else {
                 locations = locationService.filterLocations(cityNameSearch, postalCodeSearch, latMin, latMax);
             }
+
             model.addAttribute("locations", locations);
             model.addAttribute("cityNameSearch", cityNameSearch);
             model.addAttribute("postalCodeSearch", postalCodeSearch);
@@ -53,7 +57,8 @@ public class LocationWebController {
     }
 
     @GetMapping("/new")
-    public String newLocationForm(Model model) {
+    public String newLocationForm(HttpServletRequest request, Model model) {
+        model.addAttribute("currentUri", request.getRequestURI());
         model.addAttribute("location", new Location());
         model.addAttribute("mode", "new");
         return "locationForm";
@@ -61,9 +66,11 @@ public class LocationWebController {
 
     @GetMapping("/edit/{id}")
     public String editLocationForm(@PathVariable Long id,
+                                   HttpServletRequest request,
                                    Model model,
                                    RedirectAttributes redirectAttributes) {
         try {
+            model.addAttribute("currentUri", request.getRequestURI());
             Optional<Location> opt = locationService.getLocationById(id);
             if (opt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Location not found.");
@@ -123,9 +130,11 @@ public class LocationWebController {
                             @RequestParam(required = false) String postalCodeSearch,
                             @RequestParam(required = false) Float latMin,
                             @RequestParam(required = false) Float latMax,
+                            HttpServletRequest request,
                             Model model,
                             RedirectAttributes redirectAttributes) {
         try {
+            model.addAttribute("currentUri", request.getRequestURI());
             List<Location> deletedLocations;
             if ((cityNameSearch == null || cityNameSearch.isBlank()) &&
                 (postalCodeSearch == null || postalCodeSearch.isBlank()) &&
