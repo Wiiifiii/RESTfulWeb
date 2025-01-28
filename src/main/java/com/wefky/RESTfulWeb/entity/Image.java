@@ -6,15 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Entity representing an Image record.
- * Currently has:
- * - imageId (PK)
- * - owner (User)
- * - data (LOB)
- * - deleted flag
- * - contentType (String)
- */
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "images")
 @Data
@@ -30,7 +23,7 @@ public class Image {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = true)
-    private User owner; // If you have a User entity.
+    private User owner;
 
     @Lob
     @Basic(fetch = FetchType.EAGER)
@@ -43,11 +36,12 @@ public class Image {
     @Column(name = "content_type", length = 50)
     private String contentType;
 
-//     //If you want to store file name or title, add:
-//     @Column(name = "title", length = 255)
-//     private String title;
-    
-//    // Possibly:
-//     @Column(name = "description", length = 500)
-//     private String description;
+    @Column(name = "title", length = 255)
+    private String title; // Title for the file or image
+
+    @Column(name = "description", length = 500)
+    private String description; // Optional description
+
+    @Column(name = "upload_date", nullable = false)
+    private LocalDateTime uploadDate; // store file upload date
 }

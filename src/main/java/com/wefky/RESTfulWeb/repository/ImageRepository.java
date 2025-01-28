@@ -13,12 +13,12 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findAllActive();
 
     @Query("""
-        SELECT i FROM Image i
-        WHERE i.deleted = false
-          AND (:id IS NULL OR i.imageId = :id)
-          AND (:owner IS NULL OR LOWER(i.owner.username) LIKE LOWER(CONCAT('%', :owner, '%')))
-          AND (:contentType IS NULL OR LOWER(i.contentType) LIKE LOWER(CONCAT('%', :contentType, '%')))
-    """)
+           SELECT i FROM Image i
+           WHERE i.deleted = false
+             AND (:id IS NULL OR i.imageId = :id)
+             AND (:owner IS NULL OR LOWER(i.owner.username) LIKE LOWER(CONCAT('%', :owner, '%')))
+             AND (:contentType IS NULL OR LOWER(i.contentType) = LOWER(:contentType))
+           """)
     List<Image> filterImages(
             @Param("id") Long id,
             @Param("owner") String owner,

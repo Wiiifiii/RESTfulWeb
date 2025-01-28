@@ -8,13 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Service for managing Image entities, with @Transactional
- * to ensure Postgres LOB usage won't fail in auto-commit mode.
- */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -39,6 +36,10 @@ public class ImageService {
     }
 
     public Image saveImage(Image image) {
+        // If new image (no ID), set uploadDate to now
+        if (image.getImageId() == null) {
+            image.setUploadDate(LocalDateTime.now());
+        }
         return imageRepository.save(image);
     }
 

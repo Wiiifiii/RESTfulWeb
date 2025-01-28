@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
 <head>
-    <title>Deleted Images</title>
+    <title>Deleted Files</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap CSS -->
@@ -22,7 +22,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <!-- Home -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/}"
@@ -30,38 +29,34 @@
                        <i class="fas fa-home"></i> Home
                     </a>
                 </li>
-                <!-- Locations -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/web/locations}">
                        <i class="fas fa-map-marker-alt"></i> Locations
                     </a>
                 </li>
-                <!-- Measurements -->
                 <li class="nav-item">
                     <a class="nav-link"
                        th:href="@{/web/measurements}">
                        <i class="fas fa-ruler"></i> Measurements
                     </a>
                 </li>
-                <!-- Images -->
                 <li class="nav-item active">
                     <a class="nav-link"
                        th:href="@{/web/images}">
                        <i class="fas fa-image"></i> Images
                     </a>
                 </li>
-                <!-- Admin Dashboard -->
                 <sec:authorize access="hasRole('ADMIN')">
                     <li class="nav-item">
-                        <a class="nav-link"
-                           th:href="@{/admin}">
-                           <i class="fas fa-user-shield"></i> Admin Dashboard
+                        <a class="nav-link" th:href="@{/admin}">
+                            <i class="fas fa-user-shield"></i> Admin
                         </a>
                     </li>
                 </sec:authorize>
             </ul>
             <ul class="navbar-nav">
+                <!-- Sign Out -->
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">
                         <i class="fas fa-sign-out-alt"></i> Sign Out
@@ -72,62 +67,70 @@
     </div>
 </nav>
 
-<div class="container py-5">
-    <h2>Deleted Images</h2>
+<main class="container py-4 flex-grow-1">
+    <h2>Deleted Files</h2>
 
     <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
     <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
 
     <div class="mb-4">
         <a th:href="@{/web/images}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Active Images
+            <i class="fas fa-arrow-left"></i> Back to Active Files
         </a>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4" th:if="${!#lists.isEmpty(images)}">
-        <div class="col" th:each="img : ${images}">
-            <div class="card text-white bg-dark h-100">
-                <!-- Same approach: remove fileName references, use a placeholder if needed -->
-                <img src="/images/placeholder.jpg" class="card-img-top" alt="Deleted Image Placeholder" />
-                <div class="card-body">
-                    <!-- If you had 'title' or 'imageId', show them -->
-                    <h5 class="card-title">Image #<span th:text="${img.imageId}"></span></h5>
-                    <!-- If you had 'description', show it -->
-                    <p class="card-text">
-                        <strong>Content Type: </strong>
-                        <span th:text="${img.contentType != null ? img.contentType : 'N/A'}"></span>
-                    </p>
-                </div>
-                <div class="card-footer">
-                    <!-- Restore -->
-                    <button type="button"
-                            class="btn btn-success btn-sm restore-button"
-                            th:data-restore-url="@{'/web/images/restore/' + ${img.imageId}}"
-                            data-item-type="Image"
-                            th:data-item-details="${img.contentType != null ? img.contentType : 'this image'}">
-                        <i class="fas fa-undo"></i> Restore
-                    </button>
-                    <sec:authorize access="hasRole('ADMIN')">
-                        <!-- Perm Delete -->
+    <div class="table-responsive" th:if="${!#lists.isEmpty(images)}">
+        <table class="table table-striped align-middle text-white">
+            <thead class="bg-dark">
+                <tr>
+                    <th>File ID</th>
+                    <th>Owner</th>
+                    <th>Title</th>
+                    <th>ContentType</th>
+                    <th>Upload Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:each="img : ${images}">
+                <td th:text="${img.imageId}">ID</td>
+                <td th:text="${img.owner != null ? img.owner.username : 'N/A'}">Owner</td>
+                <td th:text="${img.title != null ? img.title : 'Untitled'}">Title</td>
+                <td th:text="${img.contentType}">ContentType</td>
+                <td th:text="${#temporals.format(img.uploadDate, 'yyyy-MM-dd HH:mm')}">UploadDate</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <!-- Restore -->
                         <button type="button"
-                                class="btn btn-danger btn-sm delete-permanent-button"
-                                th:data-delete-url="@{'/web/images/delete-permanent/' + ${img.imageId}}"
-                                data-item-type="Image"
-                                th:data-item-details="${img.contentType != null ? img.contentType : 'this image'}">
-                            <i class="fas fa-trash-alt"></i> Delete Permanently
+                                class="btn btn-success btn-sm restore-button"
+                                th:data-restore-url="@{'/web/images/restore/' + ${img.imageId}}"
+                                data-item-type="File"
+                                th:data-item-details="${img.title != null ? img.title : 'this file'}">
+                            <i class="fas fa-undo"></i> Restore
                         </button>
-                    </sec:authorize>
-                </div>
-            </div>
-        </div>
+                        <sec:authorize access="hasRole('ADMIN')">
+                            <!-- Permanently Delete -->
+                            <button type="button"
+                                    class="btn btn-danger btn-sm delete-permanent-button"
+                                    th:data-delete-url="@{'/web/images/delete-permanent/' + ${img.imageId}}"
+                                    data-item-type="File"
+                                    th:data-item-details="${img.title != null ? img.title : 'this file'}">
+                                <i class="fas fa-trash-alt"></i> Perm Delete
+                            </button>
+                        </sec:authorize>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
     <div th:if="${#lists.isEmpty(images)}" class="mt-4">
-        <p class="text-center">No deleted images found.</p>
+        <p class="text-center">No deleted files found.</p>
     </div>
-</div>
+</main>
 
-<footer class="mt-auto bg-dark text-white text-center py-3">
+<footer class="bg-dark text-white text-center py-3 mt-auto">
     <p>&copy; 2025 RESTful App. All rights reserved.</p>
 </footer>
 
