@@ -22,17 +22,11 @@ public class SecurityConfig {
         this.myUserDetailsService = myUserDetailsService;
     }
 
-    /**
-     * Password encoder bean using BCrypt.
-     */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Authentication provider using DAO pattern.
-     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -41,28 +35,15 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    /**
-     * Security filter chain configuration.
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http.authenticationProvider(authenticationProvider());
 
         http.authorizeHttpRequests(auth -> auth
-                // Admin-specific hard delete endpoints
                 .requestMatchers("/api/locations/*/permanent", "/api/measurements/*/permanent", "/api/images/*/permanent").hasRole("ADMIN")
-
-                // Admin portal
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-
-                // API endpoints require authenticated users
                 .requestMatchers("/api/**").authenticated()
-
-                // Allow these without login
                 .requestMatchers("/login", "/register", "/saveUser", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
-
-                // Everything else requires authentication
                 .anyRequest().authenticated()
         );
 
@@ -77,12 +58,10 @@ public class SecurityConfig {
                 .permitAll()
         );
 
-        // Handle access denied (unauthorized access)
         http.exceptionHandling(exception -> exception
                 .accessDeniedHandler(accessDeniedHandler())
         );
 
-        // Enable CSRF protection for web forms, disable for APIs
         http.csrf(csrf -> csrf
                 .ignoringRequestMatchers("/api/**")
         );
@@ -90,13 +69,9 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /**
-     * Access denied handler to redirect to a custom page.
-     */
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
-            // Redirect to a custom access denied page
             response.sendRedirect("/access-denied");
         };
     }

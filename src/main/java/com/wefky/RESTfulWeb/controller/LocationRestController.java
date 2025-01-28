@@ -24,35 +24,27 @@ public class LocationRestController {
 
     private final LocationRepository locationRepository;
 
-    /**
-     * GET all active locations with optional filters.
-     */
     @GetMapping
     public List<Location> getAllLocations(
-            @RequestParam(required=false) String cityName,
-            @RequestParam(required=false) String postalCode,
-            @RequestParam(required=false) Float latMin,
-            @RequestParam(required=false) Float latMax
+            @RequestParam(required = false) String cityName,
+            @RequestParam(required = false) String postalCode,
+            @RequestParam(required = false) Float latMin,
+            @RequestParam(required = false) Float latMax
     ) {
-        // if no params, return all active
         if ((cityName == null || cityName.isEmpty()) &&
             (postalCode == null || postalCode.isEmpty()) &&
             latMin == null && latMax == null) {
             return locationRepository.findAllActive();
         } else {
-            // filter
             return locationRepository.filterLocations(
-                cityName == null || cityName.isEmpty() ? null : cityName,
-                postalCode == null || postalCode.isEmpty() ? null : postalCode,
-                latMin,
-                latMax
+                    cityName == null || cityName.isEmpty() ? null : cityName,
+                    postalCode == null || postalCode.isEmpty() ? null : postalCode,
+                    latMin,
+                    latMax
             );
         }
     }
 
-    /**
-     * GET location by ID.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Location> getLocation(@PathVariable Long id) {
         Optional<Location> opt = locationRepository.findById(id);
@@ -62,21 +54,14 @@ public class LocationRestController {
         return ResponseEntity.ok(opt.get());
     }
 
-    /**
-     * POST create new location.
-     */
     @PostMapping
     public ResponseEntity<Location> createLocation(@RequestBody Location location) {
-        // Ensure that the ID is not set for new entities
         location.setLocationId(null);
         location.setDeleted(false);
         Location saved = locationRepository.save(location);
         return ResponseEntity.ok(saved);
     }
 
-    /**
-     * PUT update existing location.
-     */
     @PutMapping("/{id}")
     public ResponseEntity<Location> updateLocation(@PathVariable Long id, @RequestBody Location updated) {
         Optional<Location> opt = locationRepository.findById(id);
@@ -88,14 +73,10 @@ public class LocationRestController {
         existing.setCityName(updated.getCityName());
         existing.setLatitude(updated.getLatitude());
         existing.setLongitude(updated.getLongitude());
-        // Prevent updating the deleted flag via REST API
         locationRepository.save(existing);
         return ResponseEntity.ok(existing);
     }
 
-    /**
-     * DELETE (Soft Delete) location.
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteLocation(@PathVariable Long id) {
         Optional<Location> opt = locationRepository.findById(id);
@@ -108,9 +89,6 @@ public class LocationRestController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * RESTORE location (Soft Delete Inversion).
-     */
     @PostMapping("/{id}/restore")
     public ResponseEntity<Location> restoreLocation(@PathVariable Long id) {
         Optional<Location> opt = locationRepository.findById(id);
@@ -123,9 +101,6 @@ public class LocationRestController {
         return ResponseEntity.ok(location);
     }
 
-    /**
-     * DELETE (Hard Delete) location. ADMIN ONLY.
-     */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}/permanent")
     public ResponseEntity<Void> permanentlyDeleteLocation(@PathVariable Long id) {

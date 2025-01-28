@@ -14,105 +14,100 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">RESTful App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/locations}">Locations</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/measurements}">Measurements</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/images}">Images</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">
-                            <i class="fas fa-sign-out-alt"></i> Sign Out
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container py-5">
-        <h2>Deleted Measurements</h2>
-
-        <!-- Success and Error Messages -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}"></div>
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}"></div>
-
-        <!-- Back to Active Measurements Button -->
-        <div class="mb-4">
-            <a th:href="@{/web/measurements}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Active Measurements
-            </a>
-        </div>
-
-        <!-- Deleted Measurements Table -->
-        <div class="table-responsive">
-            <table class="table table-striped align-middle">
-                <thead>
-                    <tr>
-                        <th scope="col">Measurement ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="m : ${deletedMeasurements}">
-                        <td th:text="${m.id}">ID</td>
-                        <td th:text="${m.name}">Name</td>
-                        <td th:text="${m.type}">Type</td>
-                        <td>
-                            <div class="btn-group">
-                                <!-- Restore Button -->
-                                <button class="btn btn-success btn-sm restore-button" 
-                                        th:data-restore-url="@{/web/measurements/restore/{id}(id=${m.id})}" 
-                                        data-item-type="Measurement" 
-                                        th:data-item-details="'Name: ' + ${m.name}">
-                                    <i class="fas fa-undo"></i> Restore
-                                </button>
-                                
-                                <!-- Permanently Delete Button (Admin Only) -->
-                                <sec:authorize access="hasRole('ADMIN')">
-                                    <button class="btn btn-danger btn-sm delete-permanent-button" 
-                                            th:data-delete-url="@{/web/measurements/delete-permanent/{id}(id=${m.id})}" 
-                                            data-item-type="Measurement" 
-                                            th:data-item-details="'Name: ' + ${m.name}">
-                                        <i class="fas fa-trash-alt"></i> Delete Permanently
-                                    </button>
-                                </sec:authorize>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- No Deleted Measurements Found -->
-        <div th:if="${#lists.isEmpty(deletedMeasurements)}" class="mt-4">
-            <p class="text-center">No deleted measurements found.</p>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">RESTful App</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/web/locations}">Locations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/web/measurements}">Measurements</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/web/images}">Images</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
+</nav>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script th:src="@{/js/scripts.js}"></script>
+<div class="container py-5">
+    <h2>Deleted Measurements</h2>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}"></div>
+
+    <div class="mb-4">
+        <a th:href="@{/web/measurements}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Active Measurements
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+            <tr>
+                <th scope="col">Measurement ID</th>
+                <th scope="col">Unit</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Timestamp</th>
+                <th scope="col">Location</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${deletedMeasurements}">
+                <td th:text="${m.measurementId}"></td>
+                <td th:text="${m.measurementUnit}"></td>
+                <td th:text="${m.amount}"></td>
+                <td th:text="${#temporals.format(m.timestamp, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                <td th:text="${m.location != null ? m.location.cityName : 'N/A'}"></td>
+                <td>
+                    <div class="btn-group">
+                        <form th:action="@{/web/measurements/restore/{id}(id=${m.measurementId})}" method="post" class="d-inline">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="fas fa-undo"></i> Restore
+                            </button>
+                        </form>
+                        <sec:authorize access="hasRole('ADMIN')">
+                            <form th:action="@{/web/measurements/delete-permanent/{id}(id=${m.measurementId})}" method="post" class="d-inline">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Are you sure you want to permanently delete this measurement?');">
+                                    <i class="fas fa-trash-alt"></i> Delete Permanently
+                                </button>
+                            </form>
+                        </sec:authorize>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${#lists.isEmpty(deletedMeasurements)}" class="mt-4">
+        <p class="text-center">No deleted measurements found.</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/scripts.js}"></script>
 </body>
 </html>

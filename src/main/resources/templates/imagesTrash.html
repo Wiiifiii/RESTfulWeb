@@ -1,3 +1,5 @@
+<!-- File: src/main/resources/templates/imagesTrash.html -->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
 <head>
@@ -11,7 +13,7 @@
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
-<body>
+<body class="dark-theme">
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -23,16 +25,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link" th:href="@{/}" th:classappend="${currentURI == '/'} ? 'active' : ''">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/locations}">Locations</a>
+                        <a class="nav-link" th:href="@{/web/locations}" th:classappend="${currentURI.startsWith('/web/locations') ? 'active' : ''}">Locations</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/measurements}">Measurements</a>
+                        <a class="nav-link" th:href="@{/web/measurements}" th:classappend="${currentURI.startsWith('/web/measurements') ? 'active' : ''}">Measurements</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/images}">Images</a>
+                    <li class="nav-item active">
+                        <a class="nav-link" th:href="@{/web/images}" th:classappend="${currentURI.startsWith('/web/images') ? 'active' : ''}">Images</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -45,7 +47,7 @@
             </div>
         </div>
     </nav>
-
+    
     <div class="container py-5">
         <h2 class="text-center mb-4">Deleted Images</h2>
 
@@ -109,7 +111,7 @@
                         <td>
                             <img th:src="@{'/web/images/view/' + ${img.imageId}}" alt="Image" class="img-fluid table-img">
                         </td>
-                        <td th:text="${img.owner}">Owner</td>
+                        <td th:text="${img.owner.username}">Owner</td>
                         <td th:text="${img.contentType}">Content Type</td>
                         <td>
                             <div class="btn-group" role="group" aria-label="Actions">

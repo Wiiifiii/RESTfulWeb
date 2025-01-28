@@ -47,7 +47,7 @@ public class MeasurementWebController {
             model.addAttribute("startDate", startDate);
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
-            return "measurements"; // -> measurements.html
+            return "measurements";
         } catch (Exception e) {
             logger.error("Error fetching measurements: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching measurements.");
@@ -87,7 +87,6 @@ public class MeasurementWebController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            // If editing, ensure the measurement exists
             if (measurement.getMeasurementId() != null) {
                 Optional<Measurement> opt = measurementService.getMeasurementById(measurement.getMeasurementId());
                 if (opt.isEmpty()) {
@@ -95,7 +94,6 @@ public class MeasurementWebController {
                     return "redirect:/web/measurements";
                 }
             }
-
             measurementService.saveMeasurement(measurement);
             redirectAttributes.addFlashAttribute("success", "Measurement saved successfully!");
             return "redirect:/web/measurements";
@@ -139,17 +137,17 @@ public class MeasurementWebController {
                 (cityName == null || cityName.isBlank())) {
                 deletedMeasurements = measurementService.getAllDeletedMeasurements();
             } else {
-                // Filter and ensure only deleted measurements are shown
-                deletedMeasurements = measurementService.filterMeasurements(measurementUnit, startDate, endDate, cityName).stream()
+                deletedMeasurements = measurementService.filterMeasurements(measurementUnit, startDate, endDate, cityName)
+                        .stream()
                         .filter(Measurement::isDeleted)
                         .toList();
             }
-            model.addAttribute("measurements", deletedMeasurements);
+            model.addAttribute("deletedMeasurements", deletedMeasurements);
             model.addAttribute("measurementUnit", measurementUnit);
             model.addAttribute("startDate", startDate);
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
-            return "measurementsTrash"; // -> measurementsTrash.html
+            return "measurementsTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted measurements: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching deleted measurements.");
@@ -176,11 +174,11 @@ public class MeasurementWebController {
         try {
             measurementService.permanentlyDeleteMeasurement(id);
             redirectAttributes.addFlashAttribute("success", "Measurement permanently deleted!");
-            return "redirect:/"; // Redirect to home page
+            return "redirect:/";
         } catch (Exception e) {
             logger.error("Error permanently deleting measurement: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while permanently deleting the measurement.");
-            return "redirect:/"; // Redirect to home page
+            return "redirect:/";
         }
     }
 }

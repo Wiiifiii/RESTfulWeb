@@ -1,3 +1,5 @@
+<!-- File: src/main/resources/templates/imageForm.html -->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
 <head>
@@ -11,7 +13,7 @@
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
-<body>
+<body class="dark-theme">
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -23,16 +25,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link" th:href="@{/}" th:classappend="${currentURI == '/'} ? 'active' : ''">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/locations}">Locations</a>
+                        <a class="nav-link" th:href="@{/web/locations}" th:classappend="${currentURI.startsWith('/web/locations') ? 'active' : ''}">Locations</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/measurements}">Measurements</a>
+                        <a class="nav-link" th:href="@{/web/measurements}" th:classappend="${currentURI.startsWith('/web/measurements') ? 'active' : ''}">Measurements</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" th:href="@{/web/images}">Images</a>
+                        <a class="nav-link" th:href="@{/web/images}" th:classappend="${currentURI.startsWith('/web/images') ? 'active' : ''}">Images</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -60,11 +62,11 @@
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
             <!-- Conditionally include imageId only in edit mode -->
-            <input type="hidden" name="imageId" th:if="${mode} == 'edit'}" th:value="${image.imageId}" />
+            <input type="hidden" name="imageId" th:if="${mode} == 'edit'" th:value="${image.imageId}" />
 
             <div class="mb-3">
                 <label for="owner" class="form-label">Owner:</label>
-                <input type="text" id="owner" name="owner" class="form-control" th:value="${image.owner}" 
+                <input type="text" id="owner" name="owner" class="form-control" th:value="${image.owner.username}" 
                        placeholder="Enter owner name" required />
             </div>
 
@@ -80,7 +82,7 @@
 
             <div class="mb-3">
                 <label for="file" class="form-label">Image File:</label>
-                <input type="file" id="file" name="file" class="form-control" accept="image/*" th:required="${mode} == 'new'}" />
+                <input type="file" id="file" name="file" class="form-control" accept="image/*" th:required="${mode} == 'new'" />
                 <!-- Display current image in edit mode -->
                 <div th:if="${mode} == 'edit' && image.data != null}">
                     <p class="mt-2">Current Image:</p>

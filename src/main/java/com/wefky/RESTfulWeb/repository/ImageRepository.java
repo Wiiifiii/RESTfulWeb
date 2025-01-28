@@ -1,3 +1,5 @@
+// File: src/main/java/com/wefky/RESTfulWeb/repository/ImageRepository.java
+
 package com.wefky.RESTfulWeb.repository;
 
 import com.wefky.RESTfulWeb.entity.Image;
@@ -16,7 +18,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
         SELECT i FROM Image i
         WHERE i.deleted = false
           AND (:id IS NULL OR i.imageId = :id)
-          AND (:owner IS NULL OR LOWER(i.owner) LIKE LOWER(CONCAT('%', :owner, '%')))
+          AND (:owner IS NULL OR LOWER(i.owner.username) LIKE LOWER(CONCAT('%', :owner, '%')))
           AND (:contentType IS NULL OR LOWER(i.contentType) LIKE LOWER(CONCAT('%', :contentType, '%')))
     """)
     List<Image> filterImages(

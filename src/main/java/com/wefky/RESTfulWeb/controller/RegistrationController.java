@@ -1,30 +1,22 @@
 package com.wefky.RESTfulWeb.controller;
 
-import com.wefky.RESTfulWeb.entity.User;
-import com.wefky.RESTfulWeb.repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.wefky.RESTfulWeb.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Set;
 
 @Controller
 public class RegistrationController {
 
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final UserService userService;
 
-    public RegistrationController(UserRepository userRepository,
-                                  BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public RegistrationController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/register")
     public String showRegistrationForm() {
-        return "register"; // register.html
+        return "register";
     }
 
     @PostMapping("/saveUser")
@@ -32,21 +24,15 @@ public class RegistrationController {
                            @RequestParam String password,
                            @RequestParam(defaultValue = "ROLE_USER") String role,
                            RedirectAttributes redirectAttributes) {
-        // Check if user already exists
-        if (userRepository.findByUsername(username).isPresent()) {
-            // Add flash attribute for error
+
+        boolean registered = userService.registerUser(username, password, role);
+
+        if (!registered) {
             redirectAttributes.addFlashAttribute("error", "User already exists.");
             return "redirect:/register?error=UserExists";
         }
 
-        User newUser = new User();
-        newUser.setUsername(username);
-        newUser.setPassword(passwordEncoder.encode(password)); // Hash the password
-        newUser.setRoles(Set.of(role));
-        newUser.setEnabled(true);
-
-        userRepository.save(newUser);
         redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
-        return "redirect:/login?registered"; // redirect to login page
+        return "redirect:/login?registered";
     }
 }

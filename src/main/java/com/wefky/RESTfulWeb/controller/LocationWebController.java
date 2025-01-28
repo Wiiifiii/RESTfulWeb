@@ -20,7 +20,6 @@ import java.util.Optional;
 public class LocationWebController {
 
     private static final Logger logger = LoggerFactory.getLogger(LocationWebController.class);
-
     private final LocationService locationService;
 
     @GetMapping
@@ -36,8 +35,7 @@ public class LocationWebController {
             List<Location> locations;
             if ((cityNameSearch == null || cityNameSearch.isBlank()) &&
                 (postalCodeSearch == null || postalCodeSearch.isBlank()) &&
-                latMin == null &&
-                latMax == null) {
+                latMin == null && latMax == null) {
                 locations = locationService.getAllActiveLocations();
             } else {
                 locations = locationService.filterLocations(cityNameSearch, postalCodeSearch, latMin, latMax);
@@ -47,7 +45,7 @@ public class LocationWebController {
             model.addAttribute("postalCodeSearch", postalCodeSearch);
             model.addAttribute("latMin", latMin);
             model.addAttribute("latMax", latMax);
-            return "locations"; // -> locations.html
+            return "locations";
         } catch (Exception e) {
             logger.error("Error fetching locations: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching locations.");
@@ -87,7 +85,6 @@ public class LocationWebController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            // If editing, ensure the location exists
             if (location.getLocationId() != null) {
                 Optional<Location> opt = locationService.getLocationById(location.getLocationId());
                 if (opt.isEmpty()) {
@@ -95,7 +92,6 @@ public class LocationWebController {
                     return "redirect:/web/locations";
                 }
             }
-
             locationService.saveLocation(location);
             redirectAttributes.addFlashAttribute("success", "Location saved successfully!");
             return "redirect:/web/locations";
@@ -136,12 +132,11 @@ public class LocationWebController {
             List<Location> deletedLocations;
             if ((cityNameSearch == null || cityNameSearch.isBlank()) &&
                 (postalCodeSearch == null || postalCodeSearch.isBlank()) &&
-                latMin == null &&
-                latMax == null) {
+                latMin == null && latMax == null) {
                 deletedLocations = locationService.getAllDeletedLocations();
             } else {
-                // Filter and ensure only deleted locations are shown
-                deletedLocations = locationService.filterLocations(cityNameSearch, postalCodeSearch, latMin, latMax).stream()
+                deletedLocations = locationService.filterLocations(cityNameSearch, postalCodeSearch, latMin, latMax)
+                        .stream()
                         .filter(Location::isDeleted)
                         .toList();
             }
@@ -150,7 +145,7 @@ public class LocationWebController {
             model.addAttribute("postalCodeSearch", postalCodeSearch);
             model.addAttribute("latMin", latMin);
             model.addAttribute("latMax", latMax);
-            return "locationsTrash"; // -> locationsTrash.html
+            return "locationsTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted locations: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching deleted locations.");
@@ -177,21 +172,11 @@ public class LocationWebController {
         try {
             locationService.permanentlyDeleteLocation(id);
             redirectAttributes.addFlashAttribute("success", "Location permanently deleted!");
-            return "redirect:/"; // Redirect to home page
+            return "redirect:/";
         } catch (Exception e) {
             logger.error("Error permanently deleting location: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while permanently deleting the location.");
-            return "redirect:/"; // Redirect to home page
+            return "redirect:/";
         }
     }
-
-    /**
-     * Helper method to provide location type options.
-     * Removed as 'type' is not a field in Location entity.
-     */
-    /*
-    private List<String> getTypes() {
-        return List.of("Urban", "Rural", "Industrial", "Commercial"); // Add more types as needed
-    }
-    */
 }

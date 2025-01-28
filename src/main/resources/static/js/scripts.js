@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const Swal = window.Swal;
 
-    // Confirmation dialogs
     function confirmAction(title, html, icon, confirmText, confirmColor, cancelColor, actionUrl) {
         Swal.fire({
             title: title,
@@ -54,7 +53,6 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     }
 
-    // Initialize button actions
     document.querySelectorAll('.delete-button').forEach(button => {
         button.addEventListener('click', function () {
             confirmDelete(this.dataset.deleteUrl, 'Image', this.dataset.itemDetails || 'this item');
@@ -73,7 +71,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Handle View Image modal
     document.querySelectorAll('.view-button').forEach(button => {
         button.addEventListener('click', function () {
             const imageUrl = this.dataset.imageUrl;
@@ -81,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Flash messages
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('success')) {
         Swal.fire({

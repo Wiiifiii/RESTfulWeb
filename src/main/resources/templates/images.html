@@ -1,3 +1,5 @@
+<!-- File: src/main/resources/templates/images.html -->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
 <head>
@@ -17,22 +19,23 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">RESTful App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link" th:href="@{/}" th:classappend="${currentURI == '/'} ? 'active' : ''">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/locations}">Locations</a>
+                        <a class="nav-link" th:href="@{/web/locations}" th:classappend="${currentURI.startsWith('/web/locations') ? 'active' : ''}">Locations</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/measurements}">Measurements</a>
+                        <a class="nav-link" th:href="@{/web/measurements}" th:classappend="${currentURI.startsWith('/web/measurements') ? 'active' : ''}">Measurements</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" th:href="@{/web/images}">Images</a>
+                        <a class="nav-link" th:href="@{/web/images}" th:classappend="${currentURI.startsWith('/web/images') ? 'active' : ''}">Images</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -51,8 +54,12 @@
         <h2>Images</h2>
 
         <!-- Success and Error Messages -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}"></div>
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
         <!-- Add New Image Button -->
         <div class="mb-4">
@@ -108,7 +115,7 @@
                         <td>
                             <img th:src="@{'/images/view/' + ${img.imageId}}" alt="Image" class="img-fluid table-img">
                         </td>
-                        <td th:text="${img.owner}">Owner</td>
+                        <td th:text="${img.owner.username}">Owner</td>
                         <td th:text="${img.contentType}">Content Type</td>
                         <td>
                             <div class="btn-group" role="group" aria-label="Actions">

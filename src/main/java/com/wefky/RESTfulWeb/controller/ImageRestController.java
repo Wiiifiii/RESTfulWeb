@@ -1,7 +1,8 @@
+// File: src/main/java/com/wefky/RESTfulWeb/controller/ImageRestController.java
+
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Image;
-import com.wefky.RESTfulWeb.entity.User;
 import com.wefky.RESTfulWeb.repository.ImageRepository;
 import com.wefky.RESTfulWeb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

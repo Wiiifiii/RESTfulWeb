@@ -1,3 +1,5 @@
+// File: src/main/java/com/wefky/RESTfulWeb/entity/Image.java
+
 package com.wefky.RESTfulWeb.entity;
 
 import jakarta.persistence.*;
@@ -20,7 +22,7 @@ public class Image {
     private Long imageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = true)
     private User owner;
 
     @Lob

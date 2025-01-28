@@ -1,3 +1,5 @@
+// File: src/main/java/com/wefky/RESTfulWeb/controller/ImageWebController.java
+
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Image;
@@ -11,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,9 +35,11 @@ public class ImageWebController {
             @RequestParam(required = false) Long ownerId,
             @RequestParam(required = false) String contentTypeSearch,
             Model model,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
     ) {
         try {
+            String currentURI = request.getRequestURI();
             List<Image> images;
             if (ownerId == null && (contentTypeSearch == null || contentTypeSearch.isBlank())) {
                 images = imageService.getAllActiveImages();
@@ -45,6 +50,7 @@ public class ImageWebController {
             model.addAttribute("ownerId", ownerId);
             model.addAttribute("contentTypeSearch", contentTypeSearch);
             model.addAttribute("contentTypes", getContentTypes());
+            model.addAttribute("currentURI", currentURI);
             return "images"; // -> images.html
         } catch (Exception e) {
             logger.error("Error fetching images: ", e);
@@ -57,10 +63,12 @@ public class ImageWebController {
      * NEW Image Form
      */
     @GetMapping("/new")
-    public String newImageForm(Model model) {
+    public String newImageForm(Model model, HttpServletRequest request) {
+        String currentURI = request.getRequestURI();
         model.addAttribute("image", new Image());
         model.addAttribute("mode", "new");
         model.addAttribute("contentTypes", getContentTypes());
+        model.addAttribute("currentURI", currentURI);
         return "imageForm";
     }
 
@@ -68,7 +76,7 @@ public class ImageWebController {
      * EDIT Image Form
      */
     @GetMapping("/edit/{id}")
-    public String editImageForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String editImageForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         try {
             Optional<Image> opt = imageService.getImageById(id);
             if (opt.isEmpty()) {
@@ -76,9 +84,11 @@ public class ImageWebController {
                 return "redirect:/web/images";
             }
             Image image = opt.get();
+            String currentURI = request.getRequestURI();
             model.addAttribute("image", image);
             model.addAttribute("mode", "edit");
             model.addAttribute("contentTypes", getContentTypes());
+            model.addAttribute("currentURI", currentURI);
             return "imageForm";
         } catch (Exception e) {
             logger.error("Error displaying edit image form: ", e);
@@ -94,9 +104,11 @@ public class ImageWebController {
     public String saveImage(
             @ModelAttribute Image image,
             @RequestParam("file") MultipartFile file,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
     ) {
         try {
+            String currentURI = request.getRequestURI();
             // If editing, ensure the image exists
             if (image.getImageId() != null) {
                 Optional<Image> opt = imageService.getImageById(image.getImageId());
@@ -162,9 +174,11 @@ public class ImageWebController {
             @RequestParam(required = false) Long ownerId,
             @RequestParam(required = false) String contentTypeSearch,
             Model model,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
     ) {
         try {
+            String currentURI = request.getRequestURI();
             List<Image> deletedImages;
             if (ownerId == null && (contentTypeSearch == null || contentTypeSearch.isBlank())) {
                 deletedImages = imageService.getAllDeletedImages();
@@ -178,6 +192,7 @@ public class ImageWebController {
             model.addAttribute("ownerId", ownerId);
             model.addAttribute("contentTypeSearch", contentTypeSearch);
             model.addAttribute("contentTypes", getContentTypes());
+            model.addAttribute("currentURI", currentURI);
             return "imagesTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted images: ", e);

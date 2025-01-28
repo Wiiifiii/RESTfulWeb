@@ -12,6 +12,6 @@ public class AdminController {
     @Secured("ROLE_ADMIN")
     @GetMapping
     public String adminHome() {
-        return "admin"; // admin.html
+        return "admin";
     }
 }

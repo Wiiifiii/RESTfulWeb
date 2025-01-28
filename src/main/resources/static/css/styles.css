@@ -65,8 +65,8 @@ body {
 
 /* Form Elements */
 .form-control {
-    background-color: #ffffff; /* Changed to white */
-    color: #000000; /* Changed to black text */
+    background-color: #ffffff; 
+    color: #000000; 
     border: 1px solid #555;
     border-radius: 5px;
     padding: 8px;
@@ -78,14 +78,13 @@ body {
     outline: none;
 }
 
-
 /* Search Input with Icon */
 .search-container {
     position: relative;
 }
 
 .search-container .form-control {
-    padding-left: 40px; /* Space for the icon */
+    padding-left: 40px;
 }
 
 .search-container .fa-search {

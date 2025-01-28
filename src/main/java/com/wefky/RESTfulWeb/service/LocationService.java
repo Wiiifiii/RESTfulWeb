@@ -19,47 +19,26 @@ public class LocationService {
 
     private final LocationRepository locationRepository;
 
-    /**
-     * Retrieves all active (non-deleted) locations.
-     */
     @Transactional(readOnly = true)
     public List<Location> getAllActiveLocations() {
         return locationRepository.findAllActive();
     }
 
-    /**
-     * Filters locations based on optional city name, postal code, latitude range.
-     *
-     * @param cityName    Optional search term for city name.
-     * @param postalCode  Optional search term for postal code.
-     * @param latMin      Optional minimum latitude.
-     * @param latMax      Optional maximum latitude.
-     * @return List of filtered active Location entities.
-     */
     @Transactional(readOnly = true)
     public List<Location> filterLocations(String cityName, String postalCode, Float latMin, Float latMax) {
         return locationRepository.filterLocations(cityName, postalCode, latMin, latMax);
     }
 
-    /**
-     * Retrieves a location by ID.
-     */
     @Transactional(readOnly = true)
     public Optional<Location> getLocationById(Long id) {
         return locationRepository.findById(id);
     }
 
-    /**
-     * Saves a location.
-     */
     @Transactional
     public Location saveLocation(Location location) {
         return locationRepository.save(location);
     }
 
-    /**
-     * Soft deletes a location.
-     */
     @Transactional
     public void softDeleteLocation(Long id) {
         locationRepository.findById(id).ifPresent(location -> {
@@ -69,9 +48,6 @@ public class LocationService {
         });
     }
 
-    /**
-     * Permanently deletes a location.
-     */
     @Transactional
     public void permanentlyDeleteLocation(Long id) {
         if (locationRepository.existsById(id)) {
@@ -82,17 +58,11 @@ public class LocationService {
         }
     }
 
-    /**
-     * Retrieves all deleted (soft-deleted) locations.
-     */
     @Transactional(readOnly = true)
     public List<Location> getAllDeletedLocations() {
         return locationRepository.findAllDeleted();
     }
 
-    /**
-     * Restores a soft-deleted location.
-     */
     @Transactional
     public void restoreLocation(Long id) {
         locationRepository.findById(id).ifPresent(location -> {

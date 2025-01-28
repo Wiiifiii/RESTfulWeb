@@ -1,3 +1,5 @@
+// File: src/main/java/com/wefky/RESTfulWeb/service/ImageService.java
+
 package com.wefky.RESTfulWeb.service;
 
 import com.wefky.RESTfulWeb.entity.Image;
