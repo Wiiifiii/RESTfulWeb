@@ -65,8 +65,8 @@ body {
 
 /* Form Elements */
 .form-control {
-    background-color: #404045;
-    color: #ffffff;
+    background-color: #ffffff; /* Changed to white */
+    color: #000000; /* Changed to black text */
     border: 1px solid #555;
     border-radius: 5px;
     padding: 8px;
@@ -77,6 +77,7 @@ body {
     box-shadow: 0 0 5px rgba(19, 19, 70, 0.5);
     outline: none;
 }
+
 
 /* Search Input with Icon */
 .search-container {
