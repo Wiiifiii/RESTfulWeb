@@ -3,9 +3,9 @@
 document.addEventListener('DOMContentLoaded', function() {
 
   /**
-   * Helper to show a SweetAlert2 dialog and either do:
-   *  - GET navigation (window.location.href)
-   *  - or create a dynamic <form method="POST"> to submit to the server
+   * Show SweetAlert2 dialog, then do either:
+   *  - GET => window.location.href
+   *  - POST => dynamically create <form method="POST">
    */
   function confirmAction({
     title,
@@ -28,47 +28,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }).then((result) => {
       if (result.isConfirmed) {
         if (method.toUpperCase() === 'POST') {
-          // Create a form dynamically, submit as POST
           const form = document.createElement('form');
           form.method = 'POST';
           form.action = actionUrl;
-          // If CSRF is needed, you can inject a hidden input here as well
+          // If you have a CSRF token, insert it here:
+          // e.g. form.innerHTML = `<input type="hidden" name="_csrf" value="${csrfToken}" />`;
           document.body.appendChild(form);
           form.submit();
         } else {
-          // Default: GET
+          // Default = GET
           window.location.href = actionUrl;
         }
       }
     });
   }
 
+  // Soft delete => GET
   function confirmDelete(deleteUrl, itemType, itemDetails) {
     confirmAction({
       title: `Delete ${itemType}?`,
       html: `Are you sure you want to delete <strong>${itemDetails}</strong>?`,
       icon: 'warning',
       confirmText: 'Yes, delete it!',
-      confirmColor: '#dc3545', // red
-      cancelColor: '#6c757d', // gray
+      confirmColor: '#dc3545',
+      cancelColor: '#6c757d',
       actionUrl: deleteUrl,
-      method: 'GET' // If your soft-delete endpoint is GET
+      method: 'GET' // your soft-delete uses GET in the controller
     });
   }
 
+  // Restore => POST
   function confirmRestore(restoreUrl, itemType, itemDetails) {
     confirmAction({
       title: `Restore ${itemType}?`,
       html: `Are you sure you want to restore <strong>${itemDetails}</strong>?`,
       icon: 'question',
       confirmText: 'Yes, restore it!',
-      confirmColor: '#28a745', // green
-      cancelColor: '#6c757d', // gray
+      confirmColor: '#28a745',
+      cancelColor: '#6c757d',
       actionUrl: restoreUrl,
-      method: 'POST' // If your restore endpoint is POST
+      method: 'POST'
     });
   }
 
+  // Permanently delete => POST
   function confirmDeletePermanent(deleteUrl, itemType, itemDetails) {
     confirmAction({
       title: `Permanently Delete ${itemType}?`,
@@ -78,11 +81,12 @@ document.addEventListener('DOMContentLoaded', function() {
       confirmColor: '#dc3545',
       cancelColor: '#6c757d',
       actionUrl: deleteUrl,
-      method: 'POST' // If your permanent-delete endpoint is POST
+      method: 'POST'
     });
   }
 
-  // Attach to .delete-button
+  // Hook up event listeners
+  // Soft-delete
   document.querySelectorAll('.delete-button').forEach(button => {
     button.addEventListener('click', function() {
       const deleteUrl = this.dataset.deleteUrl;
@@ -92,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Attach to .restore-button
+  // Restore
   document.querySelectorAll('.restore-button').forEach(button => {
     button.addEventListener('click', function() {
       const restoreUrl = this.dataset.restoreUrl;
@@ -102,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Attach to .delete-permanent-button
+  // Permanently delete
   document.querySelectorAll('.delete-permanent-button').forEach(button => {
     button.addEventListener('click', function() {
       const deleteUrl = this.dataset.deleteUrl;
@@ -111,24 +115,4 @@ document.addEventListener('DOMContentLoaded', function() {
       confirmDeletePermanent(deleteUrl, itemType, itemDetails);
     });
   });
-
 });
-
-document.addEventListener('DOMContentLoaded', function() {
-
-  function confirmDelete(url, itemType, itemDetails) {
-    // show SweetAlert, if confirmed => window.location = url;
-  }
-
-  document.querySelectorAll('.delete-button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const url = btn.dataset.deleteUrl;
-      const itemType = btn.dataset.itemType;
-      const itemDetails = btn.dataset.itemDetails;
-      confirmDelete(url, itemType, itemDetails);
-    });
-  });
-
-  // similarly for .restore-button and .delete-permanent-button
-});
-

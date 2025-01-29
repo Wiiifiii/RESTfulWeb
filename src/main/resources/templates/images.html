@@ -71,12 +71,11 @@
                 <label for="ownerFilter" class="form-label">Owner</label>
                 <input type="text" id="ownerFilter" name="ownerFilter"
                        class="form-control"
-                       th:value="${ownerFilter}">
+                       th:value="${ownerFilter}" />
             </div>
             <div class="col-md-3">
                 <label for="contentTypeFilter" class="form-label">Content Type</label>
-                <select id="contentTypeFilter" name="contentTypeFilter"
-                        class="form-select">
+                <select id="contentTypeFilter" name="contentTypeFilter" class="form-select">
                     <option value=""
                             th:selected="${contentTypeFilter == null or contentTypeFilter == ''}">
                         All
@@ -92,7 +91,7 @@
                 <label for="idFilter" class="form-label">ID</label>
                 <input type="number" id="idFilter" name="idFilter"
                        class="form-control"
-                       th:value="${idFilter}">
+                       th:value="${idFilter}" />
             </div>
             <div class="col-md-4">
                 <button type="submit" class="btn btn-primary">
@@ -132,11 +131,10 @@
             <tbody>
                 <tr th:each="img : ${images}">
                     <td th:text="${img.imageId}"></td>
-                    <td style="width:120px; height:120px;">
+                    <td style="width:120px;">
                         <img th:if="${img.base64Data}"
                              th:src="${'data:' + img.contentType + ';base64,' + img.base64Data}"
-                             class="img-thumbnail"
-                             style="max-width:100px; max-height:100px;" />
+                             class="img-thumbnail img-thumb" />
                     </td>
                     <td th:text="${img.owner != null ? img.owner : 'N/A'}"></td>
                     <td th:text="${img.title != null ? img.title : 'No Title'}"></td>
@@ -144,8 +142,7 @@
                     <td th:text="${#temporals.format(img.uploadDate, 'yyyy-MM-dd HH:mm')}"></td>
                     <td>
                         <div class="btn-group">
-
-                            <!-- View (Bootstrap modal) -->
+                            <!-- View (modal) -->
                             <button type="button"
                                     class="btn btn-info btn-sm"
                                     data-bs-toggle="modal"
@@ -154,12 +151,17 @@
                             </button>
 
                             <!-- Edit -->
-                            <a th:href="@{/web/images/edit/{id}(id=${img.imageId}, idFilter=${idFilter}, ownerFilter=${ownerFilter}, contentTypeFilter=${contentTypeFilter})}"
+                            <a th:href="@{/web/images/edit/{id}(
+                                id=${img.imageId},
+                                idFilter=${idFilter},
+                                ownerFilter=${ownerFilter},
+                                contentTypeFilter=${contentTypeFilter}
+                            )}"
                                class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i>
                             </a>
 
-                            <!-- Delete (soft) -->
+                            <!-- Soft Delete -->
                             <button type="button"
                                     class="btn btn-danger btn-sm delete-button"
                                     th:data-delete-url="@{'/web/images/delete/' + ${img.imageId}}"
@@ -173,7 +175,7 @@
             </tbody>
         </table>
 
-        <!-- Each image's "view" modal -->
+        <!-- "View" modals for each row -->
         <div th:each="img : ${images}">
             <div class="modal fade"
                  th:id="'viewModal__' + ${img.imageId}"
@@ -184,7 +186,8 @@
                             <h5 class="modal-title"
                                 th:text="'Preview: ' + (img.title != null ? img.title : 'Image')"></h5>
                             <button type="button" class="btn-close btn-close-white"
-                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                         </div>
                         <div class="modal-body text-center">
                             <img th:if="${img.base64Data}"
@@ -207,9 +210,8 @@
     <p>&copy; 2025 RESTful App. All rights reserved.</p>
 </footer>
 
-<!-- Bootstrap JS + dependencies -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- SweetAlert2 (if you want) + custom JS -->
+<!-- SweetAlert2 + custom JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script th:src="@{/js/scripts.js}"></script>
 </body>

@@ -9,6 +9,13 @@ body {
     padding: 0;
 }
 
+/* Add a thumbnail class for uniform images */
+.img-thumb {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
 /* Buttons */
 .btn {
     background-color: #131346;
@@ -71,7 +78,6 @@ body {
     border-radius: 5px;
     padding: 8px;
 }
-
 .form-control:focus {
     border-color: #131346;
     box-shadow: 0 0 5px rgba(19, 19, 70, 0.5);
@@ -101,7 +107,6 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
 }
-
 .image-grid .card {
     background-color: #404045;
     border: 1px solid #555;
@@ -109,12 +114,10 @@ body {
     color: #ffffff;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .image-grid .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
-
 .image-grid .card img {
     width: 100%;
     height: 150px;
@@ -122,21 +125,17 @@ body {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
-
 .image-grid .card-body {
     padding: 15px;
 }
-
 .image-grid .card-title {
     font-size: 18px;
     margin-bottom: 10px;
 }
-
 .image-grid .card-text {
     font-size: 14px;
     color: #cccccc;
 }
-
 .image-grid .btn-group {
     display: flex;
     justify-content: space-between;
@@ -147,39 +146,32 @@ body {
 .table-responsive {
     overflow-x: auto;
 }
-
 .table {
     width: 100%;
     margin-bottom: 1rem;
     color: #ffffff;
 }
-
 .table thead {
     background-color: #131346;
 }
-
 .table thead th {
     vertical-align: bottom;
     border-bottom: 2px solid #dee2e6;
     text-align: left;
 }
-
 .table tbody tr {
     background-color: #404045;
     border-bottom: 1px solid #555;
 }
-
 .table tbody tr:hover {
     background-color: #555;
 }
-
 .table th,
 .table td {
     padding: 0.75rem;
     vertical-align: top;
     border-top: 1px solid #dee2e6;
 }
-
 .table .btn-group {
     display: flex;
     gap: 5px;
@@ -190,12 +182,10 @@ body {
     background-color: #404045;
     color: #ffffff;
 }
-
 .modal-header,
 .modal-footer {
     border-color: #555;
 }
-
 .modal-body img {
     width: 100%;
     height: auto;
@@ -207,7 +197,6 @@ body {
     background-color: #404045 !important;
     color: #ffffff !important;
 }
-
 .swal2-title,
 .swal2-content {
     color: #ffffff !important;
@@ -226,7 +215,6 @@ body {
     border: 1px solid #555;
     color: #ffffff;
 }
-
 .dropdown-menu .dropdown-item:hover {
     background-color: #131346;
     color: #ffffff;
@@ -237,32 +225,28 @@ body {
     .image-grid {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     }
-
     .btn {
         padding: 6px 12px;
         font-size: 14px;
     }
-
     .table th,
     .table td {
         font-size: 12px;
     }
 }
+
 .card.bg-dark {
     background-color: #404045 !important;
 }
-
 .card {
     border: 1px solid #555;
 }
-
 .btn {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 .btn:hover {
     transform: translateY(-2px);
 }
-
 .table tbody tr:hover {
     background-color: #555;
 }

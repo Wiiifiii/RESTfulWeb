@@ -25,6 +25,9 @@ public class ImagesWebController {
     private static final Logger logger = LoggerFactory.getLogger(ImagesWebController.class);
     private final ImageService imageService;
 
+    /**
+     * List active images, possibly filtered.
+     */
     @GetMapping
     public String listImages(
             @RequestParam(required = false) Long idFilter,
@@ -51,25 +54,28 @@ public class ImagesWebController {
                         (contentTypeFilter != null && !contentTypeFilter.isBlank()) ? contentTypeFilter : null
                 );
             }
-            model.addAttribute("images", images);
 
-            // pass current filter values to the template
+            model.addAttribute("images", images);
             model.addAttribute("idFilter", idFilter);
             model.addAttribute("ownerFilter", ownerFilter);
             model.addAttribute("contentTypeFilter", contentTypeFilter);
 
-            // for dropdown
+            // for filter dropdown
             model.addAttribute("possibleContentTypes",
-                    List.of("", "image/jpeg", "image/png", "application/pdf", "application/msword"));
+                    List.of("", "image/png", "image/jpeg", "application/pdf", "application/msword"));
 
-            return "images";  // -> templates/images.html
+            return "images"; // -> images.html
         } catch (Exception e) {
             logger.error("Error fetching images: ", e);
-            ra.addFlashAttribute("error", "An error occurred while fetching images.");
+            ra.addFlashAttribute("error", "An error occurred while fetching images: " + e.getMessage());
+            // If you absolutely must redirect to home:
             return "redirect:/";
         }
     }
 
+    /**
+     * View trash (deleted images), possibly filtered.
+     */
     @GetMapping("/trash")
     public String viewTrash(
             @RequestParam(required = false) Long idFilter,
@@ -103,36 +109,39 @@ public class ImagesWebController {
             model.addAttribute("contentTypeFilter", contentTypeFilter);
 
             model.addAttribute("possibleContentTypes",
-                    List.of("", "image/jpeg", "image/png", "application/pdf", "application/msword"));
+                    List.of("", "image/png", "image/jpeg", "application/pdf", "application/msword"));
 
-            return "imagesTrash";  // -> templates/imagesTrash.html
+            return "imagesTrash"; // -> imagesTrash.html
         } catch (Exception e) {
             logger.error("Error fetching deleted images: ", e);
-            ra.addFlashAttribute("error", "An error occurred while fetching deleted images.");
+            ra.addFlashAttribute("error", "An error occurred: " + e.getMessage());
             return "redirect:/web/images";
         }
     }
 
+    /**
+     * Show form for creating a new image.
+     */
     @GetMapping("/new")
-    public String newImageForm(HttpServletRequest request, Model model) {
-        model.addAttribute("currentUri", request.getRequestURI());
+    public String newImageForm(Model model) {
         model.addAttribute("image", new Image());
         model.addAttribute("mode", "new");
-        return "imageForm"; // -> templates/imageForm.html
+        return "imageForm"; // -> imageForm.html
     }
 
+    /**
+     * Show form for editing an existing image.
+     */
     @GetMapping("/edit/{id}")
     public String editImageForm(
             @PathVariable Long id,
             @RequestParam(required = false) Long idFilter,
             @RequestParam(required = false) String ownerFilter,
             @RequestParam(required = false) String contentTypeFilter,
-            HttpServletRequest request,
             Model model,
             RedirectAttributes ra
     ) {
         try {
-            model.addAttribute("currentUri", request.getRequestURI());
             Optional<Image> opt = imageService.getImageById(id);
             if (opt.isEmpty()) {
                 ra.addFlashAttribute("error", "File not found.");
@@ -140,22 +149,22 @@ public class ImagesWebController {
             }
             model.addAttribute("image", opt.get());
             model.addAttribute("mode", "edit");
-            // preserve filter values
+
+            // preserve filters
             model.addAttribute("idFilter", idFilter);
             model.addAttribute("ownerFilter", ownerFilter);
             model.addAttribute("contentTypeFilter", contentTypeFilter);
 
-            return "imageForm";
+            return "imageForm"; 
         } catch (Exception e) {
             logger.error("Error showing edit form: ", e);
-            ra.addFlashAttribute("error", "Cannot show edit form right now.");
+            ra.addFlashAttribute("error", "Cannot show edit form: " + e.getMessage());
             return "redirect:/web/images";
         }
     }
 
     /**
-     * Save or update an image. If 'imageId' is null => create new.
-     * If uploading a new file, replace the data.
+     * Save or update image.
      */
     @PostMapping("/save")
     public String saveImage(
@@ -165,7 +174,7 @@ public class ImagesWebController {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String contentType,
             @RequestParam(required = false) MultipartFile file,
-            // hidden filter fields to preserve
+            // preserve filter
             @RequestParam(required = false) Long idFilter,
             @RequestParam(required = false) String ownerFilter,
             @RequestParam(required = false) String contentTypeFilter,
@@ -174,6 +183,7 @@ public class ImagesWebController {
         try {
             Image img;
             if (imageId != null) {
+                // editing
                 Optional<Image> opt = imageService.getImageById(imageId);
                 if (opt.isEmpty()) {
                     ra.addFlashAttribute("error", "File to update not found.");
@@ -181,6 +191,7 @@ public class ImagesWebController {
                 }
                 img = opt.get();
             } else {
+                // new
                 img = new Image();
             }
 
@@ -197,7 +208,7 @@ public class ImagesWebController {
             imageService.saveImage(img);
             ra.addFlashAttribute("success", "File saved successfully!");
 
-            // preserve the filters on redirect
+            // pass filters in redirect
             ra.addAttribute("idFilter", idFilter);
             ra.addAttribute("ownerFilter", ownerFilter);
             ra.addAttribute("contentTypeFilter", contentTypeFilter);
@@ -205,7 +216,7 @@ public class ImagesWebController {
             return "redirect:/web/images";
         } catch (IOException ex) {
             logger.error("IO error reading file upload", ex);
-            ra.addFlashAttribute("error", "Failed to read the file upload. " + ex.getMessage());
+            ra.addFlashAttribute("error", "Failed to read the file upload: " + ex.getMessage());
             return "redirect:/web/images";
         } catch (Exception e) {
             logger.error("Error saving file", e);
@@ -219,45 +230,49 @@ public class ImagesWebController {
     }
 
     /**
-     * Soft delete.
+     * Soft-delete (GET).
      */
     @GetMapping("/delete/{id}")
     public String softDelete(@PathVariable Long id, RedirectAttributes ra) {
         try {
             imageService.softDeleteImage(id);
             ra.addFlashAttribute("success", "File deleted!");
-            return "redirect:/web/images";
         } catch (Exception e) {
             logger.error("Error soft deleting file", e);
             ra.addFlashAttribute("error", "Failed to delete file.");
-            return "redirect:/web/images";
         }
+        return "redirect:/web/images";
     }
 
+    /**
+     * Restore from trash (POST).
+     */
     @PostMapping("/restore/{id}")
     public String restore(@PathVariable Long id, RedirectAttributes ra) {
         try {
+            // if you want restore to be admin-only, you can add @Secured("ROLE_ADMIN") here
             imageService.restoreImage(id);
             ra.addFlashAttribute("success", "File restored!");
-            return "redirect:/web/images/trash";
         } catch (Exception e) {
             logger.error("Error restoring file", e);
             ra.addFlashAttribute("error", "Failed to restore file.");
-            return "redirect:/web/images/trash";
         }
+        return "redirect:/web/images/trash";
     }
 
+    /**
+     * Permanently delete (POST). ADMIN ONLY
+     */
     @Secured("ROLE_ADMIN")
     @PostMapping("/delete-permanent/{id}")
     public String permanentlyDelete(@PathVariable Long id, RedirectAttributes ra) {
         try {
             imageService.permanentlyDeleteImage(id);
             ra.addFlashAttribute("success", "File permanently deleted!");
-            return "redirect:/web/images/trash";
         } catch (Exception e) {
             logger.error("Error permanently deleting file", e);
             ra.addFlashAttribute("error", "Failed to permanently delete file.");
-            return "redirect:/web/images/trash";
         }
+        return "redirect:/web/images/trash";
     }
 }

@@ -62,13 +62,12 @@
 
 <div class="container py-5">
     <h2 th:text="${mode} == 'edit' ? 'Edit Image' : 'New Image'"></h2>
-    <div th:if="${error}" class="alert alert-danger" role="alert"
-         th:text="${error}"></div>
+    <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
 
     <form th:action="@{/web/images/save}"
           method="post"
           enctype="multipart/form-data">
-        <!-- CSRF token if needed -->
+        <!-- CSRF (uncomment if needed) -->
         <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
 
         <!-- If editing, pass the ID -->
@@ -92,7 +91,7 @@
                    name="title"
                    class="form-control"
                    th:value="${image.title}"
-                   placeholder="Optional title" />
+                   placeholder="Image title (optional)" />
         </div>
 
         <div class="mb-3">
