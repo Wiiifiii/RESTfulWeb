@@ -31,12 +31,21 @@ document.addEventListener('DOMContentLoaded', function() {
           const form = document.createElement('form');
           form.method = 'POST';
           form.action = actionUrl;
-          // If you have a CSRF token, insert it here:
-          // e.g. form.innerHTML = `<input type="hidden" name="_csrf" value="${csrfToken}" />`;
+
+          // Include CSRF token if present
+          const csrfToken = document.querySelector('input[name="_csrf"]');
+          if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = csrfToken.name;
+            csrfInput.value = csrfToken.value;
+            form.appendChild(csrfInput);
+          }
+
           document.body.appendChild(form);
           form.submit();
         } else {
-          // Default = GET
+          // Default: GET
           window.location.href = actionUrl;
         }
       }
@@ -50,10 +59,10 @@ document.addEventListener('DOMContentLoaded', function() {
       html: `Are you sure you want to delete <strong>${itemDetails}</strong>?`,
       icon: 'warning',
       confirmText: 'Yes, delete it!',
-      confirmColor: '#dc3545',
-      cancelColor: '#6c757d',
+      confirmColor: '#dc3545', // red
+      cancelColor: '#6c757d', // gray
       actionUrl: deleteUrl,
-      method: 'GET' // your soft-delete uses GET in the controller
+      method: 'GET'
     });
   }
 
@@ -64,8 +73,8 @@ document.addEventListener('DOMContentLoaded', function() {
       html: `Are you sure you want to restore <strong>${itemDetails}</strong>?`,
       icon: 'question',
       confirmText: 'Yes, restore it!',
-      confirmColor: '#28a745',
-      cancelColor: '#6c757d',
+      confirmColor: '#28a745', // green
+      cancelColor: '#6c757d', // gray
       actionUrl: restoreUrl,
       method: 'POST'
     });
@@ -78,15 +87,14 @@ document.addEventListener('DOMContentLoaded', function() {
       html: `Permanently remove <strong>${itemDetails}</strong>?<br>This cannot be undone.`,
       icon: 'warning',
       confirmText: 'Yes, permanently delete!',
-      confirmColor: '#dc3545',
-      cancelColor: '#6c757d',
+      confirmColor: '#dc3545', // red
+      cancelColor: '#6c757d', // gray
       actionUrl: deleteUrl,
       method: 'POST'
     });
   }
 
-  // Hook up event listeners
-  // Soft-delete
+  // Hook up event listeners for each button
   document.querySelectorAll('.delete-button').forEach(button => {
     button.addEventListener('click', function() {
       const deleteUrl = this.dataset.deleteUrl;
@@ -96,7 +104,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Restore
   document.querySelectorAll('.restore-button').forEach(button => {
     button.addEventListener('click', function() {
       const restoreUrl = this.dataset.restoreUrl;
@@ -106,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Permanently delete
   document.querySelectorAll('.delete-permanent-button').forEach(button => {
     button.addEventListener('click', function() {
       const deleteUrl = this.dataset.deleteUrl;

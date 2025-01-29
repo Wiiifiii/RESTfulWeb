@@ -33,7 +33,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findAllDeleted();
 
     /**
-     * Filter deleted images (trash).
+     * Filter deleted (trash) images by optional id, owner, contentType.
      */
     @Query("""
         SELECT i

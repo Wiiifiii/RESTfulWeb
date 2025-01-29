@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Set;
+
 @Controller
 public class RegistrationController {
 
@@ -25,7 +27,10 @@ public class RegistrationController {
                            @RequestParam(defaultValue = "ROLE_USER") String role,
                            RedirectAttributes redirectAttributes) {
 
-        boolean registered = userService.registerUser(username, password, role);
+        // Convert role String to Set<String>
+        Set<String> roles = Set.of(role);
+
+        boolean registered = userService.registerUser(username, password, roles);
 
         if (!registered) {
             redirectAttributes.addFlashAttribute("error", "User already exists.");

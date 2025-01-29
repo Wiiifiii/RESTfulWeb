@@ -42,14 +42,15 @@ public class ImageService {
         return opt;
     }
 
+    /**
+     * Create or update an Image. Sets uploadDate if new.
+     */
     public Image saveImage(Image image) {
-        // If new, set uploadDate
         if (image.getImageId() == null) {
+            // new => set upload date
             image.setUploadDate(LocalDateTime.now());
         }
-        // Save to DB
         Image saved = imageRepository.save(image);
-        // Populate base64 on the returned object
         populateBase64(saved);
         return saved;
     }
@@ -93,19 +94,14 @@ public class ImageService {
         });
     }
 
-    /**
-     * Helper to set base64Data on a single Image.
-     */
+    // Helper to populate base64 for a single or list
     private void populateBase64(Image img) {
-        if (img.getData() != null) {
+        if (img.getData() != null && img.getContentType() != null && img.getContentType().startsWith("image/")) {
             String encoded = Base64.getEncoder().encodeToString(img.getData());
             img.setBase64Data(encoded);
         }
     }
 
-    /**
-     * Overload for a list of images.
-     */
     private void populateBase64(List<Image> images) {
         for (Image img : images) {
             populateBase64(img);

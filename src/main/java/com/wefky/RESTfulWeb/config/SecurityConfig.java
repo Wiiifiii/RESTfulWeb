@@ -40,46 +40,45 @@ public class SecurityConfig {
         http.authenticationProvider(authenticationProvider());
 
         http.authorizeHttpRequests(auth -> auth
-            // Only admins can do permanent delete in API or Web
-            .requestMatchers("/api/images/*/permanent").hasRole("ADMIN")
-            .requestMatchers("/web/images/delete-permanent/**").hasRole("ADMIN")
+                // Public routes
+                .requestMatchers("/login", "/register", "/saveUser", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
 
-            // If you have an admin dashboard
-            .requestMatchers("/admin/**").hasRole("ADMIN")
+                // ADMIN routes
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/web/images/delete-permanent/**", "/web/locations/delete-permanent/**", "/web/measurements/delete-permanent/**").hasRole("ADMIN")
 
-            // The rest of /api/ requires login
-            .requestMatchers("/api/**").authenticated()
+                // API routes require authentication
+                .requestMatchers("/api/**").authenticated()
 
-            // The rest of /web/ requires login
-            .requestMatchers("/web/**").authenticated()
+                // Web routes require authentication
+                .requestMatchers("/web/**").authenticated()
 
-            // Allow public access to login, register, CSS/JS, etc.
-            .requestMatchers("/login", "/register", "/saveUser",
-                            "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
-
-            // Everything else
-            .anyRequest().authenticated()
+                // Any other request
+                .anyRequest().authenticated()
         );
 
+        // Configure form login
         http.formLogin(form -> form
-            .loginPage("/login").permitAll()
-            .defaultSuccessUrl("/", true)
+                .loginPage("/login")
+                .permitAll()
+                .defaultSuccessUrl("/", true)
         );
 
+        // Configure logout
         http.logout(logout -> logout
-            .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-            .logoutSuccessUrl("/login?logout")
-            .permitAll()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
         );
 
+        // Handle access denied (403)
         http.exceptionHandling(exception -> exception
-            .accessDeniedHandler(accessDeniedHandler())
+                .accessDeniedHandler(accessDeniedHandler())
         );
 
-        // Disable CSRF for certain API endpoints
-        // If you want to keep it for the rest, that's your choice
+        // Disable CSRF for API endpoints
         http.csrf(csrf -> csrf
-            .ignoringRequestMatchers("/api/**")
+                .ignoringRequestMatchers("/api/**")
         );
 
         return http.build();
@@ -88,6 +87,7 @@ public class SecurityConfig {
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
+            // Redirect to a custom access-denied page
             response.sendRedirect("/access-denied");
         };
     }

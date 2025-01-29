@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST Controller for images (/api/images).
+ * This is optional if you only need the web-based approach.
+ */
 @RestController
 @RequestMapping("/api/images")
 @RequiredArgsConstructor
@@ -25,26 +29,18 @@ public class ImageRestController {
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
 
-    /**
-     * GET all active images with optional filters.
-     */
     @GetMapping
     public List<Image> getAllImages(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String owner,
             @RequestParam(required = false) String contentType
     ) {
-        // if no filters, get everything
         if (id == null && (owner == null || owner.isBlank()) && (contentType == null || contentType.isBlank())) {
             return imageService.getAllActiveImages();
         }
-        // else filter
         return imageService.filterImages(id, owner, contentType);
     }
 
-    /**
-     * GET one image by ID (only if not deleted).
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Image> getImageById(@PathVariable Long id) {
         Optional<Image> opt = imageService.getImageById(id);
@@ -54,9 +50,7 @@ public class ImageRestController {
         return ResponseEntity.ok(opt.get());
     }
 
-    /**
-     * DELETE (soft delete) image by ID.
-     */
+    // Soft-delete via REST
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteImage(@PathVariable Long id) {
         Optional<Image> opt = imageRepository.findById(id);
@@ -69,9 +63,7 @@ public class ImageRestController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * RESTORE image.
-     */
+    // Restore via REST
     @PostMapping("/{id}/restore")
     public ResponseEntity<Image> restoreImage(@PathVariable Long id) {
         Optional<Image> opt = imageRepository.findById(id);
@@ -84,9 +76,7 @@ public class ImageRestController {
         return ResponseEntity.ok(image);
     }
 
-    /**
-     * DELETE (hard delete).
-     */
+    // Permanent Delete via REST
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}/permanent")
     public ResponseEntity<Void> permanentlyDeleteImage(@PathVariable Long id) {

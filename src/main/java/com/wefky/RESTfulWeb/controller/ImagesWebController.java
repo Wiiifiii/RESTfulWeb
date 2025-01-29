@@ -68,7 +68,6 @@ public class ImagesWebController {
         } catch (Exception e) {
             logger.error("Error fetching images: ", e);
             ra.addFlashAttribute("error", "An error occurred while fetching images: " + e.getMessage());
-            // If you absolutely must redirect to home:
             return "redirect:/";
         }
     }
@@ -155,7 +154,7 @@ public class ImagesWebController {
             model.addAttribute("ownerFilter", ownerFilter);
             model.addAttribute("contentTypeFilter", contentTypeFilter);
 
-            return "imageForm"; 
+            return "imageForm";
         } catch (Exception e) {
             logger.error("Error showing edit form: ", e);
             ra.addFlashAttribute("error", "Cannot show edit form: " + e.getMessage());
@@ -164,7 +163,7 @@ public class ImagesWebController {
     }
 
     /**
-     * Save or update image.
+     * Save (create/update) an image.
      */
     @PostMapping("/save")
     public String saveImage(
@@ -250,7 +249,6 @@ public class ImagesWebController {
     @PostMapping("/restore/{id}")
     public String restore(@PathVariable Long id, RedirectAttributes ra) {
         try {
-            // if you want restore to be admin-only, you can add @Secured("ROLE_ADMIN") here
             imageService.restoreImage(id);
             ra.addFlashAttribute("success", "File restored!");
         } catch (Exception e) {
