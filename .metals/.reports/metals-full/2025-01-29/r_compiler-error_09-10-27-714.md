@@ -1,3 +1,16 @@
+file:///D:/GitHub/RESTfulWeb/src/main/java/com/wefky/RESTfulWeb/controller/ImagesWebController.java
+### java.util.NoSuchElementException: next on empty iterator
+
+occurred in the presentation compiler.
+
+presentation compiler configuration:
+
+
+action parameters:
+offset: 1085
+uri: file:///D:/GitHub/RESTfulWeb/src/main/java/com/wefky/RESTfulWeb/controller/ImagesWebController.java
+text:
+```scala
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Image;
@@ -25,8 +38,11 @@ public class ImagesWebController {
     private static final Logger logger = LoggerFactory.getLogger(ImagesWebController.class);
     private final ImageService imageService;
 
+    /**
+     * Show table with possible filter by ID, owner, contentType
+     */
     @GetMapping
-    public String listImages(
+    public String listImages(@@
             @RequestParam(required = false) Long idFilter,
             @RequestParam(required = false) String ownerFilter,
             @RequestParam(required = false) String contentTypeFilter,
@@ -38,8 +54,8 @@ public class ImagesWebController {
             model.addAttribute("currentUri", request.getRequestURI());
 
             boolean noFilters = (idFilter == null)
-                    && (ownerFilter == null || ownerFilter.isBlank())
-                    && (contentTypeFilter == null || contentTypeFilter.isBlank());
+                                && (ownerFilter == null || ownerFilter.isBlank())
+                                && (contentTypeFilter == null || contentTypeFilter.isBlank());
 
             List<Image> images;
             if (noFilters) {
@@ -52,17 +68,14 @@ public class ImagesWebController {
                 );
             }
             model.addAttribute("images", images);
-
-            // pass current filter values to the template
             model.addAttribute("idFilter", idFilter);
             model.addAttribute("ownerFilter", ownerFilter);
             model.addAttribute("contentTypeFilter", contentTypeFilter);
 
-            // for dropdown
-            model.addAttribute("possibleContentTypes",
-                    List.of("", "image/jpeg", "image/png", "application/pdf", "application/msword"));
+            // Some pre-defined contentTypes
+            model.addAttribute("possibleContentTypes", List.of("", "image/png", "image/jpeg", "application/pdf", "application/msword"));
 
-            return "images";  // -> templates/images.html
+            return "images"; // -> images.html
         } catch (Exception e) {
             logger.error("Error fetching images: ", e);
             ra.addFlashAttribute("error", "An error occurred while fetching images.");
@@ -71,41 +84,11 @@ public class ImagesWebController {
     }
 
     @GetMapping("/trash")
-    public String viewTrash(
-            @RequestParam(required = false) Long idFilter,
-            @RequestParam(required = false) String ownerFilter,
-            @RequestParam(required = false) String contentTypeFilter,
-            HttpServletRequest request,
-            Model model,
-            RedirectAttributes ra
-    ) {
+    public String viewTrash(HttpServletRequest request, Model model, RedirectAttributes ra) {
         try {
             model.addAttribute("currentUri", request.getRequestURI());
-
-            boolean noFilters = (idFilter == null)
-                    && (ownerFilter == null || ownerFilter.isBlank())
-                    && (contentTypeFilter == null || contentTypeFilter.isBlank());
-
-            List<Image> images;
-            if (noFilters) {
-                images = imageService.getAllDeletedImages();
-            } else {
-                images = imageService.filterDeletedImages(
-                        idFilter,
-                        (ownerFilter != null && !ownerFilter.isBlank()) ? ownerFilter : null,
-                        (contentTypeFilter != null && !contentTypeFilter.isBlank()) ? contentTypeFilter : null
-                );
-            }
-
-            model.addAttribute("images", images);
-            model.addAttribute("idFilter", idFilter);
-            model.addAttribute("ownerFilter", ownerFilter);
-            model.addAttribute("contentTypeFilter", contentTypeFilter);
-
-            model.addAttribute("possibleContentTypes",
-                    List.of("", "image/jpeg", "image/png", "application/pdf", "application/msword"));
-
-            return "imagesTrash";  // -> templates/imagesTrash.html
+            model.addAttribute("images", imageService.getAllDeletedImages());
+            return "imagesTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted images: ", e);
             ra.addFlashAttribute("error", "An error occurred while fetching deleted images.");
@@ -116,21 +99,14 @@ public class ImagesWebController {
     @GetMapping("/new")
     public String newImageForm(HttpServletRequest request, Model model) {
         model.addAttribute("currentUri", request.getRequestURI());
-        model.addAttribute("image", new Image());
+        Image img = new Image();
+        model.addAttribute("image", img);
         model.addAttribute("mode", "new");
-        return "imageForm"; // -> templates/imageForm.html
+        return "imageForm";
     }
 
     @GetMapping("/edit/{id}")
-    public String editImageForm(
-            @PathVariable Long id,
-            @RequestParam(required = false) Long idFilter,
-            @RequestParam(required = false) String ownerFilter,
-            @RequestParam(required = false) String contentTypeFilter,
-            HttpServletRequest request,
-            Model model,
-            RedirectAttributes ra
-    ) {
+    public String editImageForm(@PathVariable Long id, HttpServletRequest request, Model model, RedirectAttributes ra) {
         try {
             model.addAttribute("currentUri", request.getRequestURI());
             Optional<Image> opt = imageService.getImageById(id);
@@ -140,11 +116,6 @@ public class ImagesWebController {
             }
             model.addAttribute("image", opt.get());
             model.addAttribute("mode", "edit");
-            // preserve filter values
-            model.addAttribute("idFilter", idFilter);
-            model.addAttribute("ownerFilter", ownerFilter);
-            model.addAttribute("contentTypeFilter", contentTypeFilter);
-
             return "imageForm";
         } catch (Exception e) {
             logger.error("Error showing edit form: ", e);
@@ -154,26 +125,20 @@ public class ImagesWebController {
     }
 
     /**
-     * Save or update an image. If 'imageId' is null => create new.
-     * If uploading a new file, replace the data.
+     * Example 'save' that reads an uploaded file from the form.
      */
     @PostMapping("/save")
-    public String saveImage(
-            @RequestParam(required = false) Long imageId,
-            @RequestParam(required = false) String owner,
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) String contentType,
-            @RequestParam(required = false) MultipartFile file,
-            // hidden filter fields to preserve
-            @RequestParam(required = false) Long idFilter,
-            @RequestParam(required = false) String ownerFilter,
-            @RequestParam(required = false) String contentTypeFilter,
-            RedirectAttributes ra
-    ) {
+    public String saveImage(@RequestParam(required = false) Long imageId,
+                            @RequestParam(required = false) String owner,
+                            @RequestParam(required = false) String title,
+                            @RequestParam(required = false) String description,
+                            @RequestParam(required = false) String contentType,
+                            @RequestParam(required = false) MultipartFile file, // file from <input type="file">
+                            RedirectAttributes ra) {
         try {
             Image img;
             if (imageId != null) {
+                // edit
                 Optional<Image> opt = imageService.getImageById(imageId);
                 if (opt.isEmpty()) {
                     ra.addFlashAttribute("error", "File to update not found.");
@@ -181,6 +146,7 @@ public class ImagesWebController {
                 }
                 img = opt.get();
             } else {
+                // new
                 img = new Image();
             }
 
@@ -190,18 +156,15 @@ public class ImagesWebController {
             img.setContentType(contentType);
 
             if (file != null && !file.isEmpty()) {
+                // If user uploaded a new file, set data
                 byte[] bytes = file.getBytes();
                 img.setData(bytes);
             }
 
+            // If new => uploadDate is set in service if imageId is null. Otherwise it doesn't change
             imageService.saveImage(img);
+
             ra.addFlashAttribute("success", "File saved successfully!");
-
-            // preserve the filters on redirect
-            ra.addAttribute("idFilter", idFilter);
-            ra.addAttribute("ownerFilter", ownerFilter);
-            ra.addAttribute("contentTypeFilter", contentTypeFilter);
-
             return "redirect:/web/images";
         } catch (IOException ex) {
             logger.error("IO error reading file upload", ex);
@@ -218,9 +181,6 @@ public class ImagesWebController {
         }
     }
 
-    /**
-     * Soft delete.
-     */
     @GetMapping("/delete/{id}")
     public String softDelete(@PathVariable Long id, RedirectAttributes ra) {
         try {
@@ -253,11 +213,33 @@ public class ImagesWebController {
         try {
             imageService.permanentlyDeleteImage(id);
             ra.addFlashAttribute("success", "File permanently deleted!");
-            return "redirect:/web/images/trash";
+            return "redirect:/";
         } catch (Exception e) {
             logger.error("Error permanently deleting file", e);
             ra.addFlashAttribute("error", "Failed to permanently delete file.");
-            return "redirect:/web/images/trash";
+            return "redirect:/";
         }
     }
 }
+
+```
+
+
+
+#### Error stacktrace:
+
+```
+scala.collection.Iterator$$anon$19.next(Iterator.scala:973)
+	scala.collection.Iterator$$anon$19.next(Iterator.scala:971)
+	scala.collection.mutable.MutationTracker$CheckedIterator.next(MutationTracker.scala:76)
+	scala.collection.IterableOps.head(Iterable.scala:222)
+	scala.collection.IterableOps.head$(Iterable.scala:222)
+	scala.collection.AbstractIterable.head(Iterable.scala:935)
+	dotty.tools.dotc.interactive.InteractiveDriver.run(InteractiveDriver.scala:164)
+	dotty.tools.pc.MetalsDriver.run(MetalsDriver.scala:45)
+	dotty.tools.pc.HoverProvider$.hover(HoverProvider.scala:40)
+	dotty.tools.pc.ScalaPresentationCompiler.hover$$anonfun$1(ScalaPresentationCompiler.scala:376)
+```
+#### Short summary: 
+
+java.util.NoSuchElementException: next on empty iterator

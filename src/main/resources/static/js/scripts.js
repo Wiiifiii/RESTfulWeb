@@ -1,136 +1,134 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // Reference to SweetAlert2
-    const Swal = window.Swal;
+// File: src/main/resources/static/js/scripts.js
 
-    /**
-     * Generic helper for SweetAlert2 confirmation dialogs.
-     */
-    function confirmAction(title, html, icon, confirmText, confirmColor, cancelColor, actionUrl) {
-        Swal.fire({
-            title: title,
-            html: html,
-            icon: icon,
-            showCancelButton: true,
-            confirmButtonColor: confirmColor,
-            cancelButtonColor: cancelColor,
-            confirmButtonText: confirmText
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = actionUrl;
-            }
-        });
-    }
+document.addEventListener('DOMContentLoaded', function() {
 
-    /**
-     * Specific wrappers for Delete, Restore, and Permanent Delete.
-     */
-    function confirmDelete(deleteUrl, itemType, itemDetails) {
-        confirmAction(
-            `Delete ${itemType}?`,
-            `Are you sure you want to delete <strong>${itemDetails}</strong>?`,
-            'warning',
-            'Yes, delete it!',
-            '#dc3545', // confirmColor (red)
-            '#6c757d', // cancelColor (gray)
-            deleteUrl
-        );
-    }
-
-    function confirmRestore(restoreUrl, itemType, itemDetails) {
-        confirmAction(
-            `Restore ${itemType}?`,
-            `Are you sure you want to restore <strong>${itemDetails}</strong>?`,
-            'question',
-            'Yes, restore it!',
-            '#28a745', // confirmColor (green)
-            '#6c757d', // cancelColor (gray)
-            restoreUrl
-        );
-    }
-
-    function confirmDeletePermanent(deleteUrl, itemType, itemDetails) {
-        confirmAction(
-            `Permanently Delete ${itemType}?`,
-            `Are you sure you want to permanently delete <strong>${itemDetails}</strong>? 
-             This action cannot be undone.`,
-            'warning',
-            'Yes, permanently delete it!',
-            '#dc3545', // confirmColor (red)
-            '#6c757d', // cancelColor (gray)
-            deleteUrl
-        );
-    }
-
-    /**
-     * Attach event listeners for delete/restore/permanent-delete buttons.
-     * These rely on data-* attributes (data-delete-url, data-restore-url, data-item-type, data-item-details).
-     */
-    document.querySelectorAll('.delete-button').forEach(button => {
-        button.addEventListener('click', function () {
-            const deleteUrl = this.dataset.deleteUrl;
-            const itemType = this.dataset.itemType || 'Item';
-            const itemDetails = this.dataset.itemDetails || 'this item';
-            confirmDelete(deleteUrl, itemType, itemDetails);
-        });
+  /**
+   * Helper to show a SweetAlert2 dialog and either do:
+   *  - GET navigation (window.location.href)
+   *  - or create a dynamic <form method="POST"> to submit to the server
+   */
+  function confirmAction({
+    title,
+    html,
+    icon,
+    confirmText,
+    confirmColor,
+    cancelColor,
+    actionUrl,
+    method = 'GET'
+  }) {
+    Swal.fire({
+      title: title,
+      html: html,
+      icon: icon,
+      showCancelButton: true,
+      confirmButtonColor: confirmColor,
+      cancelButtonColor: cancelColor,
+      confirmButtonText: confirmText
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (method.toUpperCase() === 'POST') {
+          // Create a form dynamically, submit as POST
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = actionUrl;
+          // If CSRF is needed, you can inject a hidden input here as well
+          document.body.appendChild(form);
+          form.submit();
+        } else {
+          // Default: GET
+          window.location.href = actionUrl;
+        }
+      }
     });
+  }
 
-    document.querySelectorAll('.restore-button').forEach(button => {
-        button.addEventListener('click', function () {
-            const restoreUrl = this.dataset.restoreUrl;
-            const itemType = this.dataset.itemType || 'Item';
-            const itemDetails = this.dataset.itemDetails || 'this item';
-            confirmRestore(restoreUrl, itemType, itemDetails);
-        });
+  function confirmDelete(deleteUrl, itemType, itemDetails) {
+    confirmAction({
+      title: `Delete ${itemType}?`,
+      html: `Are you sure you want to delete <strong>${itemDetails}</strong>?`,
+      icon: 'warning',
+      confirmText: 'Yes, delete it!',
+      confirmColor: '#dc3545', // red
+      cancelColor: '#6c757d', // gray
+      actionUrl: deleteUrl,
+      method: 'GET' // If your soft-delete endpoint is GET
     });
+  }
 
-    document.querySelectorAll('.delete-permanent-button').forEach(button => {
-        button.addEventListener('click', function () {
-            const deleteUrl = this.dataset.deleteUrl;
-            const itemType = this.dataset.itemType || 'Item';
-            const itemDetails = this.dataset.itemDetails || 'this item';
-            confirmDeletePermanent(deleteUrl, itemType, itemDetails);
-        });
+  function confirmRestore(restoreUrl, itemType, itemDetails) {
+    confirmAction({
+      title: `Restore ${itemType}?`,
+      html: `Are you sure you want to restore <strong>${itemDetails}</strong>?`,
+      icon: 'question',
+      confirmText: 'Yes, restore it!',
+      confirmColor: '#28a745', // green
+      cancelColor: '#6c757d', // gray
+      actionUrl: restoreUrl,
+      method: 'POST' // If your restore endpoint is POST
     });
+  }
 
-    /**
-     * If you have a "View" button that should open a file or image, attach here.
-     * For example, if .view-button has data-image-url or data-file-url.
-     * 
-     * Example approach: open in new tab/window.
-     */
-    document.querySelectorAll('.view-button').forEach(button => {
-        button.addEventListener('click', function () {
-            const fileUrl = this.dataset.imageUrl || this.dataset.fileUrl;
-            if (fileUrl) {
-                // Open in new tab
-                window.open(fileUrl, '_blank');
-            } else {
-                // Or show a modal—whatever logic you want.
-                Swal.fire('No file URL provided.', '', 'info');
-            }
-        });
+  function confirmDeletePermanent(deleteUrl, itemType, itemDetails) {
+    confirmAction({
+      title: `Permanently Delete ${itemType}?`,
+      html: `Permanently remove <strong>${itemDetails}</strong>?<br>This cannot be undone.`,
+      icon: 'warning',
+      confirmText: 'Yes, permanently delete!',
+      confirmColor: '#dc3545',
+      cancelColor: '#6c757d',
+      actionUrl: deleteUrl,
+      method: 'POST' // If your permanent-delete endpoint is POST
     });
+  }
 
-    /**
-     * Show sweetalert for "success" or "error" messages if present in the URL (e.g. ?success=...).
-     */
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('success')) {
-        Swal.fire({
-            title: 'Success!',
-            text: urlParams.get('success'),
-            icon: 'success',
-            timer: 3000,
-            showConfirmButton: false
-        });
-    }
-    if (urlParams.has('error')) {
-        Swal.fire({
-            title: 'Error!',
-            text: urlParams.get('error'),
-            icon: 'error',
-            timer: 3000,
-            showConfirmButton: false
-        });
-    }
+  // Attach to .delete-button
+  document.querySelectorAll('.delete-button').forEach(button => {
+    button.addEventListener('click', function() {
+      const deleteUrl = this.dataset.deleteUrl;
+      const itemType = this.dataset.itemType || 'Item';
+      const itemDetails = this.dataset.itemDetails || 'this item';
+      confirmDelete(deleteUrl, itemType, itemDetails);
+    });
+  });
+
+  // Attach to .restore-button
+  document.querySelectorAll('.restore-button').forEach(button => {
+    button.addEventListener('click', function() {
+      const restoreUrl = this.dataset.restoreUrl;
+      const itemType = this.dataset.itemType || 'Item';
+      const itemDetails = this.dataset.itemDetails || 'this item';
+      confirmRestore(restoreUrl, itemType, itemDetails);
+    });
+  });
+
+  // Attach to .delete-permanent-button
+  document.querySelectorAll('.delete-permanent-button').forEach(button => {
+    button.addEventListener('click', function() {
+      const deleteUrl = this.dataset.deleteUrl;
+      const itemType = this.dataset.itemType || 'Item';
+      const itemDetails = this.dataset.itemDetails || 'this item';
+      confirmDeletePermanent(deleteUrl, itemType, itemDetails);
+    });
+  });
+
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  function confirmDelete(url, itemType, itemDetails) {
+    // show SweetAlert, if confirmed => window.location = url;
+  }
+
+  document.querySelectorAll('.delete-button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const url = btn.dataset.deleteUrl;
+      const itemType = btn.dataset.itemType;
+      const itemDetails = btn.dataset.itemDetails;
+      confirmDelete(url, itemType, itemDetails);
+    });
+  });
+
+  // similarly for .restore-button and .delete-permanent-button
+});
+

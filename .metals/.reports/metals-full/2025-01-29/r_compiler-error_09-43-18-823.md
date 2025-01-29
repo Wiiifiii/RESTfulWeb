@@ -1,3 +1,15 @@
+file:///D:/GitHub/RESTfulWeb/src/main/java/com/wefky/RESTfulWeb/service/ImageService.java
+### java.util.NoSuchElementException: next on empty iterator
+
+occurred in the presentation compiler.
+
+presentation compiler configuration:
+
+
+action parameters:
+uri: file:///D:/GitHub/RESTfulWeb/src/main/java/com/wefky/RESTfulWeb/service/ImageService.java
+text:
+```scala
 package com.wefky.RESTfulWeb.service;
 
 import com.wefky.RESTfulWeb.entity.Image;
@@ -21,6 +33,9 @@ public class ImageService {
     private static final Logger logger = LoggerFactory.getLogger(ImageService.class);
     private final ImageRepository imageRepository;
 
+    /**
+     * Fetch all active images, set base64Data for each.
+     */
     @Transactional(readOnly = true)
     public List<Image> getAllActiveImages() {
         List<Image> images = imageRepository.findAllActive();
@@ -28,6 +43,9 @@ public class ImageService {
         return images;
     }
 
+    /**
+     * Filter active images, set base64Data for each.
+     */
     @Transactional(readOnly = true)
     public List<Image> filterImages(Long id, String owner, String contentType) {
         List<Image> images = imageRepository.filterImages(id, owner, contentType);
@@ -35,21 +53,27 @@ public class ImageService {
         return images;
     }
 
+    /**
+     * Fetch a single image by ID (if not deleted).
+     * Also sets base64Data if found.
+     */
     @Transactional(readOnly = true)
     public Optional<Image> getImageById(Long id) {
         Optional<Image> opt = imageRepository.findById(id);
-        opt.ifPresent(this::populateBase64);
+        opt.ifPresent(this::populateBase64); // handle single item
         return opt;
     }
 
+    /**
+     * Create or update an image. If new, set uploadDate.
+     */
     public Image saveImage(Image image) {
-        // If new, set uploadDate
         if (image.getImageId() == null) {
             image.setUploadDate(LocalDateTime.now());
         }
-        // Save to DB
+        // Save
         Image saved = imageRepository.save(image);
-        // Populate base64 on the returned object
+        // Set base64 for the returned object
         populateBase64(saved);
         return saved;
     }
@@ -94,21 +118,49 @@ public class ImageService {
     }
 
     /**
-     * Helper to set base64Data on a single Image.
-     */
-    private void populateBase64(Image img) {
-        if (img.getData() != null) {
-            String encoded = Base64.getEncoder().encodeToString(img.getData());
-            img.setBase64Data(encoded);
-        }
-    }
-
-    /**
-     * Overload for a list of images.
+     * Helper to set image.base64Data from image.data
      */
     private void populateBase64(List<Image> images) {
         for (Image img : images) {
             populateBase64(img);
         }
     }
+
+    /**
+     * Overload for single Image
+     */
+    private void populateBase64(Image img) {
+        if (img.getData() != null) {
+            // Use Java's built-in Base64
+            String encoded = Base64.getEncoder().encodeToString(img.getData());
+            img.setBase64Data(encoded);
+        }
+    }
 }
+
+```
+
+
+
+#### Error stacktrace:
+
+```
+scala.collection.Iterator$$anon$19.next(Iterator.scala:973)
+	scala.collection.Iterator$$anon$19.next(Iterator.scala:971)
+	scala.collection.mutable.MutationTracker$CheckedIterator.next(MutationTracker.scala:76)
+	scala.collection.IterableOps.head(Iterable.scala:222)
+	scala.collection.IterableOps.head$(Iterable.scala:222)
+	scala.collection.AbstractIterable.head(Iterable.scala:935)
+	dotty.tools.dotc.interactive.InteractiveDriver.run(InteractiveDriver.scala:164)
+	dotty.tools.pc.MetalsDriver.run(MetalsDriver.scala:45)
+	dotty.tools.pc.WithCompilationUnit.<init>(WithCompilationUnit.scala:31)
+	dotty.tools.pc.SimpleCollector.<init>(PcCollector.scala:345)
+	dotty.tools.pc.PcSemanticTokensProvider$Collector$.<init>(PcSemanticTokensProvider.scala:63)
+	dotty.tools.pc.PcSemanticTokensProvider.Collector$lzyINIT1(PcSemanticTokensProvider.scala:63)
+	dotty.tools.pc.PcSemanticTokensProvider.Collector(PcSemanticTokensProvider.scala:63)
+	dotty.tools.pc.PcSemanticTokensProvider.provide(PcSemanticTokensProvider.scala:88)
+	dotty.tools.pc.ScalaPresentationCompiler.semanticTokens$$anonfun$1(ScalaPresentationCompiler.scala:109)
+```
+#### Short summary: 
+
+java.util.NoSuchElementException: next on empty iterator

@@ -1,0 +1,568 @@
+2025.01.29 09:08:29 INFO  Started: Metals version 1.5.1 in folders 'D:\GitHub\RESTfulWeb' for client Visual Studio Code 1.96.4.
+tammik. 29, 2025 9:09:32 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:09:36 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:09:40 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:09:43 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:09:43 AP. org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 13
+2025.01.29 09:09:43 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:09:43 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:09:44 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:09:44 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:09:45 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java
+tammik. 29, 2025 9:09:46 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-09-46-653.md
+2025.01.29 09:09:47 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:09:47 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-09-47-769.md
+tammik. 29, 2025 9:09:50 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:09:56 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:09:57 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:09:57 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:09:57 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:09:58 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-09-58-138.md
+2025.01.29 09:09:58 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:09:59 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:00 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:00 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-00-856.md
+2025.01.29 09:10:00 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java
+2025.01.29 09:10:00 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:01 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-01-195.md
+tammik. 29, 2025 9:10:03 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:10:05 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:10:05 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:05 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:06 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:06 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-06-452.md
+2025.01.29 09:10:06 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:06 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:08 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:08 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-08-811.md
+2025.01.29 09:10:09 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java
+2025.01.29 09:10:09 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:09 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-09-219.md
+tammik. 29, 2025 9:10:13 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:10:16 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:10:16 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:16 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:17 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:17 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-17-196.md
+2025.01.29 09:10:17 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:18 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:19 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:19 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-19-480.md
+2025.01.29 09:10:19 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java
+2025.01.29 09:10:19 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:19 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-19-870.md
+tammik. 29, 2025 9:10:23 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:10:26 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:10:26 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:26 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:27 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:27 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-27-146.md
+2025.01.29 09:10:27 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:27 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:27 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-27-714.md
+2025.01.29 09:10:27 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:28 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:10:29 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:29 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-29-782.md
+2025.01.29 09:10:29 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java
+2025.01.29 09:10:29 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:10:30 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-10-30-105.md
+tammik. 29, 2025 9:10:37 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:10:40 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:10:52 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:10:58 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:11:06 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:11:08 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:11:25 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:11:31 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:11:52 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:11:54 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:11:55 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:12:24 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:12:47 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:13:10 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:14:11 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:14:49 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:14:51 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:14:51 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:15:21 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:16:01 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:17:53 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:17:53 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:18:13 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:19:03 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:30:06 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:30:07 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:30:11 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:30:11 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:12 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-12-076.md
+2025.01.29 09:30:12 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:30:14 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:30:14 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:14 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-14-647.md
+2025.01.29 09:30:14 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java
+2025.01.29 09:30:14 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:15 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-15-005.md
+tammik. 29, 2025 9:30:19 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:30:26 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:30:26 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:30:27 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:27 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-27-138.md
+2025.01.29 09:30:27 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:30:28 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:30:29 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:29 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-29-680.md
+2025.01.29 09:30:29 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java
+2025.01.29 09:30:29 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:30 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-30-017.md
+tammik. 29, 2025 9:30:34 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:30:37 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:37 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:30:37 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:38 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-38-023.md
+2025.01.29 09:30:38 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:30:38 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:30:40 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:40 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-40-379.md
+2025.01.29 09:30:40 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java
+2025.01.29 09:30:40 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:40 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-40-793.md
+tammik. 29, 2025 9:30:45 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:30:51 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:30:51 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:30:52 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:52 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-52-820.md
+2025.01.29 09:30:53 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:30:54 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:30:55 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:55 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-55-443.md
+2025.01.29 09:30:55 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java
+2025.01.29 09:30:55 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:30:55 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-30-55-758.md
+tammik. 29, 2025 9:31:00 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:31:03 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:31:03 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:31:04 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:31:04 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-31-04-818.md
+2025.01.29 09:31:04 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:31:04 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:31:06 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:31:07 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:31:07 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-31-07-267.md
+2025.01.29 09:31:07 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java
+2025.01.29 09:31:07 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:31:07 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-31-07-611.md
+tammik. 29, 2025 9:31:14 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:31:18 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:31:34 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:31:37 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:31:45 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:31:47 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:32:09 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:32:27 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:32:33 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:32:48 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:33:28 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:33:35 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:33:55 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:33:56 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:34:01 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:34:47 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:35:08 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:35:13 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:35:20 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:35:20 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:35:41 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:36:30 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:43:04 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:43:14 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:43:14 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:43:15 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:43:15 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-43-15-627.md
+2025.01.29 09:43:16 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:43:16 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:43:18 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:43:18 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-43-18-310.md
+2025.01.29 09:43:18 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java
+2025.01.29 09:43:18 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:43:18 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-43-18-823.md
+tammik. 29, 2025 9:43:29 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:43:35 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:43:35 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:43:36 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:43:36 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-43-36-211.md
+2025.01.29 09:43:37 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:43:37 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:43:37 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:43:38 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:43:38 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-43-38-655.md
+2025.01.29 09:43:39 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java
+2025.01.29 09:43:39 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:43:39 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-43-39-223.md
+2025.01.29 09:43:39 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:43:39 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:43:40 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-43-40-193.md
+2025.01.29 09:43:40 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java
+2025.01.29 09:43:40 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:43:40 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-43-40-712.md
+tammik. 29, 2025 9:43:43 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:43:49 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:43:49 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:43:49 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:43:49 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-43-49-984.md
+2025.01.29 09:43:50 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:43:50 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:43:52 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:43:52 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-43-52-593.md
+2025.01.29 09:43:52 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java
+2025.01.29 09:43:52 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:43:53 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-43-53-109.md
+tammik. 29, 2025 9:43:59 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:44:01 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:44:01 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:44:01 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:44:02 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-44-02-033.md
+2025.01.29 09:44:03 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:44:03 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:44:04 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:44:04 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-44-04-619.md
+2025.01.29 09:44:04 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java
+2025.01.29 09:44:04 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:44:05 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-44-05-067.md
+tammik. 29, 2025 9:44:45 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:44:48 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:44:48 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 09:44:48 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:44:48 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-44-48-956.md
+2025.01.29 09:44:50 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:44:52 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:44:52 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:44:52 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:44:52 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-44-52-849.md
+2025.01.29 09:44:53 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java
+2025.01.29 09:44:53 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:44:53 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-44-53-518.md
+2025.01.29 09:44:53 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 09:44:54 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:44:54 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-44-54-272.md
+2025.01.29 09:44:54 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java
+2025.01.29 09:44:54 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 9:44:54 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_09-44-54-801.md
+tammik. 29, 2025 9:45:46 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:46:28 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:48:38 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:48:38 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:49:10 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:49:15 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:50:07 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:50:08 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:50:10 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:50:48 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:51:24 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:51:40 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:51:45 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 9:52:50 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:21:07 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:21:49 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:21:56 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:22:01 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 10:22:01 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:02 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:02 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-02-187.md
+2025.01.29 10:22:03 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:04 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:05 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:05 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-05-414.md
+2025.01.29 10:22:05 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java
+2025.01.29 10:22:05 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:06 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-06-004.md
+tammik. 29, 2025 10:22:25 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:22:27 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 10:22:27 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:28 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:28 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-28-089.md
+2025.01.29 10:22:29 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:30 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:30 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:30 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-30-726.md
+2025.01.29 10:22:31 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java
+2025.01.29 10:22:31 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:31 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-31-301.md
+tammik. 29, 2025 10:22:34 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:22:44 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 10:22:46 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:46 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:47 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:47 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-47-540.md
+2025.01.29 10:22:47 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java
+2025.01.29 10:22:47 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\repository\ImageRepository.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:48 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-48-058.md
+2025.01.29 10:22:48 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:48 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\entity\Image.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:48 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-48-951.md
+tammik. 29, 2025 10:22:53 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:22:55 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 10:22:55 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:55 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:55 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-55-983.md
+2025.01.29 10:22:56 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:56 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:22:58 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:58 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-58-319.md
+2025.01.29 10:22:58 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java
+2025.01.29 10:22:58 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:22:58 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-22-58-873.md
+tammik. 29, 2025 10:23:02 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:23:05 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 10:23:05 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:23:06 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:23:06 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-23-06-474.md
+2025.01.29 10:23:06 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:23:06 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:23:08 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:23:08 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:23:08 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-23-08-845.md
+2025.01.29 10:23:09 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java
+2025.01.29 10:23:09 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:23:09 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-23-09-415.md
+tammik. 29, 2025 10:23:13 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:23:15 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 10:23:15 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:23:15 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:23:15 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-23-15-711.md
+2025.01.29 10:23:16 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:23:16 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:23:17 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:23:18 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:23:18 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-23-18-137.md
+2025.01.29 10:23:18 WARN  no build target for: D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java
+2025.01.29 10:23:18 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImagesWebController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:23:18 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-23-18-653.md
+tammik. 29, 2025 10:23:25 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:23:27 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 10:23:27 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:23:27 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\controller\ImageRestController.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:23:27 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-23-27-851.md
+2025.01.29 10:23:28 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:23:29 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\service\ImageService.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:23:29 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-23-29-067.md
+tammik. 29, 2025 10:23:43 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:23:46 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:23:54 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:23:55 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:24:07 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:24:12 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+2025.01.29 10:24:33 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\ResTfulWebApplication.java. Using presentation compiler with project's scala-library version: 3.3.4
+2025.01.29 10:24:34 INFO  no build target found for D:\GitHub\RESTfulWeb\src\main\java\com\wefky\RESTfulWeb\ResTfulWebApplication.java. Using presentation compiler with project's scala-library version: 3.3.4
+tammik. 29, 2025 10:24:34 AP. scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: A severe compiler error occurred, full details of the error can be found in the error report D:\GitHub\RESTfulWeb\.metals\.reports\metals-full\2025-01-29\r_compiler-error_10-24-34-306.md
+tammik. 29, 2025 10:24:46 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:25:29 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:32:17 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:32:18 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:32:50 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:32:52 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:32:52 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:32:56 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:32:58 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:33:00 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:33:00 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:33:02 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:33:07 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange
+tammik. 29, 2025 10:33:09 AP. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+WARNING: Unsupported notification method: metals/windowStateDidChange

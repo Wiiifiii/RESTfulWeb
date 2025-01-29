@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
 <head>
-    <title>Images List</title>
+    <title>Files/Images</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body class="d-flex flex-column min-vh-100">
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">RESTful App</a>
@@ -22,43 +23,28 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <!-- Home -->
                 <li class="nav-item">
-                    <a class="nav-link"
-                       th:href="@{/}"
-                       th:classappend="${currentUri == '/' ? 'active' : ''}">
-                       <i class="fas fa-home"></i> Home
+                    <a class="nav-link" th:href="@{/}">
+                        <i class="fas fa-home"></i> Home
                     </a>
                 </li>
-                <!-- Locations -->
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/web/locations}">
                         <i class="fas fa-map-marker-alt"></i> Locations
                     </a>
                 </li>
-                <!-- Measurements -->
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/web/measurements}">
                         <i class="fas fa-ruler"></i> Measurements
                     </a>
                 </li>
-                <!-- Images (Active) -->
                 <li class="nav-item active">
                     <a class="nav-link" th:href="@{/web/images}">
                         <i class="fas fa-image"></i> Images
                     </a>
                 </li>
-                <!-- Admin Dashboard -->
-                <sec:authorize access="hasRole('ADMIN')">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin}">
-                            <i class="fas fa-user-shield"></i> Admin
-                        </a>
-                    </li>
-                </sec:authorize>
             </ul>
             <ul class="navbar-nav">
-                <!-- Sign Out -->
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">
                         <i class="fas fa-sign-out-alt"></i> Sign Out
@@ -69,41 +55,47 @@
     </div>
 </nav>
 
-<main class="container py-4 flex-grow-1">
+<div class="container py-4 flex-grow-1">
     <h2>Files / Images</h2>
 
-    <!-- Alerts -->
-    <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
-    <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+    <!-- Flash messages -->
+    <div th:if="${success}" class="alert alert-success" role="alert"
+         th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" role="alert"
+         th:text="${error}"></div>
 
-    <!-- Filter Form -->
-    <form th:action="@{/web/images}" method="get" class="mb-4">
+    <!-- Filter form -->
+    <form th:action="@{/web/images}" method="get" class="mb-3">
         <div class="row g-3 align-items-end">
-            <div class="col-md-2">
-                <label for="idFilter" class="form-label">ID:</label>
-                <input type="number" class="form-control" id="idFilter" name="idFilter"
-                       th:value="${idFilter}"
-                       placeholder="File ID">
+            <div class="col-md-3">
+                <label for="ownerFilter" class="form-label">Owner</label>
+                <input type="text" id="ownerFilter" name="ownerFilter"
+                       class="form-control"
+                       th:value="${ownerFilter}">
             </div>
             <div class="col-md-3">
-                <label for="ownerFilter" class="form-label">Owner (username):</label>
-                <input type="text" class="form-control" id="ownerFilter" name="ownerFilter"
-                       th:value="${ownerFilter}"
-                       placeholder="Owner username">
-            </div>
-            <div class="col-md-3">
-                <label for="contentTypeFilter" class="form-label">Content Type:</label>
-                <select id="contentTypeFilter" name="contentTypeFilter" class="form-select">
-                    <option value="" th:selected="${contentTypeFilter == ''}">All</option>
-                    <option th:each="ct : ${possibleContentTypes}"
-                            th:value="${ct}"
-                            th:text="${ct == '' ? 'All' : ct}"
-                            th:selected="${ct == contentTypeFilter}">
+                <label for="contentTypeFilter" class="form-label">Content Type</label>
+                <select id="contentTypeFilter" name="contentTypeFilter"
+                        class="form-select">
+                    <option value=""
+                            th:selected="${contentTypeFilter == null or contentTypeFilter == ''}">
+                        All
+                    </option>
+                    <option th:each="ctype : ${possibleContentTypes}"
+                            th:value="${ctype}"
+                            th:text="${ctype == '' ? '---' : ctype}"
+                            th:selected="${contentTypeFilter == ctype}">
                     </option>
                 </select>
             </div>
-            <div class="col-md-4 text-end">
-                <button type="submit" class="btn btn-primary me-2">
+            <div class="col-md-2">
+                <label for="idFilter" class="form-label">ID</label>
+                <input type="number" id="idFilter" name="idFilter"
+                       class="form-control"
+                       th:value="${idFilter}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">
                     <i class="fas fa-filter"></i> Filter
                 </button>
                 <button type="button" class="btn btn-secondary"
@@ -114,138 +106,111 @@
         </div>
     </form>
 
-    <!-- Buttons to View Trash / Add New File -->
     <div class="mb-4">
         <a th:href="@{/web/images/new}" class="btn btn-success">
-            <i class="fas fa-plus"></i> Add Image/File
+            <i class="fas fa-plus"></i> Add New
         </a>
         <a th:href="@{/web/images/trash}" class="btn btn-secondary">
-            <i class="fas fa-trash-alt"></i> View Trash
+            <i class="fas fa-trash"></i> View Trash
         </a>
     </div>
 
-    <!-- Table Layout for Consistent Row Sizes -->
-    <div class="table-responsive">
+    <!-- Table of images -->
+    <div class="table-responsive" th:if="${images != null and !#lists.isEmpty(images)}">
         <table class="table table-striped align-middle text-white">
             <thead class="bg-dark">
                 <tr>
-                    <th>File ID</th>
+                    <th>ID</th>
+                    <th>Preview</th>
                     <th>Owner</th>
                     <th>Title</th>
-                    <th>ContentType</th>
+                    <th>Content Type</th>
                     <th>Upload Date</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-            <tr th:each="img : ${images}">
-                <td th:text="${img.imageId}">ID</td>
-                <td th:text="${img.owner != null ? img.owner.username : 'N/A'}">Owner</td>
-                <td th:text="${img.title != null ? img.title : 'Untitled'}">Title</td>
-                <td th:text="${img.contentType}">ContentType</td>
-                <td th:text="${#temporals.format(img.uploadDate, 'yyyy-MM-dd HH:mm')}">UploadDate</td>
-                <td>
-                    <div class="btn-group" role="group">
-                        <!-- View: opens pop-up or modal. Let's do an onClick with a SweetAlert for preview. -->
-                        <button type="button" class="btn btn-info btn-sm view-button"
-                                data-item-id="${img.imageId}"
-                                data-content-type="${img.contentType}">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                        <!-- Edit: goes to form -->
-                        <a th:href="@{/web/images/edit/{id}(id=${img.imageId})}" class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i> Edit
-                        </a>
-                        <!-- Soft Delete with confirm -->
-                        <button type="button"
-                                class="btn btn-danger btn-sm delete-button"
-                                th:data-delete-url="@{'/web/images/delete/' + ${img.imageId}}"
-                                data-item-type="File"
-                                th:data-item-details="${img.title != null ? img.title : 'this file'}">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
-                </td>
-            </tr>
+                <tr th:each="img : ${images}">
+                    <td th:text="${img.imageId}"></td>
+                    <td style="width:120px; height:120px;">
+                        <img th:if="${img.base64Data}"
+                             th:src="${'data:' + img.contentType + ';base64,' + img.base64Data}"
+                             class="img-thumbnail"
+                             style="max-width:100px; max-height:100px;" />
+                    </td>
+                    <td th:text="${img.owner != null ? img.owner : 'N/A'}"></td>
+                    <td th:text="${img.title != null ? img.title : 'No Title'}"></td>
+                    <td th:text="${img.contentType}"></td>
+                    <td th:text="${#temporals.format(img.uploadDate, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td>
+                        <div class="btn-group">
+
+                            <!-- View (Bootstrap modal) -->
+                            <button type="button"
+                                    class="btn btn-info btn-sm"
+                                    data-bs-toggle="modal"
+                                    th:data-bs-target="'#viewModal__' + ${img.imageId}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+
+                            <!-- Edit -->
+                            <a th:href="@{/web/images/edit/{id}(id=${img.imageId}, idFilter=${idFilter}, ownerFilter=${ownerFilter}, contentTypeFilter=${contentTypeFilter})}"
+                               class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+
+                            <!-- Delete (soft) -->
+                            <button type="button"
+                                    class="btn btn-danger btn-sm delete-button"
+                                    th:data-delete-url="@{'/web/images/delete/' + ${img.imageId}}"
+                                    data-item-type="Image"
+                                    th:data-item-details="${img.title != null ? img.title : 'File'}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
+
+        <!-- Each image's "view" modal -->
+        <div th:each="img : ${images}">
+            <div class="modal fade"
+                 th:id="'viewModal__' + ${img.imageId}"
+                 tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content bg-dark text-white">
+                        <div class="modal-header">
+                            <h5 class="modal-title"
+                                th:text="'Preview: ' + (img.title != null ? img.title : 'Image')"></h5>
+                            <button type="button" class="btn-close btn-close-white"
+                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img th:if="${img.base64Data}"
+                                 th:src="${'data:' + img.contentType + ';base64,' + img.base64Data}"
+                                 class="img-fluid" />
+                            <p class="mt-3" th:text="${img.description}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div th:if="${#lists.isEmpty(images)}" class="mt-4">
-        <p class="text-center">No files found.</p>
+    <div th:if="${images == null or #lists.isEmpty(images)}" class="mt-4 text-center">
+        <p>No files found.</p>
     </div>
-</main>
+</div>
 
-<footer class="bg-dark text-white text-center py-3 mt-auto">
+<footer class="mt-auto bg-dark text-white text-center py-3">
     <p>&copy; 2025 RESTful App. All rights reserved.</p>
 </footer>
 
-<!-- View File Modal (for images, docs, etc.) -->
-<div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content bg-dark text-white">
-      <div class="modal-header">
-        <h5 class="modal-title" id="fileModalLabel">View File</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- We'll insert an <img> or link here via JS -->
-        <div id="filePreview" class="text-center"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Scripts -->
+<!-- Bootstrap JS + dependencies -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 (if you want) + custom JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script th:src="@{/js/scripts.js}"></script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const viewButtons = document.querySelectorAll('.view-button');
-    viewButtons.forEach(btn => {
-      btn.addEventListener('click', function() {
-        const itemId = this.dataset.itemId;
-        const contentType = this.dataset.contentType;
-
-        // We can retrieve the file from a new endpoint, e.g. /web/images/view/{id}
-        // or from a data url, etc. For demonstration, let's show a mock approach.
-
-        // Show the modal
-        const fileModal = new bootstrap.Modal(document.getElementById('fileModal'));
-        const filePreview = document.getElementById('filePreview');
-        filePreview.innerHTML = '';
-
-        if (contentType && contentType.startsWith('image/')) {
-          // Show an image
-          // We'll need an endpoint that returns the image as a data: url or a direct /api
-          const img = document.createElement('img');
-          img.src = '/web/images/view/' + itemId; // or some real endpoint
-          img.alt = 'File Preview';
-          img.className = 'img-fluid';
-          filePreview.appendChild(img);
-
-        } else if (contentType === 'application/pdf') {
-          // Show a PDF embed or link
-          filePreview.innerHTML = `
-            <object data="/web/images/view/${itemId}" type="application/pdf" width="100%" height="600">
-              <p>Your browser does not support PDFs.
-              <a href="/web/images/view/${itemId}">Download PDF</a></p>
-            </object>
-          `;
-        } else {
-          // For docx or other types, just show a download link
-          filePreview.innerHTML = `
-            <p>Preview not supported. <a href="/web/images/view/${itemId}" class="btn btn-primary" target="_blank">Download</a></p>
-          `;
-        }
-
-        fileModal.show();
-      });
-    });
-  });
-</script>
-
 </body>
 </html>

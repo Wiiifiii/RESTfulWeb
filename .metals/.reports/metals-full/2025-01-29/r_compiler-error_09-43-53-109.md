@@ -1,3 +1,15 @@
+file:///D:/GitHub/RESTfulWeb/src/main/java/com/wefky/RESTfulWeb/controller/ImageRestController.java
+### java.util.NoSuchElementException: next on empty iterator
+
+occurred in the presentation compiler.
+
+presentation compiler configuration:
+
+
+action parameters:
+uri: file:///D:/GitHub/RESTfulWeb/src/main/java/com/wefky/RESTfulWeb/controller/ImageRestController.java
+text:
+```scala
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Image;
@@ -14,6 +26,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST Controller for images (/api/images).
+ */
 @RestController
 @RequestMapping("/api/images")
 @RequiredArgsConstructor
@@ -27,6 +42,7 @@ public class ImageRestController {
 
     /**
      * GET all active images with optional filters.
+     * Returns JSON with base64Data included (if not empty).
      */
     @GetMapping
     public List<Image> getAllImages(
@@ -34,16 +50,16 @@ public class ImageRestController {
             @RequestParam(required = false) String owner,
             @RequestParam(required = false) String contentType
     ) {
-        // if no filters, get everything
         if (id == null && (owner == null || owner.isBlank()) && (contentType == null || contentType.isBlank())) {
+            // no filters
             return imageService.getAllActiveImages();
         }
-        // else filter
+        // filters
         return imageService.filterImages(id, owner, contentType);
     }
 
     /**
-     * GET one image by ID (only if not deleted).
+     * GET image by ID.
      */
     @GetMapping("/{id}")
     public ResponseEntity<Image> getImageById(@PathVariable Long id) {
@@ -55,7 +71,7 @@ public class ImageRestController {
     }
 
     /**
-     * DELETE (soft delete) image by ID.
+     * DELETE (Soft Delete) image by ID.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteImage(@PathVariable Long id) {
@@ -81,11 +97,15 @@ public class ImageRestController {
         Image image = opt.get();
         image.setDeleted(false);
         imageRepository.save(image);
+        // repopulate base64 if needed
+        if (image.getData() != null) {
+            image.setBase64Data(java.util.Base64.getEncoder().encodeToString(image.getData()));
+        }
         return ResponseEntity.ok(image);
     }
 
     /**
-     * DELETE (hard delete).
+     * DELETE (Hard Delete) image. ADMIN ONLY.
      */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}/permanent")
@@ -97,3 +117,30 @@ public class ImageRestController {
         return ResponseEntity.noContent().build();
     }
 }
+
+```
+
+
+
+#### Error stacktrace:
+
+```
+scala.collection.Iterator$$anon$19.next(Iterator.scala:973)
+	scala.collection.Iterator$$anon$19.next(Iterator.scala:971)
+	scala.collection.mutable.MutationTracker$CheckedIterator.next(MutationTracker.scala:76)
+	scala.collection.IterableOps.head(Iterable.scala:222)
+	scala.collection.IterableOps.head$(Iterable.scala:222)
+	scala.collection.AbstractIterable.head(Iterable.scala:935)
+	dotty.tools.dotc.interactive.InteractiveDriver.run(InteractiveDriver.scala:164)
+	dotty.tools.pc.MetalsDriver.run(MetalsDriver.scala:45)
+	dotty.tools.pc.WithCompilationUnit.<init>(WithCompilationUnit.scala:31)
+	dotty.tools.pc.SimpleCollector.<init>(PcCollector.scala:345)
+	dotty.tools.pc.PcSemanticTokensProvider$Collector$.<init>(PcSemanticTokensProvider.scala:63)
+	dotty.tools.pc.PcSemanticTokensProvider.Collector$lzyINIT1(PcSemanticTokensProvider.scala:63)
+	dotty.tools.pc.PcSemanticTokensProvider.Collector(PcSemanticTokensProvider.scala:63)
+	dotty.tools.pc.PcSemanticTokensProvider.provide(PcSemanticTokensProvider.scala:88)
+	dotty.tools.pc.ScalaPresentationCompiler.semanticTokens$$anonfun$1(ScalaPresentationCompiler.scala:109)
+```
+#### Short summary: 
+
+java.util.NoSuchElementException: next on empty iterator

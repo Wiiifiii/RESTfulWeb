@@ -1,3 +1,15 @@
+file:///D:/GitHub/RESTfulWeb/src/main/java/com/wefky/RESTfulWeb/controller/ImagesWebController.java
+### java.util.NoSuchElementException: next on empty iterator
+
+occurred in the presentation compiler.
+
+presentation compiler configuration:
+
+
+action parameters:
+uri: file:///D:/GitHub/RESTfulWeb/src/main/java/com/wefky/RESTfulWeb/controller/ImagesWebController.java
+text:
+```scala
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Image;
@@ -25,6 +37,9 @@ public class ImagesWebController {
     private static final Logger logger = LoggerFactory.getLogger(ImagesWebController.class);
     private final ImageService imageService;
 
+    /**
+     * List all active images, optionally filtered.
+     */
     @GetMapping
     public String listImages(
             @RequestParam(required = false) Long idFilter,
@@ -51,18 +66,17 @@ public class ImagesWebController {
                         (contentTypeFilter != null && !contentTypeFilter.isBlank()) ? contentTypeFilter : null
                 );
             }
-            model.addAttribute("images", images);
 
-            // pass current filter values to the template
+            model.addAttribute("images", images);
             model.addAttribute("idFilter", idFilter);
             model.addAttribute("ownerFilter", ownerFilter);
             model.addAttribute("contentTypeFilter", contentTypeFilter);
 
-            // for dropdown
+            // possible content types for the filter dropdown
             model.addAttribute("possibleContentTypes",
-                    List.of("", "image/jpeg", "image/png", "application/pdf", "application/msword"));
+                    List.of("", "image/png", "image/jpeg", "application/pdf", "application/msword"));
 
-            return "images";  // -> templates/images.html
+            return "images"; // -> images.html
         } catch (Exception e) {
             logger.error("Error fetching images: ", e);
             ra.addFlashAttribute("error", "An error occurred while fetching images.");
@@ -70,6 +84,10 @@ public class ImagesWebController {
         }
     }
 
+    /**
+     * View the trash (deleted images).
+     * Also includes optional filters.
+     */
     @GetMapping("/trash")
     public String viewTrash(
             @RequestParam(required = false) Long idFilter,
@@ -96,16 +114,16 @@ public class ImagesWebController {
                         (contentTypeFilter != null && !contentTypeFilter.isBlank()) ? contentTypeFilter : null
                 );
             }
-
             model.addAttribute("images", images);
             model.addAttribute("idFilter", idFilter);
             model.addAttribute("ownerFilter", ownerFilter);
             model.addAttribute("contentTypeFilter", contentTypeFilter);
 
+            // possible content types for the filter dropdown
             model.addAttribute("possibleContentTypes",
-                    List.of("", "image/jpeg", "image/png", "application/pdf", "application/msword"));
+                    List.of("", "image/png", "image/jpeg", "application/pdf", "application/msword"));
 
-            return "imagesTrash";  // -> templates/imagesTrash.html
+            return "imagesTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted images: ", e);
             ra.addFlashAttribute("error", "An error occurred while fetching deleted images.");
@@ -118,7 +136,8 @@ public class ImagesWebController {
         model.addAttribute("currentUri", request.getRequestURI());
         model.addAttribute("image", new Image());
         model.addAttribute("mode", "new");
-        return "imageForm"; // -> templates/imageForm.html
+        // If you want to preserve filter values from a prior page, add them here if needed
+        return "imageForm";
     }
 
     @GetMapping("/edit/{id}")
@@ -140,7 +159,7 @@ public class ImagesWebController {
             }
             model.addAttribute("image", opt.get());
             model.addAttribute("mode", "edit");
-            // preserve filter values
+            // preserve filters, so we can pass them back in a hidden form
             model.addAttribute("idFilter", idFilter);
             model.addAttribute("ownerFilter", ownerFilter);
             model.addAttribute("contentTypeFilter", contentTypeFilter);
@@ -154,26 +173,25 @@ public class ImagesWebController {
     }
 
     /**
-     * Save or update an image. If 'imageId' is null => create new.
-     * If uploading a new file, replace the data.
+     * Save (create/update) an image.
+     * Preserve filters in the redirect.
      */
     @PostMapping("/save")
-    public String saveImage(
-            @RequestParam(required = false) Long imageId,
-            @RequestParam(required = false) String owner,
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) String contentType,
-            @RequestParam(required = false) MultipartFile file,
-            // hidden filter fields to preserve
-            @RequestParam(required = false) Long idFilter,
-            @RequestParam(required = false) String ownerFilter,
-            @RequestParam(required = false) String contentTypeFilter,
-            RedirectAttributes ra
-    ) {
+    public String saveImage(@RequestParam(required = false) Long imageId,
+                            @RequestParam(required = false) String owner,
+                            @RequestParam(required = false) String title,
+                            @RequestParam(required = false) String description,
+                            @RequestParam(required = false) String contentType,
+                            @RequestParam(required = false) MultipartFile file,
+                            // hidden filter fields (to restore after save)
+                            @RequestParam(required = false) Long idFilter,
+                            @RequestParam(required = false) String ownerFilter,
+                            @RequestParam(required = false) String contentTypeFilter,
+                            RedirectAttributes ra) {
         try {
             Image img;
             if (imageId != null) {
+                // editing existing
                 Optional<Image> opt = imageService.getImageById(imageId);
                 if (opt.isEmpty()) {
                     ra.addFlashAttribute("error", "File to update not found.");
@@ -181,6 +199,7 @@ public class ImagesWebController {
                 }
                 img = opt.get();
             } else {
+                // new
                 img = new Image();
             }
 
@@ -197,7 +216,7 @@ public class ImagesWebController {
             imageService.saveImage(img);
             ra.addFlashAttribute("success", "File saved successfully!");
 
-            // preserve the filters on redirect
+            // preserve filters for the main listing page
             ra.addAttribute("idFilter", idFilter);
             ra.addAttribute("ownerFilter", ownerFilter);
             ra.addAttribute("contentTypeFilter", contentTypeFilter);
@@ -218,9 +237,6 @@ public class ImagesWebController {
         }
     }
 
-    /**
-     * Soft delete.
-     */
     @GetMapping("/delete/{id}")
     public String softDelete(@PathVariable Long id, RedirectAttributes ra) {
         try {
@@ -261,3 +277,30 @@ public class ImagesWebController {
         }
     }
 }
+
+```
+
+
+
+#### Error stacktrace:
+
+```
+scala.collection.Iterator$$anon$19.next(Iterator.scala:973)
+	scala.collection.Iterator$$anon$19.next(Iterator.scala:971)
+	scala.collection.mutable.MutationTracker$CheckedIterator.next(MutationTracker.scala:76)
+	scala.collection.IterableOps.head(Iterable.scala:222)
+	scala.collection.IterableOps.head$(Iterable.scala:222)
+	scala.collection.AbstractIterable.head(Iterable.scala:935)
+	dotty.tools.dotc.interactive.InteractiveDriver.run(InteractiveDriver.scala:164)
+	dotty.tools.pc.MetalsDriver.run(MetalsDriver.scala:45)
+	dotty.tools.pc.WithCompilationUnit.<init>(WithCompilationUnit.scala:31)
+	dotty.tools.pc.SimpleCollector.<init>(PcCollector.scala:345)
+	dotty.tools.pc.PcSemanticTokensProvider$Collector$.<init>(PcSemanticTokensProvider.scala:63)
+	dotty.tools.pc.PcSemanticTokensProvider.Collector$lzyINIT1(PcSemanticTokensProvider.scala:63)
+	dotty.tools.pc.PcSemanticTokensProvider.Collector(PcSemanticTokensProvider.scala:63)
+	dotty.tools.pc.PcSemanticTokensProvider.provide(PcSemanticTokensProvider.scala:88)
+	dotty.tools.pc.ScalaPresentationCompiler.semanticTokens$$anonfun$1(ScalaPresentationCompiler.scala:109)
+```
+#### Short summary: 
+
+java.util.NoSuchElementException: next on empty iterator
