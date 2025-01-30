@@ -37,9 +37,9 @@ public class ImagesWebController {
             Model model,
             RedirectAttributes ra
     ) {
-        try {
-            model.addAttribute("currentUri", request.getRequestURI());
+        model.addAttribute("currentUri", request.getRequestURI());
 
+        try {
             boolean noFilters = (idFilter == null)
                     && (ownerFilter == null || ownerFilter.isBlank())
                     && (contentTypeFilter == null || contentTypeFilter.isBlank());
@@ -50,8 +50,8 @@ public class ImagesWebController {
             } else {
                 images = imageService.filterImages(
                         idFilter,
-                        (ownerFilter != null && !ownerFilter.isBlank()) ? ownerFilter : null,
-                        (contentTypeFilter != null && !contentTypeFilter.isBlank()) ? contentTypeFilter : null
+                        (ownerFilter != null && !ownerFilter.isBlank()) ? ownerFilter.trim() : null,
+                        (contentTypeFilter != null && !contentTypeFilter.isBlank()) ? contentTypeFilter.trim() : null
                 );
             }
 
@@ -60,15 +60,33 @@ public class ImagesWebController {
             model.addAttribute("ownerFilter", ownerFilter);
             model.addAttribute("contentTypeFilter", contentTypeFilter);
 
-            // for filter dropdown
-            model.addAttribute("possibleContentTypes",
-                    List.of("", "image/png", "image/jpeg", "application/pdf", "application/msword"));
+            // Fetch distinct content types dynamically
+            List<String> possibleContentTypes = imageService.getDistinctContentTypes();
+            // Optionally, add an empty option for "All"
+            possibleContentTypes.add(0, "");
+            model.addAttribute("possibleContentTypes", possibleContentTypes);
 
             return "images"; // -> images.html
         } catch (Exception e) {
             logger.error("Error fetching images: ", e);
             ra.addFlashAttribute("error", "An error occurred while fetching images: " + e.getMessage());
-            return "redirect:/";
+            // Instead of redirecting to "/", return the images view with error
+            // Optionally, fetch all active images without filters
+            try {
+                List<Image> images = imageService.getAllActiveImages();
+                model.addAttribute("images", images);
+                model.addAttribute("idFilter", idFilter);
+                model.addAttribute("ownerFilter", ownerFilter);
+                model.addAttribute("contentTypeFilter", contentTypeFilter);
+                List<String> possibleContentTypes = imageService.getDistinctContentTypes();
+                possibleContentTypes.add(0, "");
+                model.addAttribute("possibleContentTypes", possibleContentTypes);
+            } catch (Exception innerEx) {
+                logger.error("Error fetching all active images after initial error: ", innerEx);
+                // If even fetching all images fails, redirect to home
+                return "redirect:/";
+            }
+            return "images";
         }
     }
 
@@ -84,9 +102,9 @@ public class ImagesWebController {
             Model model,
             RedirectAttributes ra
     ) {
-        try {
-            model.addAttribute("currentUri", request.getRequestURI());
+        model.addAttribute("currentUri", request.getRequestURI());
 
+        try {
             boolean noFilters = (idFilter == null)
                     && (ownerFilter == null || ownerFilter.isBlank())
                     && (contentTypeFilter == null || contentTypeFilter.isBlank());
@@ -97,8 +115,8 @@ public class ImagesWebController {
             } else {
                 images = imageService.filterDeletedImages(
                         idFilter,
-                        (ownerFilter != null && !ownerFilter.isBlank()) ? ownerFilter : null,
-                        (contentTypeFilter != null && !contentTypeFilter.isBlank()) ? contentTypeFilter : null
+                        (ownerFilter != null && !ownerFilter.isBlank()) ? ownerFilter.trim() : null,
+                        (contentTypeFilter != null && !contentTypeFilter.isBlank()) ? contentTypeFilter.trim() : null
                 );
             }
 
@@ -107,14 +125,33 @@ public class ImagesWebController {
             model.addAttribute("ownerFilter", ownerFilter);
             model.addAttribute("contentTypeFilter", contentTypeFilter);
 
-            model.addAttribute("possibleContentTypes",
-                    List.of("", "image/png", "image/jpeg", "application/pdf", "application/msword"));
+            // Fetch distinct content types dynamically
+            List<String> possibleContentTypes = imageService.getDistinctContentTypes();
+            // Optionally, add an empty option for "All"
+            possibleContentTypes.add(0, "");
+            model.addAttribute("possibleContentTypes", possibleContentTypes);
 
             return "imagesTrash"; // -> imagesTrash.html
         } catch (Exception e) {
             logger.error("Error fetching deleted images: ", e);
-            ra.addFlashAttribute("error", "An error occurred: " + e.getMessage());
-            return "redirect:/web/images";
+            ra.addFlashAttribute("error", "An error occurred while fetching deleted images: " + e.getMessage());
+            // Instead of redirecting to "/web/images", return the imagesTrash view with error
+            // Optionally, fetch all deleted images without filters
+            try {
+                List<Image> images = imageService.getAllDeletedImages();
+                model.addAttribute("images", images);
+                model.addAttribute("idFilter", idFilter);
+                model.addAttribute("ownerFilter", ownerFilter);
+                model.addAttribute("contentTypeFilter", contentTypeFilter);
+                List<String> possibleContentTypes = imageService.getDistinctContentTypes();
+                possibleContentTypes.add(0, "");
+                model.addAttribute("possibleContentTypes", possibleContentTypes);
+            } catch (Exception innerEx) {
+                logger.error("Error fetching all deleted images after initial error: ", innerEx);
+                // If even fetching all images fails, redirect to images
+                return "redirect:/web/images";
+            }
+            return "imagesTrash";
         }
     }
 
@@ -149,7 +186,7 @@ public class ImagesWebController {
             model.addAttribute("image", opt.get());
             model.addAttribute("mode", "edit");
 
-            // preserve filters
+            // Preserve filters
             model.addAttribute("idFilter", idFilter);
             model.addAttribute("ownerFilter", ownerFilter);
             model.addAttribute("contentTypeFilter", contentTypeFilter);
@@ -173,7 +210,7 @@ public class ImagesWebController {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String contentType,
             @RequestParam(required = false) MultipartFile file,
-            // preserve filter
+            // Preserve filter
             @RequestParam(required = false) Long idFilter,
             @RequestParam(required = false) String ownerFilter,
             @RequestParam(required = false) String contentTypeFilter,
@@ -182,7 +219,7 @@ public class ImagesWebController {
         try {
             Image img;
             if (imageId != null) {
-                // editing
+                // Editing
                 Optional<Image> opt = imageService.getImageById(imageId);
                 if (opt.isEmpty()) {
                     ra.addFlashAttribute("error", "File to update not found.");
@@ -190,7 +227,7 @@ public class ImagesWebController {
                 }
                 img = opt.get();
             } else {
-                // new
+                // New
                 img = new Image();
             }
 
@@ -207,7 +244,7 @@ public class ImagesWebController {
             imageService.saveImage(img);
             ra.addFlashAttribute("success", "File saved successfully!");
 
-            // pass filters in redirect
+            // Pass filters in redirect
             ra.addAttribute("idFilter", idFilter);
             ra.addAttribute("ownerFilter", ownerFilter);
             ra.addAttribute("contentTypeFilter", contentTypeFilter);
@@ -221,9 +258,15 @@ public class ImagesWebController {
             logger.error("Error saving file", e);
             ra.addFlashAttribute("error", "Error saving file: " + e.getMessage());
             if (imageId != null) {
-                return "redirect:/web/images/edit/" + imageId;
+                return "redirect:/web/images/edit/" + imageId
+                        + "?idFilter=" + idFilter
+                        + "&ownerFilter=" + ownerFilter
+                        + "&contentTypeFilter=" + contentTypeFilter;
             } else {
-                return "redirect:/web/images/new";
+                return "redirect:/web/images/new"
+                        + "?idFilter=" + idFilter
+                        + "&ownerFilter=" + ownerFilter
+                        + "&contentTypeFilter=" + contentTypeFilter;
             }
         }
     }

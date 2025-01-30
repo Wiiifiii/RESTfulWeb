@@ -30,60 +30,87 @@ public class ImageRestController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public List<Image> getAllImages(
+    public ResponseEntity<List<Image>> getAllImages(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String owner,
             @RequestParam(required = false) String contentType
     ) {
-        if (id == null && (owner == null || owner.isBlank()) && (contentType == null || contentType.isBlank())) {
-            return imageService.getAllActiveImages();
+        try {
+            if (id == null && (owner == null || owner.isBlank()) && (contentType == null || contentType.isBlank())) {
+                List<Image> images = imageService.getAllActiveImages();
+                return ResponseEntity.ok(images);
+            }
+            List<Image> filteredImages = imageService.filterImages(id, owner, contentType);
+            return ResponseEntity.ok(filteredImages);
+        } catch (Exception e) {
+            logger.error("Error fetching images via REST API: ", e);
+            return ResponseEntity.status(500).build();
         }
-        return imageService.filterImages(id, owner, contentType);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Image> getImageById(@PathVariable Long id) {
-        Optional<Image> opt = imageService.getImageById(id);
-        if (opt.isEmpty() || opt.get().isDeleted()) {
-            return ResponseEntity.notFound().build();
+        try {
+            Optional<Image> opt = imageService.getImageById(id);
+            if (opt.isEmpty() || opt.get().isDeleted()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(opt.get());
+        } catch (Exception e) {
+            logger.error("Error fetching image by ID via REST API: ", e);
+            return ResponseEntity.status(500).build();
         }
-        return ResponseEntity.ok(opt.get());
     }
 
     // Soft-delete via REST
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteImage(@PathVariable Long id) {
-        Optional<Image> opt = imageRepository.findById(id);
-        if (opt.isEmpty() || opt.get().isDeleted()) {
-            return ResponseEntity.notFound().build();
+        try {
+            Optional<Image> opt = imageRepository.findById(id);
+            if (opt.isEmpty() || opt.get().isDeleted()) {
+                return ResponseEntity.notFound().build();
+            }
+            Image image = opt.get();
+            image.setDeleted(true);
+            imageRepository.save(image);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            logger.error("Error soft deleting image via REST API: ", e);
+            return ResponseEntity.status(500).build();
         }
-        Image image = opt.get();
-        image.setDeleted(true);
-        imageRepository.save(image);
-        return ResponseEntity.noContent().build();
     }
 
     // Restore via REST
     @PostMapping("/{id}/restore")
     public ResponseEntity<Image> restoreImage(@PathVariable Long id) {
-        Optional<Image> opt = imageRepository.findById(id);
-        if (opt.isEmpty() || !opt.get().isDeleted()) {
-            return ResponseEntity.notFound().build();
+        try {
+            Optional<Image> opt = imageRepository.findById(id);
+            if (opt.isEmpty() || !opt.get().isDeleted()) {
+                return ResponseEntity.notFound().build();
+            }
+            Image image = opt.get();
+            image.setDeleted(false);
+            imageRepository.save(image);
+            return ResponseEntity.ok(image);
+        } catch (Exception e) {
+            logger.error("Error restoring image via REST API: ", e);
+            return ResponseEntity.status(500).build();
         }
-        Image image = opt.get();
-        image.setDeleted(false);
-        imageRepository.save(image);
-        return ResponseEntity.ok(image);
     }
 
     // Permanent Delete via REST
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}/permanent")
     public ResponseEntity<Void> permanentlyDeleteImage(@PathVariable Long id) {
-        if (!imageRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+        try {
+            if (!imageRepository.existsById(id)) {
+                return ResponseEntity.notFound().build();
+            }
+            imageRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            logger.error("Error permanently deleting image via REST API: ", e);
+            return ResponseEntity.status(500).build();
         }
-        imageRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }

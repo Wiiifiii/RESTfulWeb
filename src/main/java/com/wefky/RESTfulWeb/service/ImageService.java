@@ -47,7 +47,7 @@ public class ImageService {
      */
     public Image saveImage(Image image) {
         if (image.getImageId() == null) {
-            // new => set upload date
+            // New image => set upload date
             image.setUploadDate(LocalDateTime.now());
         }
         Image saved = imageRepository.save(image);
@@ -94,11 +94,26 @@ public class ImageService {
         });
     }
 
+    /**
+     * Fetch distinct content types from active images.
+     */
+    @Transactional(readOnly = true)
+    public List<String> getDistinctContentTypes() {
+        List<String> contentTypes = imageRepository.findDistinctContentTypes();
+        return contentTypes;
+    }
+
     // Helper to populate base64 for a single or list
     private void populateBase64(Image img) {
-        if (img.getData() != null && img.getContentType() != null && img.getContentType().startsWith("image/")) {
-            String encoded = Base64.getEncoder().encodeToString(img.getData());
-            img.setBase64Data(encoded);
+        if (img.getData() != null && img.getContentType() != null) {
+            if (img.getContentType().startsWith("image/")) {
+                String encoded = Base64.getEncoder().encodeToString(img.getData());
+                img.setBase64Data(encoded);
+            } else {
+                img.setBase64Data(null); // Not an image, no base64 data needed
+            }
+        } else {
+            img.setBase64Data(null); // No data or content type
         }
     }
 
