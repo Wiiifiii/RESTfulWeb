@@ -25,7 +25,7 @@ public class ImagesWebController {
     private static final Logger logger = LoggerFactory.getLogger(ImagesWebController.class);
     private final ImageService imageService;
 
-    /**
+   /**
      * List active images, possibly filtered.
      */
     @GetMapping
@@ -40,21 +40,11 @@ public class ImagesWebController {
         model.addAttribute("currentUri", request.getRequestURI());
 
         try {
-            boolean noFilters = (idFilter == null)
-                    && (ownerFilter == null || ownerFilter.isBlank())
-                    && (contentTypeFilter == null || contentTypeFilter.isBlank());
+            // Convert empty strings to null
+            ownerFilter = (ownerFilter != null && !ownerFilter.isBlank()) ? ownerFilter.trim() : null;
+            contentTypeFilter = (contentTypeFilter != null && !contentTypeFilter.isBlank()) ? contentTypeFilter.trim() : null;
 
-            List<Image> images;
-            if (noFilters) {
-                images = imageService.getAllActiveImages();
-            } else {
-                images = imageService.filterImages(
-                        idFilter,
-                        (ownerFilter != null && !ownerFilter.isBlank()) ? ownerFilter.trim() : null,
-                        (contentTypeFilter != null && !contentTypeFilter.isBlank()) ? contentTypeFilter.trim() : null
-                );
-            }
-
+            List<Image> images = imageService.filterImages(idFilter, ownerFilter, contentTypeFilter);
             model.addAttribute("images", images);
             model.addAttribute("idFilter", idFilter);
             model.addAttribute("ownerFilter", ownerFilter);
@@ -70,22 +60,24 @@ public class ImagesWebController {
         } catch (Exception e) {
             logger.error("Error fetching images: ", e);
             ra.addFlashAttribute("error", "An error occurred while fetching images: " + e.getMessage());
-            // Instead of redirecting to "/", return the images view with error
-            // Optionally, fetch all active images without filters
+
+            // Attempt to fetch all active images without filters to display alongside the error
             try {
                 List<Image> images = imageService.getAllActiveImages();
                 model.addAttribute("images", images);
-                model.addAttribute("idFilter", idFilter);
-                model.addAttribute("ownerFilter", ownerFilter);
-                model.addAttribute("contentTypeFilter", contentTypeFilter);
+                model.addAttribute("idFilter", null);
+                model.addAttribute("ownerFilter", null);
+                model.addAttribute("contentTypeFilter", null);
+
                 List<String> possibleContentTypes = imageService.getDistinctContentTypes();
                 possibleContentTypes.add(0, "");
                 model.addAttribute("possibleContentTypes", possibleContentTypes);
             } catch (Exception innerEx) {
                 logger.error("Error fetching all active images after initial error: ", innerEx);
-                // If even fetching all images fails, redirect to home
+                // If fetching all images also fails, redirect to home
                 return "redirect:/";
             }
+
             return "images";
         }
     }
@@ -135,22 +127,24 @@ public class ImagesWebController {
         } catch (Exception e) {
             logger.error("Error fetching deleted images: ", e);
             ra.addFlashAttribute("error", "An error occurred while fetching deleted images: " + e.getMessage());
-            // Instead of redirecting to "/web/images", return the imagesTrash view with error
-            // Optionally, fetch all deleted images without filters
+
+            // Attempt to fetch all deleted images without filters to display alongside the error
             try {
                 List<Image> images = imageService.getAllDeletedImages();
                 model.addAttribute("images", images);
                 model.addAttribute("idFilter", idFilter);
                 model.addAttribute("ownerFilter", ownerFilter);
                 model.addAttribute("contentTypeFilter", contentTypeFilter);
+
                 List<String> possibleContentTypes = imageService.getDistinctContentTypes();
                 possibleContentTypes.add(0, "");
                 model.addAttribute("possibleContentTypes", possibleContentTypes);
             } catch (Exception innerEx) {
                 logger.error("Error fetching all deleted images after initial error: ", innerEx);
-                // If even fetching all images fails, redirect to images
+                // If fetching all images also fails, redirect to active images
                 return "redirect:/web/images";
             }
+
             return "imagesTrash";
         }
     }

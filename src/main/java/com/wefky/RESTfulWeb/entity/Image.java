@@ -2,6 +2,7 @@ package com.wefky.RESTfulWeb.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
@@ -18,8 +19,10 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id")
+   
     private Long imageId;
 
+    @NotBlank(message = "Owner is required.")
     @Column(name = "owner", length = 100)
     private String owner;
 
@@ -31,6 +34,7 @@ public class Image {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
+    @NotBlank(message = "Content Type is required.")
     @Column(name = "content_type", length = 50)
     private String contentType;
 

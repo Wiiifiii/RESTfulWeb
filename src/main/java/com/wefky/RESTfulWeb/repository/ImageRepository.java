@@ -14,17 +14,15 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
     /**
      * Filter active images by optional id, owner (partial), contentType (exact).
-     * Matches any of the provided criteria (OR logic).
+     * Matches all of the provided criteria (AND logic).
      */
     @Query("""
         SELECT i
         FROM Image i
         WHERE i.deleted = false
-          AND (
-               (:id IS NOT NULL AND i.imageId = :id)
-            OR (:owner IS NOT NULL AND LOWER(i.owner) LIKE LOWER(CONCAT('%', :owner, '%')))
-            OR (:contentType IS NOT NULL AND LOWER(i.contentType) = LOWER(:contentType))
-          )
+          AND (:id IS NULL OR i.imageId = :id)
+          AND (:owner IS NULL OR LOWER(i.owner) LIKE LOWER(CONCAT('%', :owner, '%')))
+          AND (:contentType IS NULL OR LOWER(i.contentType) = LOWER(:contentType))
     """)
     List<Image> filterImages(
             @Param("id") Long id,
@@ -37,17 +35,15 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
     /**
      * Filter deleted (trash) images by optional id, owner, contentType.
-     * Matches any of the provided criteria (OR logic).
+     * Matches all of the provided criteria (AND logic).
      */
     @Query("""
         SELECT i
         FROM Image i
         WHERE i.deleted = true
-          AND (
-               (:id IS NOT NULL AND i.imageId = :id)
-            OR (:owner IS NOT NULL AND LOWER(i.owner) LIKE LOWER(CONCAT('%', :owner, '%')))
-            OR (:contentType IS NOT NULL AND LOWER(i.contentType) = LOWER(:contentType))
-          )
+          AND (:id IS NULL OR i.imageId = :id)
+          AND (:owner IS NULL OR LOWER(i.owner) LIKE LOWER(CONCAT('%', :owner, '%')))
+          AND (:contentType IS NULL OR LOWER(i.contentType) = LOWER(:contentType))
     """)
     List<Image> filterDeletedImages(
             @Param("id") Long id,
