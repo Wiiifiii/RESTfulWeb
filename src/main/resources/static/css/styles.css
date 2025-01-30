@@ -19,6 +19,7 @@ body {
     width: 100px;
     height: 100px;
     object-fit: cover;
+    border-radius: 5px;
 }
 
 /* Buttons */
@@ -151,4 +152,15 @@ body {
 .swal2-title,
 .swal2-content {
     color: #ffffff !important;
+}
+
+/* Additional Custom Styles */
+
+textarea.form-control {
+    background-color: #ffffff; 
+    color: #000000;
+}
+
+.btn-close-white {
+    filter: invert(1);
 }
