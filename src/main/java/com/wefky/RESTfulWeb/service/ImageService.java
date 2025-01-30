@@ -43,8 +43,65 @@ public class ImageService {
     }
 
     /**
-     * Create or update an Image. Sets uploadDate if new.
+     * Search active images by a single search term that can match imageId, owner, or contentType.
      */
+    @Transactional(readOnly = true)
+    public List<Image> searchImages(String search) {
+        if (search == null || search.isBlank()) {
+            return imageRepository.findAllActive();
+        }
+
+        Long searchId = null;
+        String searchText = null;
+        try {
+            searchId = Long.parseLong(search);
+        } catch (NumberFormatException e) {
+            // Not a number, treat as text
+        }
+
+        if (searchId != null) {
+            // Pass both id and text
+            List<Image> images = imageRepository.searchImages(searchId, search);
+            populateBase64(images);
+            return images;
+        } else {
+            searchText = search.trim();
+            List<Image> images = imageRepository.searchImages(null, searchText);
+            populateBase64(images);
+            return images;
+        }
+    }
+
+    /**
+     * Search deleted images by a single search term that can match imageId, owner, or contentType.
+     */
+    @Transactional(readOnly = true)
+    public List<Image> searchDeletedImages(String search) {
+        if (search == null || search.isBlank()) {
+            return imageRepository.findAllDeleted();
+        }
+
+        Long searchId = null;
+        String searchText = null;
+        try {
+            searchId = Long.parseLong(search);
+        } catch (NumberFormatException e) {
+            // Not a number, treat as text
+        }
+
+        if (searchId != null) {
+            // Pass both id and text
+            List<Image> images = imageRepository.searchDeletedImages(searchId, search);
+            populateBase64(images);
+            return images;
+        } else {
+            searchText = search.trim();
+            List<Image> images = imageRepository.searchDeletedImages(null, searchText);
+            populateBase64(images);
+            return images;
+        }
+    }
+
     public Image saveImage(Image image) {
         if (image.getImageId() == null) {
             // New image => set upload date

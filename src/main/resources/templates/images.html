@@ -64,38 +64,19 @@
     <div th:if="${error}" class="alert alert-danger" role="alert"
          th:text="${error}"></div>
 
-    <!-- Filter form -->
+    <!-- Unified Search form -->
     <form th:action="@{/web/images}" method="get" class="mb-3">
         <div class="row g-3 align-items-end">
-            <div class="col-md-3">
-                <label for="ownerFilter" class="form-label">Owner</label>
-                <input type="text" id="ownerFilter" name="ownerFilter"
+            <div class="col-md-6">
+                <label for="search" class="form-label">Search</label>
+                <input type="text" id="search" name="search"
                        class="form-control"
-                       th:value="${ownerFilter}" />
+                       th:value="${search}" 
+                       placeholder="Search by ID, Owner, or Content Type" />
             </div>
             <div class="col-md-3">
-                <label for="contentTypeFilter" class="form-label">Content Type</label>
-                <select id="contentTypeFilter" name="contentTypeFilter" class="form-select">
-                    <option value=""
-                            th:selected="${contentTypeFilter == null or contentTypeFilter == ''}">
-                        All
-                    </option>
-                    <option th:each="ctype : ${possibleContentTypes}"
-                            th:value="${ctype}"
-                            th:text="${ctype == '' ? '---' : ctype}"
-                            th:selected="${contentTypeFilter == ctype}">
-                    </option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label for="idFilter" class="form-label">ID</label>
-                <input type="number" id="idFilter" name="idFilter"
-                       class="form-control"
-                       th:value="${idFilter}" />
-            </div>
-            <div class="col-md-4">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-filter"></i> Filter
+                    <i class="fas fa-search"></i> Search
                 </button>
                 <button type="button" class="btn btn-secondary"
                         onclick="window.location.href='/web/images'">
@@ -106,10 +87,10 @@
     </form>
 
     <div class="mb-4">
-        <a th:href="@{/web/images/new}" class="btn btn-success">
+        <a th:href="@{/web/images/new(search=${search})}" class="btn btn-success">
             <i class="fas fa-plus"></i> Add New
         </a>
-        <a th:href="@{/web/images/trash}" class="btn btn-secondary">
+        <a th:href="@{/web/images/trash(search=${search})}" class="btn btn-secondary">
             <i class="fas fa-trash"></i> View Trash
         </a>
     </div>
@@ -161,7 +142,7 @@
                             </button>
 
                             <!-- Edit -->
-                            <a th:href="@{/web/images/edit/{id}(id=${img.imageId}, idFilter=${idFilter}, ownerFilter=${ownerFilter}, contentTypeFilter=${contentTypeFilter})}"
+                            <a th:href="@{/web/images/edit/{id}(id=${img.imageId}, search=${search})}"
                                class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i>
                             </a>
@@ -169,7 +150,7 @@
                             <!-- Soft Delete -->
                             <button type="button"
                                     class="btn btn-danger btn-sm delete-button"
-                                    th:data-delete-url="@{'/web/images/delete/' + ${img.imageId}}"
+                                    th:data-delete-url="@{'/web/images/delete/' + ${img.imageId} + '?search=' + ${search}}"
                                     data-item-type="Image"
                                     th:data-item-details="${img.title != null ? img.title : 'File'}">
                                 <i class="fas fa-trash"></i>
@@ -204,7 +185,6 @@
                                          class="img-fluid" />
                                 </th:block>
                                 <th:block th:if="${img.contentType == 'application/pdf'}">
-                                    <!-- PDF iframe preview with base64 -->
                                     <iframe th:src="${'data:application/pdf;base64,' + img.base64Data}"
                                             style="width:100%;height:500px;" frameborder="0">
                                         PDF file preview not available.

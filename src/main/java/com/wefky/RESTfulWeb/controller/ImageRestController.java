@@ -2,7 +2,6 @@ package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Image;
 import com.wefky.RESTfulWeb.repository.ImageRepository;
-import com.wefky.RESTfulWeb.repository.UserRepository;
 import com.wefky.RESTfulWeb.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -16,7 +15,6 @@ import java.util.Optional;
 
 /**
  * REST Controller for images (/api/images).
- * This is optional if you only need the web-based approach.
  */
 @RestController
 @RequestMapping("/api/images")
@@ -27,27 +25,26 @@ public class ImageRestController {
 
     private final ImageService imageService;
     private final ImageRepository imageRepository;
-    private final UserRepository userRepository;
 
+    /**
+     * Get all active images or search by a single query parameter.
+     */
     @GetMapping
     public ResponseEntity<List<Image>> getAllImages(
-            @RequestParam(required = false) Long id,
-            @RequestParam(required = false) String owner,
-            @RequestParam(required = false) String contentType
+            @RequestParam(required = false) String search
     ) {
         try {
-            if (id == null && (owner == null || owner.isBlank()) && (contentType == null || contentType.isBlank())) {
-                List<Image> images = imageService.getAllActiveImages();
-                return ResponseEntity.ok(images);
-            }
-            List<Image> filteredImages = imageService.filterImages(id, owner, contentType);
-            return ResponseEntity.ok(filteredImages);
+            List<Image> images = imageService.searchImages(search);
+            return ResponseEntity.ok(images);
         } catch (Exception e) {
             logger.error("Error fetching images via REST API: ", e);
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body(null);
         }
     }
 
+    /**
+     * Get a specific image by ID.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Image> getImageById(@PathVariable Long id) {
         try {
@@ -62,7 +59,9 @@ public class ImageRestController {
         }
     }
 
-    // Soft-delete via REST
+    /**
+     * Soft-delete an image by ID.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteImage(@PathVariable Long id) {
         try {
@@ -80,7 +79,9 @@ public class ImageRestController {
         }
     }
 
-    // Restore via REST
+    /**
+     * Restore a soft-deleted image by ID.
+     */
     @PostMapping("/{id}/restore")
     public ResponseEntity<Image> restoreImage(@PathVariable Long id) {
         try {
@@ -98,7 +99,9 @@ public class ImageRestController {
         }
     }
 
-    // Permanent Delete via REST
+    /**
+     * Permanently delete an image by ID. ADMIN ONLY
+     */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}/permanent")
     public ResponseEntity<Void> permanentlyDeleteImage(@PathVariable Long id) {
