@@ -1,7 +1,6 @@
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Image;
-import com.wefky.RESTfulWeb.repository.ImageRepository;
 import com.wefky.RESTfulWeb.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -13,9 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * REST Controller for images (/api/images).
- */
 @RestController
 @RequestMapping("/api/images")
 @RequiredArgsConstructor
@@ -24,7 +20,6 @@ public class ImageRestController {
     private static final Logger logger = LoggerFactory.getLogger(ImageRestController.class);
 
     private final ImageService imageService;
-    private final ImageRepository imageRepository;
 
     /**
      * Get all active images or search by a single query parameter.
@@ -48,7 +43,9 @@ public class ImageRestController {
     @GetMapping("/{id}")
     public ResponseEntity<Image> getImageById(@PathVariable Long id) {
         try {
-            Optional<Image> opt = imageService.getImageById(id);
+            Optional<Image> opt = imageService.searchImages(null).stream()
+                    .filter(img -> img.getImageId().equals(id))
+                    .findFirst();
             if (opt.isEmpty() || opt.get().isDeleted()) {
                 return ResponseEntity.notFound().build();
             }
@@ -65,13 +62,13 @@ public class ImageRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteImage(@PathVariable Long id) {
         try {
-            Optional<Image> opt = imageRepository.findById(id);
+            Optional<Image> opt = imageService.searchImages(null).stream()
+                    .filter(img -> img.getImageId().equals(id))
+                    .findFirst();
             if (opt.isEmpty() || opt.get().isDeleted()) {
                 return ResponseEntity.notFound().build();
             }
-            Image image = opt.get();
-            image.setDeleted(true);
-            imageRepository.save(image);
+            imageService.softDeleteImage(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             logger.error("Error soft deleting image via REST API: ", e);
@@ -85,14 +82,17 @@ public class ImageRestController {
     @PostMapping("/{id}/restore")
     public ResponseEntity<Image> restoreImage(@PathVariable Long id) {
         try {
-            Optional<Image> opt = imageRepository.findById(id);
-            if (opt.isEmpty() || !opt.get().isDeleted()) {
+            Optional<Image> opt = imageService.searchDeletedImages(null).stream()
+                    .filter(img -> img.getImageId().equals(id))
+                    .findFirst();
+            if (opt.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
-            Image image = opt.get();
-            image.setDeleted(false);
-            imageRepository.save(image);
-            return ResponseEntity.ok(image);
+            imageService.restoreImage(id);
+            Optional<Image> restored = imageService.searchImages(null).stream()
+                    .filter(img -> img.getImageId().equals(id))
+                    .findFirst();
+            return restored.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
             logger.error("Error restoring image via REST API: ", e);
             return ResponseEntity.status(500).build();
@@ -106,10 +106,10 @@ public class ImageRestController {
     @DeleteMapping("/{id}/permanent")
     public ResponseEntity<Void> permanentlyDeleteImage(@PathVariable Long id) {
         try {
-            if (!imageRepository.existsById(id)) {
+            if (!imageService.searchImages(null).stream().anyMatch(img -> img.getImageId().equals(id))) {
                 return ResponseEntity.notFound().build();
             }
-            imageRepository.deleteById(id);
+            imageService.permanentlyDeleteImage(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             logger.error("Error permanently deleting image via REST API: ", e);

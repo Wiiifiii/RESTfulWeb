@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -21,34 +20,15 @@ public class ImageService {
     private static final Logger logger = LoggerFactory.getLogger(ImageService.class);
     private final ImageRepository imageRepository;
 
-    @Transactional(readOnly = true)
-    public List<Image> getAllActiveImages() {
-        List<Image> images = imageRepository.findAllActive();
-        populateBase64(images);
-        return images;
-    }
-
-    @Transactional(readOnly = true)
-    public List<Image> filterImages(Long id, String owner, String contentType) {
-        List<Image> images = imageRepository.filterImages(id, owner, contentType);
-        populateBase64(images);
-        return images;
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<Image> getImageById(Long id) {
-        Optional<Image> opt = imageRepository.findById(id);
-        opt.ifPresent(this::populateBase64);
-        return opt;
-    }
-
     /**
-     * Search active images by a single search term that can match imageId, owner, or contentType.
+     * Unified search across imageId, owner, and contentType for active images.
      */
     @Transactional(readOnly = true)
     public List<Image> searchImages(String search) {
         if (search == null || search.isBlank()) {
-            return imageRepository.findAllActive();
+            List<Image> images = imageRepository.findAllActive();
+            populateBase64(images);
+            return images;
         }
 
         Long searchId = null;
@@ -60,7 +40,6 @@ public class ImageService {
         }
 
         if (searchId != null) {
-            // Pass both id and text
             List<Image> images = imageRepository.searchImages(searchId, search);
             populateBase64(images);
             return images;
@@ -73,12 +52,14 @@ public class ImageService {
     }
 
     /**
-     * Search deleted images by a single search term that can match imageId, owner, or contentType.
+     * Unified search across imageId, owner, and contentType for deleted images.
      */
     @Transactional(readOnly = true)
     public List<Image> searchDeletedImages(String search) {
         if (search == null || search.isBlank()) {
-            return imageRepository.findAllDeleted();
+            List<Image> images = imageRepository.findAllDeleted();
+            populateBase64(images);
+            return images;
         }
 
         Long searchId = null;
@@ -90,7 +71,6 @@ public class ImageService {
         }
 
         if (searchId != null) {
-            // Pass both id and text
             List<Image> images = imageRepository.searchDeletedImages(searchId, search);
             populateBase64(images);
             return images;
@@ -102,16 +82,35 @@ public class ImageService {
         }
     }
 
+    /**
+     * Fetch an image by its ID if it's not deleted.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Image> getImageById(Long id) {
+        Optional<Image> opt = imageRepository.findById(id);
+        if (opt.isPresent() && !opt.get().isDeleted()) {
+            populateBase64(opt.get());
+            return opt;
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Save (create or update) an image.
+     */
     public Image saveImage(Image image) {
         if (image.getImageId() == null) {
             // New image => set upload date
-            image.setUploadDate(LocalDateTime.now());
+            image.setUploadDate(java.time.LocalDateTime.now());
         }
         Image saved = imageRepository.save(image);
         populateBase64(saved);
         return saved;
     }
 
+    /**
+     * Soft-delete an image by setting its 'deleted' flag to true.
+     */
     public void softDeleteImage(Long id) {
         imageRepository.findById(id).ifPresent(image -> {
             image.setDeleted(true);
@@ -120,6 +119,9 @@ public class ImageService {
         });
     }
 
+    /**
+     * Permanently delete an image from the database.
+     */
     public void permanentlyDeleteImage(Long id) {
         if (imageRepository.existsById(id)) {
             imageRepository.deleteById(id);
@@ -129,20 +131,9 @@ public class ImageService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public List<Image> getAllDeletedImages() {
-        List<Image> images = imageRepository.findAllDeleted();
-        populateBase64(images);
-        return images;
-    }
-
-    @Transactional(readOnly = true)
-    public List<Image> filterDeletedImages(Long id, String owner, String contentType) {
-        List<Image> images = imageRepository.filterDeletedImages(id, owner, contentType);
-        populateBase64(images);
-        return images;
-    }
-
+    /**
+     * Restore a soft-deleted image by setting its 'deleted' flag to false.
+     */
     public void restoreImage(Long id) {
         imageRepository.findById(id).ifPresent(image -> {
             image.setDeleted(false);
@@ -160,20 +151,25 @@ public class ImageService {
         return contentTypes;
     }
 
-    // Helper to populate base64 for a single or list
+    /**
+     * Populate Base64 data for a single image.
+     */
     private void populateBase64(Image img) {
         if (img.getData() != null && img.getContentType() != null) {
             if (img.getContentType().startsWith("image/")) {
                 String encoded = Base64.getEncoder().encodeToString(img.getData());
                 img.setBase64Data(encoded);
             } else {
-                img.setBase64Data(null); // Not an image, no base64 data needed
+                img.setBase64Data(null); // Not an image
             }
         } else {
             img.setBase64Data(null); // No data or content type
         }
     }
 
+    /**
+     * Populate Base64 data for a list of images.
+     */
     private void populateBase64(List<Image> images) {
         for (Image img : images) {
             populateBase64(img);
