@@ -175,7 +175,7 @@
                             <sec:authorize access="hasRole('ADMIN')">
                                 <button type="button"
                                         class="btn btn-danger btn-sm delete-permanent-button"
-                                        th:data-delete-url="@{'/web/images/delete-permanent/' + ${img.imageId}}"
+                                        th:data-delete-url="@{'/web/imagesTr/delete-permanent/' + ${img.imageId}}"
                                         data-item-type="Image"
                                         th:data-item-details="${img.title != null ? img.title : 'File'}">
                                     <i class="fas fa-trash-alt"></i>
