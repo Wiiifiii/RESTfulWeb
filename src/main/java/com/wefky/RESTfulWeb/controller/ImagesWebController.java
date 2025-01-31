@@ -5,7 +5,8 @@ import com.wefky.RESTfulWeb.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.access.annotation.Secured; // Ensure this import is present
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -265,8 +266,10 @@ public class ImagesWebController {
 
     /**
      * Soft-delete an image.
+     * Changed from @GetMapping to @PostMapping for better security.
      */
-    @GetMapping("/delete/{id}")
+    @Secured("ROLE_ADMIN") // Ensures only Admins can access
+    @PostMapping("/delete/{id}")
     public String softDelete(@PathVariable Long id, @RequestParam(required = false) String search, RedirectAttributes ra) {
         try {
             imageService.softDeleteImage(id);
@@ -277,7 +280,7 @@ public class ImagesWebController {
         }
 
         String redirectUrl = "/web/images";
-        if (search != null && !search.isEmpty()) {
+        if (search != null && !search.trim().isEmpty() && !"null".equalsIgnoreCase(search.trim())) {
             redirectUrl += "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
         }
         return "redirect:" + redirectUrl;
@@ -287,7 +290,7 @@ public class ImagesWebController {
      * Restore a soft-deleted image.
      * Accessible to users with ROLE_ADMIN.
      */
- 
+    @Secured("ROLE_ADMIN")
     @PostMapping("/restore/{id}")
     public String restore(@PathVariable Long id, @RequestParam(required = false) String search, RedirectAttributes ra) {
         try {
@@ -308,6 +311,7 @@ public class ImagesWebController {
     /**
      * Permanently delete an image. ADMIN ONLY
      */
+
     @Secured("ROLE_ADMIN")
     @PostMapping("/delete-permanent/{id}")
     public String permanentlyDelete(@PathVariable Long id, @RequestParam(required = false) String search, RedirectAttributes ra) {

@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      class="dark-theme">
 <head>
     <title>Files/Images</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSRF Meta Tags -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <!-- FontAwesome -->
@@ -13,211 +18,241 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">RESTful App</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav" aria-controls="navbarNav"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}">
-                        <i class="fas fa-home"></i> Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/web/locations}">
-                        <i class="fas fa-map-marker-alt"></i> Locations
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/web/measurements}">
-                        <i class="fas fa-ruler"></i> Measurements
-                    </a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/web/images}">
-                        <i class="fas fa-image"></i> Images
-                    </a>
-                </li>
-            </ul>
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">
-                        <i class="fas fa-sign-out-alt"></i> Sign Out
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<div class="container py-4 flex-grow-1">
-    <h2>Files / Images</h2>
-
-    <!-- Flash messages -->
-    <div th:if="${success}" class="alert alert-success" role="alert"
-         th:text="${success}"></div>
-    <div th:if="${error}" class="alert alert-danger" role="alert"
-         th:text="${error}"></div>
-
-    <!-- Unified Search form -->
-    <form th:action="@{/web/images}" method="get" class="mb-3">
-        <div class="row g-3 align-items-end">
-            <div class="col-md-6">
-                <label for="search" class="form-label">Search</label>
-                <input type="text" id="search" name="search"
-                       class="form-control"
-                       th:value="${search}" 
-                       placeholder="Search by ID, Owner, or Content Type" />
-            </div>
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search"></i> Search
-                </button>
-                <button type="button" class="btn btn-secondary"
-                        onclick="window.location.href='/web/images'">
-                    <i class="fas fa-times"></i> Clear
-                </button>
-            </div>
-        </div>
-    </form>
-
-    <div class="mb-4">
-        <a th:href="@{/web/images/new(search=${search})}" class="btn btn-success">
-            <i class="fas fa-plus"></i> Add New
-        </a>
-        <a th:href="@{/web/images/trash(search=${search})}" class="btn btn-secondary">
-            <i class="fas fa-trash"></i> View Trash
-        </a>
-    </div>
-
-    <!-- Table of images -->
-    <div class="table-responsive" th:if="${images != null and !#lists.isEmpty(images)}">
-        <table class="table table-striped align-middle text-white">
-            <thead class="bg-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Preview / Icon</th>
-                    <th>Owner</th>
-                    <th>Title</th>
-                    <th>Content Type</th>
-                    <th>Upload Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="img : ${images}">
-                    <td th:text="${img.imageId}"></td>
-                    <td style="width:120px;">
-                        <th:block th:if="${img.contentType != null}">
-                            <th:block th:if="${img.contentType.startsWith('image/')}">
-                                <img th:if="${img.base64Data}"
-                                     th:src="${'data:' + img.contentType + ';base64,' + img.base64Data}"
-                                     class="img-thumbnail img-thumb" />
-                            </th:block>
-                            <th:block th:if="${img.contentType == 'application/pdf'}">
-                                <i class="fas fa-file-pdf fa-2x"></i>
-                            </th:block>
-                            <th:block th:if="${img.contentType == 'application/msword'}">
-                                <i class="fas fa-file-word fa-2x"></i>
-                            </th:block>
-                        </th:block>
-                    </td>
-                    <td th:text="${img.owner != null ? img.owner : 'N/A'}"></td>
-                    <td th:text="${img.title != null ? img.title : 'No Title'}"></td>
-                    <td th:text="${img.contentType}"></td>
-                    <td th:text="${#temporals.format(img.uploadDate, 'yyyy-MM-dd HH:mm')}"></td>
-                    <td>
-                        <div class="btn-group">
-                            <!-- View (modal) -->
-                            <button type="button"
-                                    class="btn btn-info btn-sm"
-                                    data-bs-toggle="modal"
-                                    th:data-bs-target="'#viewModal__' + ${img.imageId}">
-                                <i class="fas fa-eye"></i>
-                            </button>
-
-                            <!-- Edit -->
-                            <a th:href="@{/web/images/edit/{id}(id=${img.imageId}, search=${search})}"
-                               class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">RESTful App</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <!-- Active if currentUri == "/" -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/}"
+                           th:classappend="${currentUri == '/' ? 'active' : ''}">
+                           <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <!-- Active if route starts with /web/locations -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/web/locations}"
+                           th:classappend="${currentUri.startsWith('/web/locations') ? 'active' : ''}">
+                           <i class="fas fa-map-marker-alt"></i> Locations
+                        </a>
+                    </li>
+                    <!-- Active if route starts with /web/measurements -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/web/measurements}"
+                           th:classappend="${currentUri.startsWith('/web/measurements') ? 'active' : ''}">
+                           <i class="fas fa-ruler"></i> Measurements
+                        </a>
+                    </li>
+                    <!-- Active if route starts with /web/images -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/web/images}"
+                           th:classappend="${currentUri.startsWith('/web/images') ? 'active' : ''}">
+                           <i class="fas fa-image"></i> Images
+                        </a>
+                    </li>
+                    <!-- Admin Dashboard for admin only -->
+                    <sec:authorize access="hasRole('ADMIN')">
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               th:href="@{/admin}">
+                               <i class="fas fa-user-shield"></i> Admin Dashboard
                             </a>
+                        </li>
+                    </sec:authorize>
+                </ul>
+                      <!-- Display Username and Role -->
+                      <li class="nav-item">
+                        <span class="navbar-text me-3" sec:authorize="isAuthenticated()">
+                            Signed in as: <strong th:text="${#authentication.name}">User</strong>
+                            <span sec:authorize="hasRole('ADMIN')" class="badge bg-primary ms-2">Admin</span>
+                            <span sec:authorize="hasRole('USER')" class="badge bg-secondary ms-2">User</span>
+                        </span>
+                    </li>
+                <ul class="navbar-nav">
+                    <!-- Sign Out -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-                            <!-- Soft Delete -->
-                            <button type="button"
-                                    class="btn btn-danger btn-sm delete-button"
-                                    th:data-delete-url="@{'/web/images/delete/' + ${img.imageId} + '?search=' + ${search}}"
-                                    data-item-type="Image"
-                                    th:data-item-details="${img.title != null ? img.title : 'File'}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="container py-4 flex-grow-1">
+        <h2>Files / Images</h2>
 
-        <!-- "View" modals for each row -->
-        <div th:each="img : ${images}">
-            <div class="modal fade"
-                 th:id="'viewModal__' + ${img.imageId}"
-                 tabindex="-1"
-                 aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content bg-dark text-white">
-                        <div class="modal-header">
-                            <h5 class="modal-title"
-                                th:text="'Preview: ' + (img.title != null ? img.title : 'Image')"></h5>
-                            <button type="button"
-                                    class="btn-close btn-close-white"
-                                    data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body text-center">
+        <!-- Flash messages -->
+        <div th:if="${success}" class="alert alert-success" role="alert"
+             th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" role="alert"
+             th:text="${error}"></div>
+
+        <!-- Unified Search form -->
+        <form th:action="@{/web/images}" method="get" class="mb-3">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label for="search" class="form-label">Search</label>
+                    <input type="text" id="search" name="search"
+                           class="form-control"
+                           th:value="${search}" 
+                           placeholder="Search by ID, Owner, or Content Type" />
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <button type="button" class="btn btn-secondary"
+                            onclick="window.location.href='/web/images'">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="mb-4">
+            <a th:href="@{/web/images/new(search=${search})}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Add New
+            </a>
+            <a th:href="@{/web/images/trash(search=${search})}" class="btn btn-secondary">
+                <i class="fas fa-trash"></i> View Trash
+            </a>
+        </div>
+
+        <!-- Table of images -->
+        <div class="table-responsive" th:if="${images != null and !#lists.isEmpty(images)}">
+            <table class="table table-striped align-middle text-white">
+                <thead class="bg-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Preview / Icon</th>
+                        <th>Owner</th>
+                        <th>Title</th>
+                        <th>Content Type</th>
+                        <th>Upload Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="img : ${images}">
+                        <td th:text="${img.imageId}"></td>
+                        <td style="width:120px;">
                             <th:block th:if="${img.contentType != null}">
                                 <th:block th:if="${img.contentType.startsWith('image/')}">
                                     <img th:if="${img.base64Data}"
                                          th:src="${'data:' + img.contentType + ';base64,' + img.base64Data}"
-                                         class="img-fluid" />
+                                         class="img-thumbnail img-thumb" />
                                 </th:block>
                                 <th:block th:if="${img.contentType == 'application/pdf'}">
-                                    <iframe th:src="${'data:application/pdf;base64,' + img.base64Data}"
-                                            style="width:100%;height:500px;" frameborder="0">
-                                        PDF file preview not available.
-                                    </iframe>
+                                    <i class="fas fa-file-pdf fa-2x"></i>
                                 </th:block>
-                                
                                 <th:block th:if="${img.contentType == 'application/msword'}">
-                                    <p><i class="fas fa-file-word fa-2x"></i> Word file preview not available.</p>
+                                    <i class="fas fa-file-word fa-2x"></i>
                                 </th:block>
                             </th:block>
-                            <p class="mt-3" th:text="${img.description}"></p>
+                        </td>
+                        <td th:text="${img.owner != null ? img.owner : 'N/A'}"></td>
+                        <td th:text="${img.title != null ? img.title : 'No Title'}"></td>
+                        <td th:text="${img.contentType}"></td>
+                        <td th:text="${#temporals.format(img.uploadDate, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td>
+                            <div class="btn-group">
+                                <!-- View (modal) -->
+                                <button type="button"
+                                        class="btn btn-info btn-sm"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#viewModal__' + ${img.imageId}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+
+                                <!-- Edit -->
+                                <a th:href="@{/web/images/edit/{id}(id=${img.imageId}, search=${search})}"
+                                   class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <!-- Soft Delete -->
+                                <button type="button"
+                                        class="btn btn-danger btn-sm delete-button"
+                                        th:data-delete-url="@{'/web/images/delete/' + ${img.imageId} + '?search=' + ${search}}"
+                                        data-item-type="Image"
+                                        th:data-item-details="${img.title != null ? img.title : 'File'}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- "View" modals for each row -->
+            <div th:each="img : ${images}">
+                <div class="modal fade"
+                     th:id="'viewModal__' + ${img.imageId}"
+                     tabindex="-1"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content bg-dark text-white">
+                            <div class="modal-header">
+                                <h5 class="modal-title"
+                                    th:text="'Preview: ' + (img.title != null ? img.title : 'Image')"></h5>
+                                <button type="button"
+                                        class="btn-close btn-close-white"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <th:block th:if="${img.contentType != null}">
+                                    <th:block th:if="${img.contentType.startsWith('image/')}">
+                                        <img th:if="${img.base64Data}"
+                                             th:src="${'data:' + img.contentType + ';base64,' + img.base64Data}"
+                                             class="img-fluid" />
+                                    </th:block>
+                                    <th:block th:if="${img.contentType == 'application/pdf'}">
+                                        <iframe th:src="${'data:application/pdf;base64,' + img.base64Data}"
+                                                style="width:100%;height:500px;" frameborder="0">
+                                            PDF file preview not available.
+                                        </iframe>
+                                    </th:block>
+                                    
+                                    <th:block th:if="${img.contentType == 'application/msword'}">
+                                        <p><i class="fas fa-file-word fa-2x"></i> Word file preview not available.</p>
+                                    </th:block>
+                                </th:block>
+                                <p class="mt-3" th:text="${img.description}"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
+        <div th:if="${images == null or #lists.isEmpty(images)}" class="mt-4 text-center">
+            <p>No files found.</p>
+        </div>
     </div>
 
-    <div th:if="${images == null or #lists.isEmpty(images)}" class="mt-4 text-center">
-        <p>No files found.</p>
-    </div>
-</div>
+    <footer class="mt-auto bg-dark text-white text-center py-3">
+        <p>&copy; 2025 RESTful App. All rights reserved.</p>
+    </footer>
 
-<footer class="mt-auto bg-dark text-white text-center py-3">
-    <p>&copy; 2025 RESTful App. All rights reserved.</p>
-</footer>
-
-<!-- Bootstrap JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- Custom JS -->
-<script th:src="@{/js/scripts.js}"></script>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Custom JS -->
+    <script th:src="@{/js/scripts.js}"></script>
 </body>
 </html>

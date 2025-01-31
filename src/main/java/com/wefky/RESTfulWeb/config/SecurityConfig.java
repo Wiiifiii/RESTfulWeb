@@ -8,6 +8,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -45,7 +46,11 @@ public class SecurityConfig {
 
                 // ADMIN routes
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/web/images/delete-permanent/**", "/web/locations/delete-permanent/**", "/web/measurements/delete-permanent/**").hasRole("ADMIN")
+                // Allow POST requests to delete endpoints for Admins
+                .requestMatchers(HttpMethod.POST, "/web/images/delete/**",
+                        "/web/images/delete-permanent/**",
+                        "/web/locations/delete-permanent/**",
+                        "/web/measurements/delete-permanent/**").hasRole("ADMIN")
 
                 // API routes require authentication
                 .requestMatchers("/api/**").authenticated()

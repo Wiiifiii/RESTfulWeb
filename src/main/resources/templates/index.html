@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" class="dark-theme">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      class="dark-theme">
 <head>
     <title>Home - RESTful App</title>
     <meta charset="UTF-8">
@@ -65,6 +67,14 @@
                     </li>
                 </sec:authorize>
             </ul>
+                  <!-- Display Username and Role -->
+                  <li class="nav-item">
+                    <span class="navbar-text me-3" sec:authorize="isAuthenticated()">
+                        Signed in as: <strong th:text="${#authentication.name}">User</strong>
+                        <span sec:authorize="hasRole('ADMIN')" class="badge bg-primary ms-2">Admin</span>
+                        <span sec:authorize="hasRole('USER')" class="badge bg-secondary ms-2">User</span>
+                    </span>
+                </li>
             <ul class="navbar-nav">
                 <!-- Sign Out -->
                 <li class="nav-item">

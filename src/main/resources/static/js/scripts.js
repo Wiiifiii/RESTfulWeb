@@ -1,100 +1,179 @@
 // scripts.js
-document.addEventListener('DOMContentLoaded', function () {
-    // Retrieve CSRF token from hidden input
-    const csrfParamElement = document.querySelector('input[name="_csrf"]');
-    const csrfParam = csrfParamElement ? csrfParamElement.name : '';
-    const csrfToken = csrfParamElement ? csrfParamElement.value : '';
 
-    // Handle soft delete
+document.addEventListener('DOMContentLoaded', function () {
+    // Function to get CSRF token and header from meta tags
+    function getCsrfToken() {
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        return { csrfToken, csrfHeader };
+    }
+
+    // Handle Soft Delete Buttons
     const deleteButtons = document.querySelectorAll('.delete-button');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const deleteUrl = this.getAttribute('data-delete-url');
-            const itemType = this.getAttribute('data-item-type');
-            const itemDetails = this.getAttribute('data-item-details');
+    deleteButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const deleteUrl = button.getAttribute('data-delete-url');
+            const itemType = button.getAttribute('data-item-type');
+            const itemDetails = button.getAttribute('data-item-details');
 
             Swal.fire({
-                title: 'Are you sure?',
-                text: `Do you want to delete the ${itemType}: ${itemDetails}?`,
+                title: `Are you sure you want to delete this ${itemType}?`,
+                text: `Item: ${itemDetails}`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, delete it!',
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = deleteUrl;
+                    // Perform the delete operation via AJAX POST request
+                    const { csrfToken, csrfHeader } = getCsrfToken();
+
+                    fetch(deleteUrl, {
+                        method: 'POST', // Changed to POST
+                        headers: {
+                            [csrfHeader]: csrfToken,
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        credentials: 'same-origin' // Include cookies
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            // If redirected, navigate to the new URL
+                            window.location.href = response.url;
+                        } else if (response.ok) {
+                            Swal.fire(
+                                'Deleted!',
+                                'The file has been deleted.',
+                                'success'
+                            ).then(() => {
+                                // Reload the page to reflect changes
+                                window.location.reload();
+                            });
+                        } else {
+                            return response.text().then(text => { throw new Error(text) });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Error!',
+                            `Failed to delete the file: ${error.message}`,
+                            'error'
+                        );
+                    });
                 }
             });
         });
     });
 
-    // Handle restore
-    const restoreButtons = document.querySelectorAll('.restore-button');
-    restoreButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const restoreUrl = this.getAttribute('data-restore-url');
-            const itemType = this.getAttribute('data-item-type');
-            const itemDetails = this.getAttribute('data-item-details');
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: `Do you want to restore the ${itemType}: ${itemDetails}?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, restore it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Create a form to submit POST request
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = restoreUrl;
-
-                    // Add CSRF token
-                    const csrfInput = document.createElement('input');
-                    csrfInput.type = 'hidden';
-                    csrfInput.name = csrfParam;
-                    csrfInput.value = csrfToken;
-                    form.appendChild(csrfInput);
-
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            });
-        });
-    });
-
-    // Handle permanent delete
+    // Handle Permanently Delete Buttons (ADMIN ONLY)
     const deletePermanentButtons = document.querySelectorAll('.delete-permanent-button');
-    deletePermanentButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const deleteUrl = this.getAttribute('data-delete-url');
-            const itemType = this.getAttribute('data-item-type');
-            const itemDetails = this.getAttribute('data-item-details');
+    deletePermanentButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const deleteUrl = button.getAttribute('data-delete-url');
+            const itemType = button.getAttribute('data-item-type');
+            const itemDetails = button.getAttribute('data-item-details');
 
             Swal.fire({
-                title: 'Are you absolutely sure?',
-                text: `This action will permanently delete the ${itemType}: ${itemDetails}. This cannot be undone!`,
+                title: `Are you sure you want to permanently delete this ${itemType}?`,
+                text: `Item: ${itemDetails}`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, permanently delete it!',
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Create a form to submit POST request
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = deleteUrl;
+                    // Perform the permanent delete via AJAX POST request
+                    const { csrfToken, csrfHeader } = getCsrfToken();
 
-                    // Add CSRF token
-                    const csrfInput = document.createElement('input');
-                    csrfInput.type = 'hidden';
-                    csrfInput.name = csrfParam;
-                    csrfInput.value = csrfToken;
-                    form.appendChild(csrfInput);
+                    fetch(deleteUrl, {
+                        method: 'POST', // Changed from DELETE to POST for form compatibility
+                        headers: {
+                            [csrfHeader]: csrfToken,
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        credentials: 'same-origin' // Include cookies
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            // If redirected, navigate to the new URL
+                            window.location.href = response.url;
+                        } else if (response.ok) {
+                            Swal.fire(
+                                'Permanently Deleted!',
+                                'The file has been permanently deleted.',
+                                'success'
+                            ).then(() => {
+                                // Reload the page to reflect changes
+                                window.location.reload();
+                            });
+                        } else {
+                            return response.text().then(text => { throw new Error(text) });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Error!',
+                            `Failed to permanently delete the file: ${error.message}`,
+                            'error'
+                        );
+                    });
+                }
+            });
+        });
+    });
 
-                    document.body.appendChild(form);
-                    form.submit();
+    // Handle Restore Buttons
+    const restoreButtons = document.querySelectorAll('.restore-button');
+    restoreButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const restoreUrl = button.getAttribute('data-restore-url');
+            const itemType = button.getAttribute('data-item-type');
+            const itemDetails = button.getAttribute('data-item-details');
+
+            Swal.fire({
+                title: `Are you sure you want to restore this ${itemType}?`,
+                text: `Item: ${itemDetails}`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, restore it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Perform the restore operation via AJAX POST request
+                    const { csrfToken, csrfHeader } = getCsrfToken();
+
+                    fetch(restoreUrl, {
+                        method: 'POST',
+                        headers: {
+                            [csrfHeader]: csrfToken,
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        credentials: 'same-origin' // Include cookies
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            // If redirected, navigate to the new URL
+                            window.location.href = response.url;
+                        } else if (response.ok) {
+                            Swal.fire(
+                                'Restored!',
+                                'The file has been restored.',
+                                'success'
+                            ).then(() => {
+                                // Reload the page to reflect changes
+                                window.location.reload();
+                            });
+                        } else {
+                            return response.text().then(text => { throw new Error(text) });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Error!',
+                            `Failed to restore the file: ${error.message}`,
+                            'error'
+                        );
+                    });
                 }
             });
         });

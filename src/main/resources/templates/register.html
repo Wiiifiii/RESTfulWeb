@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" class="dark-theme">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      class="dark-theme">
 <head>
     <title>Register</title>
     <meta charset="UTF-8">
@@ -12,26 +14,65 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">RESTful App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav"
+                    aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
+                    <!-- Active if currentUri == "/" -->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Home</a>
+                        <a class="nav-link"
+                           th:href="@{/}"
+                           th:classappend="${currentUri == '/' ? 'active' : ''}">
+                           <i class="fas fa-home"></i> Home
+                        </a>
                     </li>
+                    <!-- Active if route starts with /web/locations -->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/locations}">Locations</a>
+                        <a class="nav-link"
+                           th:href="@{/web/locations}"
+                           th:classappend="${currentUri.startsWith('/web/locations') ? 'active' : ''}">
+                           <i class="fas fa-map-marker-alt"></i> Locations
+                        </a>
                     </li>
+                    <!-- Active if route starts with /web/measurements -->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/measurements}">Measurements</a>
+                        <a class="nav-link"
+                           th:href="@{/web/measurements}"
+                           th:classappend="${currentUri.startsWith('/web/measurements') ? 'active' : ''}">
+                           <i class="fas fa-ruler"></i> Measurements
+                        </a>
                     </li>
+                    <!-- Active if route starts with /web/images -->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/images}">Images</a>
+                        <a class="nav-link"
+                           th:href="@{/web/images}"
+                           th:classappend="${currentUri.startsWith('/web/images') ? 'active' : ''}">
+                           <i class="fas fa-image"></i> Images
+                        </a>
                     </li>
+                    <!-- Admin Dashboard for admin only -->
+                    <sec:authorize access="hasRole('ADMIN')">
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               th:href="@{/admin}">
+                               <i class="fas fa-user-shield"></i> Admin Dashboard
+                            </a>
+                        </li>
+                    </sec:authorize>
                 </ul>
+                      <!-- Display Username and Role -->
+                      <li class="nav-item">
+                        <span class="navbar-text me-3" sec:authorize="isAuthenticated()">
+                            Signed in as: <strong th:text="${#authentication.name}">User</strong>
+                            <span sec:authorize="hasRole('ADMIN')" class="badge bg-primary ms-2">Admin</span>
+                            <span sec:authorize="hasRole('USER')" class="badge bg-secondary ms-2">User</span>
+                        </span>
+                    </li>
                 <ul class="navbar-nav">
+                    <!-- Sign Out -->
                     <li class="nav-item">
                         <a class="nav-link" href="/logout">
                             <i class="fas fa-sign-out-alt"></i> Sign Out
@@ -41,7 +82,6 @@
             </div>
         </div>
     </nav>
-
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-md-6">

@@ -79,6 +79,7 @@ public class ImageRestController {
     /**
      * Restore a soft-deleted image by ID.
      */
+    @Secured("ROLE_ADMIN")
     @PostMapping("/{id}/restore")
     public ResponseEntity<Image> restoreImage(@PathVariable Long id) {
         try {

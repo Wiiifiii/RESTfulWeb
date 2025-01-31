@@ -1,7 +1,6 @@
 package com.wefky.RESTfulWeb.config;
 
 import com.wefky.RESTfulWeb.entity.Role;
-import com.wefky.RESTfulWeb.entity.User;
 import com.wefky.RESTfulWeb.repository.RoleRepository;
 import com.wefky.RESTfulWeb.repository.UserRepository;
 import com.wefky.RESTfulWeb.service.UserService;
