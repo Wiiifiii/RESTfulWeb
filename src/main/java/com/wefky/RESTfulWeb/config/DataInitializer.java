@@ -34,9 +34,9 @@ public class DataInitializer {
 
             // Initialize admin user if not present
             if (!userRepository.findByUsername("admin").isPresent()) {
-                boolean created = userService.registerUser("admin", "adminpassword", Set.of("ROLE_ADMIN"));
+                boolean created = userService.registerUser("admin", "admin", Set.of("ROLE_ADMIN"));
                 if (created) {
-                    System.out.println("Admin user created with username 'admin' and password 'adminpassword'.");
+                    System.out.println("Admin user created with username 'admin' and password 'admin'.");
                 }
             }
 

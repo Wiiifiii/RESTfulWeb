@@ -114,7 +114,7 @@ public class LocationWebController {
         }
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String softDeleteLocation(@PathVariable Long id,
                                      RedirectAttributes redirectAttributes) {
         try {
@@ -189,11 +189,11 @@ public class LocationWebController {
         try {
             locationService.permanentlyDeleteLocation(id);
             redirectAttributes.addFlashAttribute("success", "Location permanently deleted!");
-            return "redirect:/";
+            return "redirect:/web/locations/trash";
         } catch (Exception e) {
             logger.error("Error permanently deleting location: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while permanently deleting the location.");
-            return "redirect:/";
+            return "redirect:/web/locations/trash";
         }
     }
 }

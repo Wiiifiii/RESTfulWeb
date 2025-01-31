@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const { csrfToken, csrfHeader } = getCsrfToken();
 
                     fetch(deleteUrl, {
-                        method: 'POST', // Changed to POST for form compatibility
+                        method: 'POST', // Ensure POST method for soft delete
                         headers: {
                             ...(csrfHeader && csrfToken ? { [csrfHeader]: csrfToken } : {}),
                             'Content-Type': 'application/x-www-form-urlencoded'
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const { csrfToken, csrfHeader } = getCsrfToken();
 
                     fetch(deleteUrl, {
-                        method: 'POST', // Changed from DELETE to POST for form compatibility
+                        method: 'POST', // Ensure POST method for hard delete
                         headers: {
                             ...(csrfHeader && csrfToken ? { [csrfHeader]: csrfToken } : {}),
                             'Content-Type': 'application/x-www-form-urlencoded'
