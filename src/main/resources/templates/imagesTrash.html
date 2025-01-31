@@ -179,7 +179,7 @@
                                         th:data-restore-url="@{'/web/images/restore/' + ${img.imageId} + '?search=' + ${search}}"
                                         data-item-type="Image"
                                         th:data-item-details="${img.title != null ? img.title : 'File'}">
-                                    <i class="fas fa-undo"></i>
+                                    <i class="fas fa-undo"></i> Restore
                                 </button>
 
                                 <!-- Permanently Delete (ADMIN ONLY) -->
@@ -189,7 +189,7 @@
                                             th:data-delete-url="@{'/web/images/delete-permanent/' + ${img.imageId} + '?search=' + ${search}}"
                                             data-item-type="Image"
                                             th:data-item-details="${img.title != null ? img.title : 'File'}">
-                                        <i class="fas fa-trash-alt"></i>
+                                        <i class="fas fa-trash-alt"></i> Delete Permanently
                                     </button>
                                 </sec:authorize>
                             </div>

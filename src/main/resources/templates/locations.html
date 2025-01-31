@@ -98,11 +98,11 @@
 
     <!-- Buttons -->
     <div class="mb-4">
-        <a th:href="@{/web/locations/new}" class="btn btn-primary">
+        <a th:href="@{/web/locations/new}" class="btn btn-success">
             <i class="fas fa-plus"></i> Add New Location
         </a>
         <a th:href="@{/web/locations/trash}" class="btn btn-secondary">
-            <i class="fas fa-trash-alt"></i> View Trash
+            <i class="fas fa-trash"></i> View Trash
         </a>
     </div>
 
@@ -155,7 +155,7 @@
 
         <div class="mt-3">
             <button type="submit" class="btn btn-primary">
-                <i class="fas fa-filter"></i> Filter
+                <i class="fas fa-search"></i> Search
             </button>
             <button type="button" class="btn btn-secondary"
                     onclick="window.location.href='/web/locations'">
@@ -189,7 +189,7 @@
                         <!-- Edit -->
                         <a th:href="@{/web/locations/edit/{id}(id=${location.locationId})}"
                            class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i> Edit
+                            <i class="fas fa-edit"></i>
                         </a>
                         <!-- Soft Delete (with SweetAlert) -->
                         <button type="button"
@@ -197,7 +197,7 @@
                                 th:data-delete-url="@{'/web/locations/delete/' + ${location.locationId}}"
                                 data-item-type="Location"
                                 th:data-item-details="${location.cityName != null ? location.cityName : 'this location'}">
-                            <i class="fas fa-trash"></i> Delete
+                            <i class="fas fa-trash"></i> 
                         </button>
                     </div>
                 </td>

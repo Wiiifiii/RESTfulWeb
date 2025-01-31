@@ -268,7 +268,7 @@ public class ImagesWebController {
      * Soft-delete an image.
      * Changed from @GetMapping to @PostMapping for better security.
      */
-    @Secured("ROLE_ADMIN") // Ensures only Admins can access
+  
     @PostMapping("/delete/{id}")
     public String softDelete(@PathVariable Long id, @RequestParam(required = false) String search, RedirectAttributes ra) {
         try {
@@ -290,7 +290,7 @@ public class ImagesWebController {
      * Restore a soft-deleted image.
      * Accessible to users with ROLE_ADMIN.
      */
-    @Secured("ROLE_ADMIN")
+   
     @PostMapping("/restore/{id}")
     public String restore(@PathVariable Long id, @RequestParam(required = false) String search, RedirectAttributes ra) {
         try {

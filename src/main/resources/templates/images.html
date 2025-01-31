@@ -98,6 +98,14 @@
              th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-danger" role="alert"
              th:text="${error}"></div>
+             <div class="mb-4">
+                <a th:href="@{/web/images/new(search=${search})}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Add New Image
+                </a>
+                <a th:href="@{/web/images/trash(search=${search})}" class="btn btn-secondary">
+                    <i class="fas fa-trash"></i> View Trash
+                </a>
+            </div>
 
         <!-- Unified Search form -->
         <form th:action="@{/web/images}" method="get" class="mb-3">
@@ -121,14 +129,6 @@
             </div>
         </form>
 
-        <div class="mb-4">
-            <a th:href="@{/web/images/new(search=${search})}" class="btn btn-success">
-                <i class="fas fa-plus"></i> Add New
-            </a>
-            <a th:href="@{/web/images/trash(search=${search})}" class="btn btn-secondary">
-                <i class="fas fa-trash"></i> View Trash
-            </a>
-        </div>
 
         <!-- Table of images -->
         <div class="table-responsive" th:if="${images != null and !#lists.isEmpty(images)}">

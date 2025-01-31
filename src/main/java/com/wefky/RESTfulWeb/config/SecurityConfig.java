@@ -42,12 +42,12 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
                 // Public routes
-                .requestMatchers("/login", "/register", "/saveUser", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                .requestMatchers("/login", "/register", "/saveUser", "/css/**", "/js/**", "/images/**","/locations/**","/measurments/**", "/favicon.ico").permitAll()
 
                 // ADMIN routes
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Allow POST requests to delete endpoints for Admins
-                .requestMatchers(HttpMethod.POST, "/web/images/delete/**",
+                .requestMatchers(HttpMethod.POST,
                         "/web/images/delete-permanent/**",
                         "/web/locations/delete-permanent/**",
                         "/web/measurements/delete-permanent/**").hasRole("ADMIN")

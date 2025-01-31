@@ -72,22 +72,20 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-
-<dependency>
-
-        <groupId>javax.servlet</groupId>
-
-        <artifactId>javax.servlet-api</artifactId>
-
-        <version>4.0.1</version>
-
-        <scope>provided</scope>
-
-    </dependency>
-    <dependency>
-    <groupId>org.thymeleaf.extras</groupId>
-    <artifactId>thymeleaf-extras-springsecurity6</artifactId> <!-- Use 'springsecurity6' if applicable -->
-</dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId> 
+        </dependency>
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+        </dependency>
 
     </dependencies>
 
