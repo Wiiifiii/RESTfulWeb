@@ -24,6 +24,7 @@ public class MeasurementService {
         return measurementRepository.findAllActive();
     }
 
+    // Use the native query for filtering active measurements
     @Transactional(readOnly = true)
     public List<Measurement> filterMeasurements(String measurementUnit, LocalDateTime startDate, LocalDateTime endDate, String cityName) {
         return measurementRepository.filterMeasurementsNative(measurementUnit, startDate, endDate, cityName);
@@ -74,6 +75,6 @@ public class MeasurementService {
 
     @Transactional(readOnly = true)
     public List<Measurement> filterDeletedMeasurements(String measurementUnit, LocalDateTime start, LocalDateTime end, String cityName) {
-        return measurementRepository.filterDeletedMeasurements(measurementUnit, start, end, cityName);
+        return measurementRepository.findAllDeleted(measurementUnit, start, end, cityName);
     }
 }

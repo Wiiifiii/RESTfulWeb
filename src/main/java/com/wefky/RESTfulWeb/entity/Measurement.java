@@ -36,8 +36,8 @@ public class Measurement {
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id_fk")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "location_id", referencedColumnName = "location_id")
     private Location location;
 
     @Column(name = "deleted", nullable = false)
