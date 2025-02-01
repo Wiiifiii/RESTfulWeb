@@ -5,8 +5,7 @@ import com.wefky.RESTfulWeb.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.access.annotation.Secured; // Ensure this import is present
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +21,40 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller for handling web requests related to images.
+ * Provides endpoints for listing, viewing, creating, editing, deleting, and restoring images.
+ * 
+ * Endpoints:
+ * - GET /web/images: List active images, possibly filtered by a search term.
+ * - GET /web/images/trash: View deleted images, possibly filtered by a search term.
+ * - GET /web/images/new: Show form for creating a new image.
+ * - GET /web/images/edit/{id}: Show form for editing an existing image.
+ * - POST /web/images/save: Save (create/update) an image.
+ * - POST /web/images/delete/{id}: Soft-delete an image.
+ * - POST /web/images/restore/{id}: Restore a soft-deleted image.
+ * - POST /web/images/delete-permanent/{id}: Permanently delete an image (ADMIN ONLY).
+ * 
+ * Dependencies:
+ * - ImageService: Service for handling image-related operations.
+ * - Logger: Logger for logging errors and information.
+ * 
+ * Annotations:
+ * - @Controller: Indicates that this class serves as a web controller.
+ * - @RequestMapping("/web/images"): Maps requests to /web/images to this controller.
+ * - @RequiredArgsConstructor: Generates a constructor with required arguments (final fields).
+ * - @Secured("ROLE_ADMIN"): Restricts access to methods to users with the ROLE_ADMIN authority.
+ * 
+ * Methods:
+ * - listImages: Lists active images, possibly filtered by a search term.
+ * - viewTrash: Lists deleted images, possibly filtered by a search term.
+ * - newImageForm: Shows the form for creating a new image.
+ * - editImageForm: Shows the form for editing an existing image.
+ * - saveImage: Saves (creates/updates) an image.
+ * - softDelete: Soft-deletes an image.
+ * - restore: Restores a soft-deleted image.
+ * - permanentlyDelete: Permanently deletes an image (ADMIN ONLY).
+ */
 @Controller
 @RequestMapping("/web/images")
 @RequiredArgsConstructor

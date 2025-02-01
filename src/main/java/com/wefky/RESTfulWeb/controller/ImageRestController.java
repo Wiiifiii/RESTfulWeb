@@ -12,6 +12,34 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST controller for managing images.
+ * Provides endpoints to get, soft-delete, restore, and permanently delete images.
+ * 
+ * Endpoints:
+ * - GET /api/images: Get all active images or search by a single query parameter.
+ * - GET /api/images/{id}: Get a specific image by ID.
+ * - DELETE /api/images/{id}: Soft-delete an image by ID.
+ * - POST /api/images/{id}/restore: Restore a soft-deleted image by ID (Admin only).
+ * - DELETE /api/images/{id}/permanent: Permanently delete an image by ID (Admin only).
+ * 
+ * Dependencies:
+ * - ImageService: Service layer for image operations.
+ * - Logger: For logging errors and information.
+ * 
+ * Annotations:
+ * - @RestController: Indicates that this class is a REST controller.
+ * - @RequestMapping("/api/images"): Maps HTTP requests to /api/images to this controller.
+ * - @RequiredArgsConstructor: Generates a constructor with required arguments (final fields).
+ * - @Secured("ROLE_ADMIN"): Restricts access to methods to users with the ROLE_ADMIN authority.
+ * 
+ * Methods:
+ * - getAllImages(String search): Fetches all active images or searches by a query parameter.
+ * - getImageById(Long id): Fetches a specific image by its ID.
+ * - softDeleteImage(Long id): Soft-deletes an image by its ID.
+ * - restoreImage(Long id): Restores a soft-deleted image by its ID (Admin only).
+ * - permanentlyDeleteImage(Long id): Permanently deletes an image by its ID (Admin only).
+ */
 @RestController
 @RequestMapping("/api/images")
 @RequiredArgsConstructor

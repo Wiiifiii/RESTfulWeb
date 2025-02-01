@@ -15,6 +15,38 @@ import java.util.Optional;
 /**
  * REST Controller for managing Locations via API.
  */
+/**
+ * REST controller for managing locations.
+ * Provides endpoints for CRUD operations and filtering on locations.
+ * 
+ * Endpoints:
+ * - GET /api/locations: Retrieve all active locations with optional filters.
+ * - GET /api/locations/{id}: Retrieve a location by its ID.
+ * - POST /api/locations: Create a new location.
+ * - PUT /api/locations/{id}: Update an existing location.
+ * - DELETE /api/locations/{id}: Soft delete a location.
+ * - POST /api/locations/{id}/restore: Restore a soft-deleted location.
+ * - DELETE /api/locations/{id}/permanent: Permanently delete a location (Admin only).
+ * 
+ * Dependencies:
+ * - LocationRepository: Repository for accessing location data.
+ * - Logger: Logger for logging information and errors.
+ * 
+ * Annotations:
+ * - @RestController: Indicates that this class is a REST controller.
+ * - @RequestMapping("/api/locations"): Maps HTTP requests to /api/locations to this controller.
+ * - @RequiredArgsConstructor: Generates a constructor with required arguments (final fields).
+ * - @Secured("ROLE_ADMIN"): Secures the endpoint to be accessible only by users with ROLE_ADMIN.
+ * 
+ * Methods:
+ * - getAllLocations: Retrieves all active locations with optional filters for city name, postal code, latitude minimum, and latitude maximum.
+ * - getLocation: Retrieves a location by its ID. Returns 404 if the location is not found or is deleted.
+ * - createLocation: Creates a new location. Sets the location ID to null and deleted flag to false before saving.
+ * - updateLocation: Updates an existing location by its ID. Returns 404 if the location is not found or is deleted.
+ * - softDeleteLocation: Soft deletes a location by setting its deleted flag to true. Returns 404 if the location is not found or is already deleted.
+ * - restoreLocation: Restores a soft-deleted location by setting its deleted flag to false. Returns 404 if the location is not found or is not deleted.
+ * - permanentlyDeleteLocation: Permanently deletes a location by its ID. Returns 404 if the location is not found. Accessible only by users with ROLE_ADMIN.
+ */
 @RestController
 @RequestMapping("/api/locations")
 @RequiredArgsConstructor
@@ -87,7 +119,6 @@ public class LocationRestController {
         existing.setCityName(updated.getCityName());
         existing.setLatitude(updated.getLatitude());
         existing.setLongitude(updated.getLongitude());
-        // ensure 'deleted' is not toggled here
         locationRepository.save(existing);
         return ResponseEntity.ok(existing);
     }

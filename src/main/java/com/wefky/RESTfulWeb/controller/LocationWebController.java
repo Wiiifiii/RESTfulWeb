@@ -15,6 +15,27 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * LocationWebController is a Spring MVC controller that handles web requests related to locations.
+ * It provides methods to list, create, edit, delete, and restore locations.
+ * 
+ * Annotations:
+ * - @Controller: Indicates that this class serves as a controller in the Spring MVC framework.
+ * - @RequestMapping("/web/locations"): Maps HTTP requests to handler methods of this controller.
+ * - @RequiredArgsConstructor: Generates a constructor with required arguments (final fields).
+ * 
+ * Methods:
+ * - listLocations: Handles GET requests to list locations with optional filters.
+ * - newLocationForm: Handles GET requests to display a form for creating a new location.
+ * - editLocationForm: Handles GET requests to display a form for editing an existing location.
+ * - saveLocation: Handles POST requests to save a new or edited location.
+ * - softDeleteLocation: Handles POST requests to soft delete a location.
+ * - viewTrash: Handles GET requests to view soft-deleted locations with optional filters.
+ * - restoreLocation: Handles POST requests to restore a soft-deleted location.
+ * - permanentlyDeleteLocation: Handles POST requests to permanently delete a location (requires admin role).
+ * 
+ * Each method includes error handling and logging to ensure that any issues are properly recorded and communicated to the user.
+ */
 @Controller
 @RequestMapping("/web/locations")
 @RequiredArgsConstructor

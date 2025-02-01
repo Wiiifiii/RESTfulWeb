@@ -13,6 +13,43 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+/**
+ * Security configuration class for the RESTful web application.
+ * This class configures authentication, authorization, and security settings.
+ * 
+ * Annotations:
+ * - @Configuration: Indicates that this class is a configuration class.
+ * - @EnableGlobalMethodSecurity: Enables method-level security with secured and pre/post annotations.
+ * 
+ * Beans:
+ * - BCryptPasswordEncoder: Provides a password encoder bean using BCrypt hashing algorithm.
+ * - AuthenticationProvider: Configures the authentication provider with user details service and password encoder.
+ * - SecurityFilterChain: Configures the security filter chain with authentication, authorization, and other security settings.
+ * - AccessDeniedHandler: Handles access denied exceptions by redirecting to a custom access-denied page.
+ * 
+ * Security Settings:
+ * - Public routes: Allows access to login, register, static resources, and access-denied page without authentication.
+ * - ADMIN routes: Restricts access to /admin/** endpoints to users with ADMIN role.
+ * - POST requests for delete-permanent endpoints: Restricts access to users with ADMIN role.
+ * - POST requests for delete (soft delete) endpoints: Requires authentication.
+ * - API routes: Requires authentication for /api/** endpoints.
+ * - Web routes: Requires authentication for /web/** endpoints.
+ * - Any other request: Requires authentication.
+ * 
+ * Form Login:
+ * - Configures form login with custom login page and default success URL.
+ * 
+ * Logout:
+ * - Configures logout with custom logout URL and success URL.
+ * 
+ * Access Denied Handling:
+ * - Redirects to custom access-denied page on access denied exceptions.
+ * 
+ * CSRF:
+ * - Disables CSRF protection for API endpoints.
+ * 
+ * @param myUserDetailsService The user details service for loading user-specific data.
+ */
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {

@@ -16,24 +16,53 @@ import java.util.Set;
 /**
  * Initializes roles and admin user on application startup.
  */
+/**
+ * DataInitializer is a configuration class that initializes roles and an admin user 
+ * in the database upon application startup. It ensures that the necessary roles 
+ * and users are present for the application to function correctly.
+ * 
+ * <p>This class uses the following components:
+ * <ul>
+ *   <li>{@link UserService} - Service for user-related operations</li>
+ *   <li>{@link RoleRepository} - Repository for role-related database operations</li>
+ *   <li>{@link UserRepository} - Repository for user-related database operations</li>
+ * </ul>
+ * 
+ * <p>The initialization logic is executed by a {@link CommandLineRunner} bean, which:
+ * <ul>
+ *   <li>Ensures that the "ROLE_USER" role exists in the database, creating it if necessary</li>
+ *   <li>Creates an admin user with the username "admin" and password "admin" if it does not already exist</li>
+ *   <li>Assigns the "ROLE_USER" role to all users who do not have any roles assigned, except for the admin user</li>
+ * </ul>
+ * 
+ * <p>Logging is performed using a {@link Logger} to provide information about the initialization process.
+ * 
+ * @see UserService
+ * @see RoleRepository
+ * @see UserRepository
+ * @see CommandLineRunner
+ */
 @Configuration
 @RequiredArgsConstructor
 public class DataInitializer {
 
+    // Injecting required services and repositories
     private final UserService userService;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    
+    // Logger for logging information
     private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
+    /**
+     * Bean that runs on application startup to initialize roles and admin user.
+     * 
+     * @return CommandLineRunner to execute the initialization logic
+     */
     @Bean
     CommandLineRunner initRolesAndAdmin() {
         return args -> {
-            // Ensure roles exist
-            Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                    .orElseGet(() -> {
-                        logger.info("Creating ROLE_ADMIN");
-                        return roleRepository.save(Role.builder().name("ROLE_ADMIN").build());
-                    });
+            // Ensure ROLE_USER exists in the database
             Role userRole = roleRepository.findByName("ROLE_USER")
                     .orElseGet(() -> {
                         logger.info("Creating ROLE_USER");

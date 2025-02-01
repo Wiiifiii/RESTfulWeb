@@ -21,6 +21,40 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * MeasurementWebController is a Spring MVC controller that handles web requests related to measurements.
+ * It provides endpoints for listing, creating, editing, deleting, and restoring measurements.
+ * 
+ * Endpoints:
+ * - GET /web/measurements: List all active measurements with optional filters.
+ * - GET /web/measurements/new: Display form for creating a new measurement.
+ * - GET /web/measurements/edit/{id}: Display form for editing an existing measurement.
+ * - POST /web/measurements/save: Save a new or edited measurement.
+ * - POST /web/measurements/delete/{id}: Soft delete a measurement.
+ * - GET /web/measurements/trash: List all soft-deleted measurements with optional filters.
+ * - POST /web/measurements/restore/{id}: Restore a soft-deleted measurement.
+ * - POST /web/measurements/delete-permanent/{id}: Permanently delete a measurement (requires ROLE_ADMIN).
+ * 
+ * Dependencies:
+ * - MeasurementService: Service for handling measurement-related operations.
+ * - LocationService: Service for handling location-related operations.
+ * 
+ * Date-Time Formatters:
+ * - dateTimeFormatter: Formatter for full date-time input (pattern: "dd/MM/yyyy HH:mm").
+ * - dateFormatter: Formatter for date-only input (pattern: "dd/MM/yyyy").
+ * 
+ * Error Handling:
+ * - Catches and logs exceptions, and sets error messages in redirect attributes.
+ * 
+ * Logging:
+ * - Uses SLF4J Logger for logging errors and important actions.
+ * 
+ * Annotations:
+ * - @Controller: Marks this class as a Spring MVC controller.
+ * - @RequestMapping("/web/measurements"): Maps requests to /web/measurements to this controller.
+ * - @RequiredArgsConstructor: Generates a constructor with required arguments (final fields).
+ * - @Secured("ROLE_ADMIN"): Secures the permanently delete endpoint to users with ROLE_ADMIN.
+ */
 @Controller
 @RequestMapping("/web/measurements")
 @RequiredArgsConstructor

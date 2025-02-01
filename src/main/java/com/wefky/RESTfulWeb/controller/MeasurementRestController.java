@@ -17,6 +17,42 @@ import java.util.Optional;
 /**
  * REST Controller for managing Measurements via API.
  */
+/**
+ * MeasurementRestController is a REST controller that handles HTTP requests for managing measurements.
+ * It provides endpoints for creating, retrieving, updating, soft deleting, restoring, and permanently deleting measurements.
+ * 
+ * Endpoints:
+ * - GET /api/measurements: Retrieve all active measurements with optional filters.
+ * - GET /api/measurements/{id}: Retrieve a specific measurement by its ID.
+ * - POST /api/measurements: Create a new measurement.
+ * - PUT /api/measurements/{id}: Update an existing measurement by its ID.
+ * - DELETE /api/measurements/{id}: Soft delete a measurement by its ID.
+ * - POST /api/measurements/{id}/restore: Restore a soft-deleted measurement by its ID.
+ * - DELETE /api/measurements/{id}/permanent: Permanently delete a measurement by its ID (Admin only).
+ * 
+ * Dependencies:
+ * - MeasurementRepository: Repository interface for accessing measurement data.
+ * - Logger: Logger for logging information and errors.
+ * 
+ * Annotations:
+ * - @RestController: Indicates that this class is a REST controller.
+ * - @RequestMapping("/api/measurements"): Maps HTTP requests to /api/measurements to this controller.
+ * - @RequiredArgsConstructor: Generates a constructor with required arguments (final fields).
+ * - @GetMapping: Maps HTTP GET requests to handler methods.
+ * - @PostMapping: Maps HTTP POST requests to handler methods.
+ * - @PutMapping: Maps HTTP PUT requests to handler methods.
+ * - @DeleteMapping: Maps HTTP DELETE requests to handler methods.
+ * - @Secured("ROLE_ADMIN"): Secures the endpoint to be accessible only by users with the ROLE_ADMIN authority.
+ * 
+ * Methods:
+ * - getAllMeasurements: Retrieves all active measurements with optional filters for measurement unit, start date, end date, and city name.
+ * - getMeasurement: Retrieves a specific measurement by its ID.
+ * - createMeasurement: Creates a new measurement.
+ * - updateMeasurement: Updates an existing measurement by its ID.
+ * - softDeleteMeasurement: Soft deletes a measurement by its ID.
+ * - restoreMeasurement: Restores a soft-deleted measurement by its ID.
+ * - permanentlyDeleteMeasurement: Permanently deletes a measurement by its ID (Admin only).
+ */
 @RestController
 @RequestMapping("/api/measurements")
 @RequiredArgsConstructor

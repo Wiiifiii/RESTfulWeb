@@ -11,6 +11,31 @@ import java.time.LocalDateTime;
 /**
  * Entity representing a Measurement.
  */
+/**
+ * Represents a Measurement entity that maps to the "measurements" table in the database.
+ * This entity contains information about a specific measurement including its unit, amount, timestamp, 
+ * associated location, and a flag indicating if it has been deleted.
+ * 
+ * Annotations:
+ * - @Entity: Specifies that the class is an entity and is mapped to a database table.
+ * - @Table: Specifies the name of the database table to be used for mapping.
+ * - @Data: Lombok annotation to generate getters, setters, toString, equals, and hashCode methods.
+ * - @AllArgsConstructor: Lombok annotation to generate a constructor with all fields.
+ * - @NoArgsConstructor: Lombok annotation to generate a no-argument constructor.
+ * 
+ * Fields:
+ * - measurementId: Unique identifier for the measurement, auto-generated.
+ * - measurementUnit: Unit of the measurement, cannot be blank.
+ * - amount: The amount of the measurement, must be a positive value.
+ * - timestamp: The date and time when the measurement was taken, cannot be null.
+ * - location: The location associated with the measurement, fetched eagerly.
+ * - deleted: A flag indicating if the measurement has been marked as deleted, defaults to false.
+ * 
+ * Constraints:
+ * - measurementUnit: Must not be blank.
+ * - amount: Must be a positive value.
+ * - timestamp: Must not be null.
+ */
 @Entity
 @Table(name = "measurements")
 @Data

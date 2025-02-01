@@ -154,13 +154,107 @@ body {
     color: #ffffff !important;
 }
 
-/* Additional Custom Styles */
-
+/* Additional Custom Styles for Textarea */
 textarea.form-control {
     background-color: #ffffff; 
     color: #000000;
 }
 
+/* White Close Button for Alerts */
 .btn-close-white {
     filter: invert(1);
+}
+
+/* --- Home Page Custom Styles --- */
+
+/* Home Cards (Index Page) */
+.home-card {
+    min-height: 300px;
+    padding: 1.5rem;
+}
+
+.home-card .card-title i {
+    font-size: 3rem;
+    margin-right: 0.5rem;
+}
+
+/* Icon Colors */
+.icon-locations { color: #0d6efd; }      /* Bootstrap primary blue */
+.icon-measurements { color: #198754; }    /* Bootstrap success green */
+.icon-images { color: #fd7e14; }          /* Bootstrap orange */
+
+/* App Description Section */
+.app-description {
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #ffffff;
+}
+
+/* --- Admin Portal Custom Styles --- */
+
+/* Admin Header */
+.admin-header {
+    margin-bottom: 2rem;
+}
+
+.admin-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.admin-header p {
+    font-size: 1.1rem;
+}
+
+/* Admin Card */
+.admin-card {
+    background-color: #495057;
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.3);
+}
+
+.admin-card .card-body {
+    padding: 2rem;
+}
+
+.admin-card .card-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.admin-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.admin-card ul li {
+    margin-bottom: 1rem;
+}
+
+.admin-card a.btn {
+    font-size: 1.1rem;
+    padding: 0.75rem;
+}
+
+/* Admin Icon Styling */
+.admin-icon {
+    font-size: 2rem;
+    margin-right: 0.5rem;
+}
+
+/* Custom Button Colors for Admin */
+.btn-locations {
+    background-color: #0d6efd;
+    border: none;
+}
+
+.btn-measurements {
+    background-color: #198754;
+    border: none;
+}
+
+.btn-images {
+    background-color: #fd7e14;
+    border: none;
 }

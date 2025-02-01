@@ -12,6 +12,35 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class for managing images, including searching, saving, deleting, and restoring images.
+ * This class provides methods to handle both active and deleted images, as well as methods to 
+ * convert image data to Base64 format for easier handling in web applications.
+ * 
+ * The class uses Spring's @Service annotation to indicate that it's a service component, 
+ * and @Transactional to manage transactions.
+ * 
+ * Methods:
+ * - searchImages(String search): Searches for active images based on imageId, owner, or contentType.
+ * - searchDeletedImages(String search): Searches for deleted images based on imageId, owner, or contentType.
+ * - getImageById(Long id): Fetches an image by its ID if it's not deleted.
+ * - saveImage(Image image): Saves (creates or updates) an image.
+ * - softDeleteImage(Long id): Soft-deletes an image by setting its 'deleted' flag to true.
+ * - permanentlyDeleteImage(Long id): Permanently deletes an image from the database.
+ * - restoreImage(Long id): Restores a soft-deleted image by setting its 'deleted' flag to false.
+ * - getDistinctContentTypes(): Fetches distinct content types from active images.
+ * - populateBase64(Image img): Populates Base64 data for a single image.
+ * - populateBase64(List<Image> images): Populates Base64 data for a list of images.
+ * 
+ * Dependencies:
+ * - ImageRepository: Repository interface for accessing image data.
+ * - Logger: Logger for logging information and warnings.
+ * 
+ * Annotations:
+ * - @Service: Indicates that this class is a service component.
+ * - @RequiredArgsConstructor: Generates a constructor with required arguments (final fields).
+ * - @Transactional: Manages transactions for the methods in this class.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
