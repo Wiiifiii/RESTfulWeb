@@ -13,21 +13,15 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
     @Query("SELECT m FROM Measurement m WHERE m.deleted = false")
     List<Measurement> findAllActive();
 
-    // Native query with explicit CAST in both the IS NOT NULL check and the comparison.
+    // Native query using COALESCE to supply default values when parameters are null.
     @Query(value = "SELECT m.* " +
                    "FROM measurements m " +
                    "JOIN locations l ON l.location_id = m.location_id_fk " +
                    "WHERE m.deleted = false " +
-                   "AND ( " +
-                   "     (CAST(:measurementUnit AS text) IS NOT NULL " +
-                   "          AND lower(cast(m.measurement_unit as text)) LIKE lower(CONCAT('%', CAST(:measurementUnit AS text), '%'))) " +
-                   "  OR (CAST(:start AS timestamp) IS NOT NULL " +
-                   "          AND m.timestamp >= CAST(:start AS timestamp)) " +
-                   "  OR (CAST(:end AS timestamp) IS NOT NULL " +
-                   "          AND m.timestamp <= CAST(:end AS timestamp)) " +
-                   "  OR (CAST(:cityName AS text) IS NOT NULL " +
-                   "          AND lower(l.city_name) LIKE lower(CONCAT('%', CAST(:cityName AS text), '%'))) " +
-                   ")",
+                   "  AND lower(cast(m.measurement_unit as text)) LIKE lower(CONCAT('%', COALESCE(:measurementUnit, ''), '%')) " +
+                   "  AND m.timestamp >= COALESCE(CAST(:start AS timestamp), m.timestamp) " +
+                   "  AND m.timestamp <= COALESCE(CAST(:end AS timestamp), m.timestamp) " +
+                   "  AND lower(l.city_name) LIKE lower(CONCAT('%', COALESCE(:cityName, ''), '%'))",
            nativeQuery = true)
     List<Measurement> filterMeasurementsNative(
             @Param("measurementUnit") String measurementUnit,

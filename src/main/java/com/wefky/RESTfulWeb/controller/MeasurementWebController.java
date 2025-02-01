@@ -1,6 +1,7 @@
 package com.wefky.RESTfulWeb.controller;
 
 import com.wefky.RESTfulWeb.entity.Measurement;
+import com.wefky.RESTfulWeb.service.LocationService;
 import com.wefky.RESTfulWeb.service.MeasurementService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class MeasurementWebController {
 
     private static final Logger logger = LoggerFactory.getLogger(MeasurementWebController.class);
     private final MeasurementService measurementService;
+    private final LocationService locationService;
 
     // Formatter for full date-time (when user picks date and time)
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -117,6 +119,7 @@ public class MeasurementWebController {
         model.addAttribute("currentUri", request.getRequestURI());
         model.addAttribute("measurement", new Measurement());
         model.addAttribute("mode", "new");
+        model.addAttribute("allLocations", locationService.getAllActiveLocations());
         return "measurementForm";
     }
 
