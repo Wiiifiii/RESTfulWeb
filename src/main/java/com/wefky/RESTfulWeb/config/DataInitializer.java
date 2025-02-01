@@ -5,6 +5,8 @@ import com.wefky.RESTfulWeb.repository.RoleRepository;
 import com.wefky.RESTfulWeb.repository.UserRepository;
 import com.wefky.RESTfulWeb.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,35 +23,40 @@ public class DataInitializer {
     private final UserService userService;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
     @Bean
     CommandLineRunner initRolesAndAdmin() {
         return args -> {
-            // Initialize roles if they don't exist
+            // Ensure roles exist
             Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                    .orElseGet(() -> roleRepository.save(Role.builder().name("ROLE_ADMIN").build()));
+                    .orElseGet(() -> {
+                        logger.info("Creating ROLE_ADMIN");
+                        return roleRepository.save(Role.builder().name("ROLE_ADMIN").build());
+                    });
             Role userRole = roleRepository.findByName("ROLE_USER")
-                    .orElseGet(() -> roleRepository.save(Role.builder().name("ROLE_USER").build()));
-            // Add more roles if needed
+                    .orElseGet(() -> {
+                        logger.info("Creating ROLE_USER");
+                        return roleRepository.save(Role.builder().name("ROLE_USER").build());
+                    });
 
-            // Initialize admin user if not present
-            if (!userRepository.findByUsername("admin").isPresent()) {
+            // Create admin user if not present
+            if (userRepository.findByUsername("admin").isEmpty()) {
                 boolean created = userService.registerUser("admin", "admin", Set.of("ROLE_ADMIN"));
                 if (created) {
-                    System.out.println("Admin user created with username 'admin' and password 'admin'.");
+                    logger.info("Admin user created with username 'admin' and password 'admin'.");
                 }
             }
 
-            // Assign ROLE_USER to existing users (e.g., user IDs 2 to 9)
-            for (long userId = 2; userId <= 9; userId++) {
-                userRepository.findById(userId).ifPresent(user -> {
-                    if (user.getRoles() == null || user.getRoles().isEmpty()) {
-                        user.setRoles(Set.of(userRole));
-                        userRepository.save(user);
-                        System.out.println("Assigned ROLE_USER to user '" + user.getUsername() + "'.");
-                    }
-                });
-            }
+            // For each user in the system, if they have no roles assigned and are not the admin, assign ROLE_USER.
+            userRepository.findAll().forEach(user -> {
+                if ((user.getRoles() == null || user.getRoles().isEmpty()) 
+                        && !user.getUsername().equalsIgnoreCase("admin")) {
+                    user.setRoles(Set.of(userRole));
+                    userRepository.save(user);
+                    logger.info("Assigned ROLE_USER to user '{}'.", user.getUsername());
+                }
+            });
         };
     }
 }

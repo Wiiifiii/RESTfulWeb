@@ -1,9 +1,9 @@
-<!-- src/main/resources/templates/fragments/navbar.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
     <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
+            <!-- Brand and Home Link -->
             <a class="navbar-brand" th:href="@{/}">RESTful App</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarNav" aria-controls="navbarNav"
@@ -12,52 +12,59 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <!-- Active if route starts with /web/locations -->
+                    <!-- Home Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}"
+                           th:classappend="${(currentUri != null and currentUri.equals('/')) ? 'active' : ''}">
+                           <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <!-- Locations -->
                     <li class="nav-item">
                         <a class="nav-link"
                            th:href="@{/web/locations}"
-                           th:classappend="${currentUri.startsWith('/web/locations') ? 'active' : ''}">
+                           th:classappend="${(currentUri != null and currentUri.startsWith('/web/locations')) ? 'active' : ''}">
                            <i class="fas fa-map-marker-alt"></i> Locations
                         </a>
                     </li>
-                    <!-- Active if route starts with /web/measurements -->
+                    <!-- Measurements -->
                     <li class="nav-item">
                         <a class="nav-link"
                            th:href="@{/web/measurements}"
-                           th:classappend="${currentUri.startsWith('/web/measurements') ? 'active' : ''}">
+                           th:classappend="${(currentUri != null and currentUri.startsWith('/web/measurements')) ? 'active' : ''}">
                            <i class="fas fa-ruler"></i> Measurements
                         </a>
                     </li>
-                    <!-- Active if route starts with /web/images -->
+                    <!-- Images -->
                     <li class="nav-item">
                         <a class="nav-link"
                            th:href="@{/web/images}"
-                           th:classappend="${currentUri.startsWith('/web/images') ? 'active' : ''}">
+                           th:classappend="${(currentUri != null and currentUri.startsWith('/web/images')) ? 'active' : ''}">
                            <i class="fas fa-image"></i> Images
                         </a>
                     </li>
-                    <!-- Admin Dashboard for admin only -->
+                    <!-- Admin Dashboard for Admins -->
                     <sec:authorize access="hasRole('ADMIN')">
                         <li class="nav-item">
                             <a class="nav-link"
-                               th:href="@{/admin}">
+                               th:href="@{/admin}"
+                               th:classappend="${(currentUri != null and currentUri.startsWith('/admin')) ? 'active' : ''}">
                                <i class="fas fa-user-shield"></i> Admin Dashboard
                             </a>
                         </li>
                     </sec:authorize>
                 </ul>
-                <!-- Display Username and Role -->
+                <!-- Right side: Username and Logout -->
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <span class="navbar-text me-3" sec:authorize="isAuthenticated()">
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <span class="navbar-text me-3">
                             Signed in as: <strong th:text="${#authentication.name}">User</strong>
                             <span sec:authorize="hasRole('ADMIN')" class="badge bg-primary ms-2">Admin</span>
-                            <span sec:authorize="hasRole('USER')" class="badge bg-secondary ms-2">User</span>
+                            <span sec:authorize="(!hasRole('ADMIN')) and hasRole('USER')" class="badge bg-secondary ms-2">User</span>
                         </span>
                     </li>
-                    <!-- Sign Out -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" th:href="@{/logout}">
                             <i class="fas fa-sign-out-alt"></i> Sign Out
                         </a>
                     </li>

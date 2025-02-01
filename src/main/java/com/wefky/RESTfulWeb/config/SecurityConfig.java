@@ -41,8 +41,8 @@ public class SecurityConfig {
         http.authenticationProvider(authenticationProvider());
 
         http.authorizeHttpRequests(auth -> auth
-                // Public routes
-                .requestMatchers("/login", "/register", "/saveUser", "/css/**", "/js/**", "/images/**","/locations/**","/measurements/**", "/favicon.ico").permitAll()
+                // Public routes including /access-denied so the redirect can occur without a block
+                .requestMatchers("/login", "/register", "/saveUser", "/css/**", "/js/**", "/images/**", "/locations/**", "/measurements/**", "/favicon.ico", "/access-denied").permitAll()
 
                 // ADMIN routes
                 .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -99,7 +99,7 @@ public class SecurityConfig {
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
-            // Redirect to a custom access-denied page
+            // Redirect to the custom access-denied page
             response.sendRedirect("/access-denied");
         };
     }
