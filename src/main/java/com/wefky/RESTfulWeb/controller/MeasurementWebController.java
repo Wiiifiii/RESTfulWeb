@@ -11,7 +11,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
@@ -31,31 +30,28 @@ public class MeasurementWebController {
     private final MeasurementService measurementService;
     private final LocationService locationService;
 
-    // Formatter for full date-time (when user picks date and time)
+    // Formatters for full date-time and date-only inputs
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-    // Formatter for date-only input
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @GetMapping
     public String listMeasurements(
             @RequestParam(required = false) String measurementUnit,
-            @RequestParam(required = false) String startDate, // as string input
-            @RequestParam(required = false) String endDate,   // as string input
+            @RequestParam(required = false) String startDate, // raw string input
+            @RequestParam(required = false) String endDate,   // raw string input
             @RequestParam(required = false) String cityName,
             HttpServletRequest request,
             Model model,
-            RedirectAttributes redirectAttributes
-    ) {
+            RedirectAttributes redirectAttributes) {
+
         try {
             model.addAttribute("currentUri", request.getRequestURI());
 
             LocalDateTime startDateTime = null;
             LocalDateTime endDateTime = null;
-
             try {
                 if (startDate != null && !startDate.isBlank()) {
-                    // If input length is 10, assume date-only ("dd/MM/yyyy")
-                    if (startDate.trim().length() == 10) {
+                    if (startDate.trim().length() == 10) { // date-only input
                         LocalDate datePart = LocalDate.parse(startDate, dateFormatter);
                         startDateTime = datePart.atStartOfDay();
                     } else {
@@ -65,8 +61,7 @@ public class MeasurementWebController {
                 if (endDate != null && !endDate.isBlank()) {
                     if (endDate.trim().length() == 10) {
                         LocalDate datePart = LocalDate.parse(endDate, dateFormatter);
-                        // Set to end of day (23:59:59)
-                        endDateTime = datePart.atTime(LocalTime.MAX); // or use .atTime(23, 59, 59)
+                        endDateTime = datePart.atTime(LocalTime.MAX);
                     } else {
                         endDateTime = LocalDateTime.parse(endDate, dateTimeFormatter);
                     }
@@ -77,7 +72,6 @@ public class MeasurementWebController {
                 return "redirect:/web/measurements";
             }
 
-            // If no filters are provided, call the method to get all active measurements.
             boolean noFilters = (measurementUnit == null || measurementUnit.isBlank())
                     && startDateTime == null
                     && endDateTime == null
@@ -96,23 +90,17 @@ public class MeasurementWebController {
             }
 
             model.addAttribute("measurements", measurements);
-            // Pass the raw string values back to the view so that the filter fields remain populated.
             model.addAttribute("measurementUnit", measurementUnit);
             model.addAttribute("startDate", startDate);
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
-
-            return "measurements"; // returns measurements.html
+            return "measurements";
         } catch (Exception e) {
             logger.error("Error fetching measurements: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching measurements.");
             return "redirect:/web/measurements";
         }
     }
-
- 
-
-
 
     @GetMapping("/new")
     public String newMeasurementForm(HttpServletRequest request, Model model) {
@@ -125,9 +113,9 @@ public class MeasurementWebController {
 
     @GetMapping("/edit/{id}")
     public String editMeasurementForm(@PathVariable Long id,
-            HttpServletRequest request,
-            Model model,
-            RedirectAttributes redirectAttributes) {
+                                      HttpServletRequest request,
+                                      Model model,
+                                      RedirectAttributes redirectAttributes) {
         try {
             model.addAttribute("currentUri", request.getRequestURI());
             Optional<Measurement> opt = measurementService.getMeasurementById(id);
@@ -137,6 +125,7 @@ public class MeasurementWebController {
             }
             model.addAttribute("measurement", opt.get());
             model.addAttribute("mode", "edit");
+            model.addAttribute("allLocations", locationService.getAllActiveLocations());
             return "measurementForm";
         } catch (Exception e) {
             logger.error("Error displaying edit measurement form: ", e);
@@ -147,7 +136,7 @@ public class MeasurementWebController {
 
     @PostMapping("/save")
     public String saveMeasurement(@ModelAttribute Measurement measurement,
-            RedirectAttributes redirectAttributes) {
+                                  RedirectAttributes redirectAttributes) {
         try {
             if (measurement.getMeasurementId() != null) {
                 Optional<Measurement> existing = measurementService.getMeasurementById(measurement.getMeasurementId());
@@ -170,10 +159,9 @@ public class MeasurementWebController {
         }
     }
 
-    // Changed mapping from GET to POST for soft delete
     @PostMapping("/delete/{id}")
     public String softDeleteMeasurement(@PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
+                                        RedirectAttributes redirectAttributes) {
         try {
             measurementService.softDeleteMeasurement(id);
             redirectAttributes.addFlashAttribute("success", "Measurement deleted successfully!");
@@ -188,8 +176,8 @@ public class MeasurementWebController {
     @GetMapping("/trash")
     public String viewTrash(
             @RequestParam(required = false) String measurementUnit,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") LocalDateTime startDate,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") LocalDateTime endDate,
+            @RequestParam(required = false) String startDate,  // raw string input
+            @RequestParam(required = false) String endDate,    // raw string input
             @RequestParam(required = false) String cityName,
             HttpServletRequest request,
             Model model,
@@ -197,22 +185,46 @@ public class MeasurementWebController {
         try {
             model.addAttribute("currentUri", request.getRequestURI());
 
+            LocalDateTime startDateTime = null;
+            LocalDateTime endDateTime = null;
+            try {
+                if (startDate != null && !startDate.isBlank()) {
+                    if (startDate.trim().length() == 10) {
+                        LocalDate datePart = LocalDate.parse(startDate, dateFormatter);
+                        startDateTime = datePart.atStartOfDay();
+                    } else {
+                        startDateTime = LocalDateTime.parse(startDate, dateTimeFormatter);
+                    }
+                }
+                if (endDate != null && !endDate.isBlank()) {
+                    if (endDate.trim().length() == 10) {
+                        LocalDate datePart = LocalDate.parse(endDate, dateFormatter);
+                        endDateTime = datePart.atTime(LocalTime.MAX);
+                    } else {
+                        endDateTime = LocalDateTime.parse(endDate, dateTimeFormatter);
+                    }
+                }
+            } catch (DateTimeParseException dtpe) {
+                logger.error("Error parsing date filter values: ", dtpe);
+                redirectAttributes.addFlashAttribute("error", "Invalid date format. Please use dd/MM/yyyy or dd/MM/yyyy HH:mm.");
+                return "redirect:/web/measurements/trash";
+            }
+
             boolean noFilters = (measurementUnit == null || measurementUnit.isBlank())
-                    && startDate == null
-                    && endDate == null
+                    && startDateTime == null
+                    && endDateTime == null
                     && (cityName == null || cityName.isBlank());
 
             List<Measurement> deletedMeasurements;
             if (noFilters) {
                 deletedMeasurements = measurementService.getAllDeletedMeasurements();
             } else {
-                // We reuse the same filter and then select only the deleted ones.
-                deletedMeasurements = measurementService.filterMeasurements(
+                deletedMeasurements = measurementService.filterDeletedMeasurements(
                         (measurementUnit == null || measurementUnit.isBlank()) ? null : measurementUnit,
-                        startDate,
-                        endDate,
-                        (cityName == null || cityName.isBlank()) ? null : cityName);
-                deletedMeasurements = deletedMeasurements.stream().filter(Measurement::isDeleted).toList();
+                        startDateTime,
+                        endDateTime,
+                        (cityName == null || cityName.isBlank()) ? null : cityName
+                );
             }
 
             model.addAttribute("deletedMeasurements", deletedMeasurements);
@@ -220,7 +232,6 @@ public class MeasurementWebController {
             model.addAttribute("startDate", startDate);
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
-
             return "measurementsTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted measurements: ", e);
@@ -231,7 +242,7 @@ public class MeasurementWebController {
 
     @PostMapping("/restore/{id}")
     public String restoreMeasurement(@PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
+                                     RedirectAttributes redirectAttributes) {
         try {
             measurementService.restoreMeasurement(id);
             redirectAttributes.addFlashAttribute("success", "Measurement restored successfully!");
@@ -246,16 +257,14 @@ public class MeasurementWebController {
     @Secured("ROLE_ADMIN")
     @PostMapping("/delete-permanent/{id}")
     public String permanentlyDeleteMeasurement(@PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
+                                                 RedirectAttributes redirectAttributes) {
         try {
             measurementService.permanentlyDeleteMeasurement(id);
             redirectAttributes.addFlashAttribute("success", "Measurement permanently deleted!");
-            // Redirect back to the trash view
             return "redirect:/web/measurements/trash";
         } catch (Exception e) {
             logger.error("Error permanently deleting measurement: ", e);
-            redirectAttributes.addFlashAttribute("error",
-                    "An error occurred while permanently deleting the measurement.");
+            redirectAttributes.addFlashAttribute("error", "An error occurred while permanently deleting the measurement.");
             return "redirect:/web/measurements/trash";
         }
     }
