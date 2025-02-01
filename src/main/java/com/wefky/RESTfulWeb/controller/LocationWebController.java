@@ -33,25 +33,22 @@ public class LocationWebController {
                                 RedirectAttributes redirectAttributes) {
         try {
             model.addAttribute("currentUri", request.getRequestURI());
-
             List<Location> locations;
             boolean noFilters = (cityNameSearch == null || cityNameSearch.isBlank())
-                                && (postalCodeSearch == null || postalCodeSearch.isBlank())
-                                && latMin == null
-                                && latMax == null;
+                    && (postalCodeSearch == null || postalCodeSearch.isBlank())
+                    && latMin == null
+                    && latMax == null;
             if (noFilters) {
                 locations = locationService.getAllActiveLocations();
             } else {
                 locations = locationService.filterLocations(cityNameSearch, postalCodeSearch, latMin, latMax);
             }
-
             model.addAttribute("locations", locations);
             model.addAttribute("cityNameSearch", cityNameSearch);
             model.addAttribute("postalCodeSearch", postalCodeSearch);
             model.addAttribute("latMin", latMin);
             model.addAttribute("latMax", latMax);
-
-            return "locations"; // -> locations.html
+            return "locations"; // returns locations.html
         } catch (Exception e) {
             logger.error("Error fetching locations: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching locations.");
@@ -64,7 +61,7 @@ public class LocationWebController {
         model.addAttribute("currentUri", request.getRequestURI());
         model.addAttribute("location", new Location());
         model.addAttribute("mode", "new");
-        return "locationForm";
+        return "locationForm"; // returns locationForm.html
     }
 
     @GetMapping("/edit/{id}")
@@ -81,7 +78,7 @@ public class LocationWebController {
             }
             model.addAttribute("location", opt.get());
             model.addAttribute("mode", "edit");
-            return "locationForm";
+            return "locationForm"; // returns locationForm.html
         } catch (Exception e) {
             logger.error("Error displaying edit location form: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while displaying the form.");
@@ -114,6 +111,7 @@ public class LocationWebController {
         }
     }
 
+    // --- Updated Delete Action as a Standard POST Form Submission ---
     @PostMapping("/delete/{id}")
     public String softDeleteLocation(@PathVariable Long id,
                                      RedirectAttributes redirectAttributes) {
@@ -136,31 +134,24 @@ public class LocationWebController {
                             HttpServletRequest request,
                             Model model,
                             RedirectAttributes redirectAttributes) {
+        model.addAttribute("currentUri", request.getRequestURI());
         try {
-            model.addAttribute("currentUri", request.getRequestURI());
-
-            List<Location> deletedLocations;
+            List<Location> locations;
             boolean noFilters = (cityNameSearch == null || cityNameSearch.isBlank())
-                                && (postalCodeSearch == null || postalCodeSearch.isBlank())
-                                && latMin == null
-                                && latMax == null;
-
+                    && (postalCodeSearch == null || postalCodeSearch.isBlank())
+                    && latMin == null
+                    && latMax == null;
             if (noFilters) {
-                deletedLocations = locationService.getAllDeletedLocations();
+                locations = locationService.getAllDeletedLocations();
             } else {
-                deletedLocations = locationService.filterLocations(cityNameSearch, postalCodeSearch, latMin, latMax)
-                    .stream()
-                    .filter(Location::isDeleted)
-                    .toList();
+                locations = locationService.filterDeletedLocations(cityNameSearch, postalCodeSearch, latMin, latMax);
             }
-
-            model.addAttribute("locations", deletedLocations);
+            model.addAttribute("locations", locations);
             model.addAttribute("cityNameSearch", cityNameSearch);
             model.addAttribute("postalCodeSearch", postalCodeSearch);
             model.addAttribute("latMin", latMin);
             model.addAttribute("latMax", latMax);
-
-            return "locationsTrash";
+            return "locationsTrash"; // returns locationsTrash.html
         } catch (Exception e) {
             logger.error("Error fetching deleted locations: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching deleted locations.");

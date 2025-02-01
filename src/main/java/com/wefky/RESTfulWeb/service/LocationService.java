@@ -70,4 +70,17 @@ public class LocationService {
             logger.info("Location with ID {} restored.", id);
         });
     }
+
+
+    public List<Location> filterDeletedLocations(String cityName, String postalCode, Float latMin, Float latMax) {
+        // Either call a dedicated repository method or filter the list from getAllDeletedLocations()
+        // For example, using Java Streams:
+        List<Location> allDeleted = getAllDeletedLocations();
+        return allDeleted.stream()
+            .filter(loc -> (cityName == null || loc.getCityName().toLowerCase().contains(cityName.toLowerCase())))
+            .filter(loc -> (postalCode == null || loc.getPostalCode().toLowerCase().contains(postalCode.toLowerCase())))
+            .filter(loc -> (latMin == null || loc.getLatitude() >= latMin))
+            .filter(loc -> (latMax == null || loc.getLatitude() <= latMax))
+            .toList();
+    }
 }
