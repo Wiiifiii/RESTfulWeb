@@ -24,7 +24,7 @@ public class Measurement {
     private Long measurementId;
 
     @NotBlank(message = "Measurement Unit is required.")
-    @Column(name = "measurement_unit", nullable = false)
+    @Column(name = "measurement_unit", nullable = false, columnDefinition = "text")
     private String measurementUnit;
 
     @NotNull(message = "Amount is required.")

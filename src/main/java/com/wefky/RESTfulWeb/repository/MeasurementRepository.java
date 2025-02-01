@@ -13,18 +13,23 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
     @Query("SELECT m FROM Measurement m WHERE m.deleted = false")
     List<Measurement> findAllActive();
 
-    @Query("""
-           SELECT m FROM Measurement m
-           WHERE m.deleted = false
-             AND (
-                (:measurementUnit IS NOT NULL AND LOWER(m.measurementUnit) LIKE LOWER(CONCAT('%', :measurementUnit, '%')))
-             OR (:start IS NOT NULL AND m.timestamp >= :start)
-             OR (:end IS NOT NULL AND m.timestamp <= :end)
-             OR (:cityName IS NOT NULL AND LOWER(m.location.cityName) LIKE LOWER(CONCAT('%', :cityName, '%')))
-             OR (:measurementUnit IS NULL AND :start IS NULL AND :end IS NULL AND :cityName IS NULL)
-             )
-           """)
-    List<Measurement> filterMeasurements(
+    // Native query with explicit CAST in both the IS NOT NULL check and the comparison.
+    @Query(value = "SELECT m.* " +
+                   "FROM measurements m " +
+                   "JOIN locations l ON l.location_id = m.location_id_fk " +
+                   "WHERE m.deleted = false " +
+                   "AND ( " +
+                   "     (CAST(:measurementUnit AS text) IS NOT NULL " +
+                   "          AND lower(cast(m.measurement_unit as text)) LIKE lower(CONCAT('%', CAST(:measurementUnit AS text), '%'))) " +
+                   "  OR (CAST(:start AS timestamp) IS NOT NULL " +
+                   "          AND m.timestamp >= CAST(:start AS timestamp)) " +
+                   "  OR (CAST(:end AS timestamp) IS NOT NULL " +
+                   "          AND m.timestamp <= CAST(:end AS timestamp)) " +
+                   "  OR (CAST(:cityName AS text) IS NOT NULL " +
+                   "          AND lower(l.city_name) LIKE lower(CONCAT('%', CAST(:cityName AS text), '%'))) " +
+                   ")",
+           nativeQuery = true)
+    List<Measurement> filterMeasurementsNative(
             @Param("measurementUnit") String measurementUnit,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,

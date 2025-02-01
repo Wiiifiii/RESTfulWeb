@@ -24,9 +24,10 @@ public class MeasurementService {
         return measurementRepository.findAllActive();
     }
 
+    // Updated to call filterMeasurementsNative
     @Transactional(readOnly = true)
     public List<Measurement> filterMeasurements(String measurementUnit, LocalDateTime startDate, LocalDateTime endDate, String cityName) {
-        return measurementRepository.filterMeasurements(measurementUnit, startDate, endDate, cityName);
+        return measurementRepository.filterMeasurementsNative(measurementUnit, startDate, endDate, cityName);
     }
 
     @Transactional(readOnly = true)

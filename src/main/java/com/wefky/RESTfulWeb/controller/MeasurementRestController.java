@@ -28,7 +28,6 @@ public class MeasurementRestController {
     /**
      * GET active measurements with optional filters.
      * Uses Finnish date format: dd/MM/yyyy HH:mm:ss.
-     * Filtering uses OR conditions so that if any filter is provided, measurements matching any of them are returned.
      */
     @GetMapping
     public List<Measurement> getAllMeasurements(
@@ -46,7 +45,7 @@ public class MeasurementRestController {
         if (noFilters) {
             return measurementRepository.findAllActive();
         } else {
-            return measurementRepository.filterMeasurements(
+            return measurementRepository.filterMeasurementsNative(
                     (measurementUnit == null || measurementUnit.isEmpty()) ? null : measurementUnit,
                     start,
                     end,
