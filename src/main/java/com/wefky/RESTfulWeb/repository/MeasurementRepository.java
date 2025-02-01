@@ -16,10 +16,13 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
     @Query("""
            SELECT m FROM Measurement m
            WHERE m.deleted = false
-             AND (:measurementUnit IS NULL OR LOWER(m.measurementUnit) LIKE LOWER(CONCAT('%', :measurementUnit, '%')))
-             AND (:start IS NULL OR m.timestamp >= :start)
-             AND (:end IS NULL OR m.timestamp <= :end)
-             AND (:cityName IS NULL OR LOWER(m.location.cityName) LIKE LOWER(CONCAT('%', :cityName, '%')))
+             AND (
+                (:measurementUnit IS NOT NULL AND LOWER(m.measurementUnit) LIKE LOWER(CONCAT('%', :measurementUnit, '%')))
+             OR (:start IS NOT NULL AND m.timestamp >= :start)
+             OR (:end IS NOT NULL AND m.timestamp <= :end)
+             OR (:cityName IS NOT NULL AND LOWER(m.location.cityName) LIKE LOWER(CONCAT('%', :cityName, '%')))
+             OR (:measurementUnit IS NULL AND :start IS NULL AND :end IS NULL AND :cityName IS NULL)
+             )
            """)
     List<Measurement> filterMeasurements(
             @Param("measurementUnit") String measurementUnit,

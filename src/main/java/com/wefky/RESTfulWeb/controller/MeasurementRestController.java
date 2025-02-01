@@ -23,19 +23,20 @@ import java.util.Optional;
 public class MeasurementRestController {
 
     private static final Logger logger = LoggerFactory.getLogger(MeasurementRestController.class);
-
     private final MeasurementRepository measurementRepository;
 
     /**
      * GET active measurements with optional filters.
+     * Uses Finnish date format: dd/MM/yyyy HH:mm:ss.
+     * Filtering uses OR conditions so that if any filter is provided, measurements matching any of them are returned.
      */
     @GetMapping
     public List<Measurement> getAllMeasurements(
             @RequestParam(required = false) String measurementUnit,
             @RequestParam(required = false)
-            @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime start,
+            @DateTimeFormat(pattern="dd/MM/yyyy HH:mm:ss") LocalDateTime start,
             @RequestParam(required = false)
-            @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime end,
+            @DateTimeFormat(pattern="dd/MM/yyyy HH:mm:ss") LocalDateTime end,
             @RequestParam(required = false) String cityName
     ) {
         boolean noFilters = (measurementUnit == null || measurementUnit.isEmpty())
@@ -97,6 +98,7 @@ public class MeasurementRestController {
 
     /**
      * DELETE (Soft Delete) measurement.
+     * (Note: This endpoint is used by the REST API. The Web Controller now uses a POST mapping for soft delete.)
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteMeasurement(@PathVariable Long id) {
