@@ -1,10 +1,12 @@
+<!-- src/main/resources/templates/measurementsTrash.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      class="dark-theme">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Deleted Measurements</title>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,143 +18,80 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">RESTful App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav" aria-controls="navbarNav"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <!-- Active if currentUri == "/" -->
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           th:href="@{/}"
-                           th:classappend="${currentUri == '/' ? 'active' : ''}">
-                           <i class="fas fa-home"></i> Home
-                        </a>
-                    </li>
-                    <!-- Active if route starts with /web/locations -->
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           th:href="@{/web/locations}"
-                           th:classappend="${currentUri.startsWith('/web/locations') ? 'active' : ''}">
-                           <i class="fas fa-map-marker-alt"></i> Locations
-                        </a>
-                    </li>
-                    <!-- Active if route starts with /web/measurements -->
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           th:href="@{/web/measurements}"
-                           th:classappend="${currentUri.startsWith('/web/measurements') ? 'active' : ''}">
-                           <i class="fas fa-ruler"></i> Measurements
-                        </a>
-                    </li>
-                    <!-- Active if route starts with /web/images -->
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           th:href="@{/web/images}"
-                           th:classappend="${currentUri.startsWith('/web/images') ? 'active' : ''}">
-                           <i class="fas fa-image"></i> Images
-                        </a>
-                    </li>
-                    <!-- Admin Dashboard for admin only -->
-                    <sec:authorize access="hasRole('ADMIN')">
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               th:href="@{/admin}">
-                               <i class="fas fa-user-shield"></i> Admin Dashboard
-                            </a>
-                        </li>
-                    </sec:authorize>
-                </ul>
-                      <!-- Display Username and Role -->
-                      <li class="nav-item">
-                        <span class="navbar-text me-3" sec:authorize="isAuthenticated()">
-                            Signed in as: <strong th:text="${#authentication.name}">User</strong>
-                            <span sec:authorize="hasRole('ADMIN')" class="badge bg-primary ms-2">Admin</span>
-                            <span sec:authorize="hasRole('USER')" class="badge bg-secondary ms-2">User</span>
-                        </span>
-                    </li>
-                <ul class="navbar-nav">
-                    <!-- Sign Out -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">
-                            <i class="fas fa-sign-out-alt"></i> Sign Out
-                        </a>
-                    </li>
-                </ul>
-            </div>
+
+    <!-- Include Navbar Fragment -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <!-- Container -->
+    <div class="container py-5">
+        <h2 class="text-center mb-4">Deleted Measurements</h2>
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}"></div>
+
+        <div class="mb-4">
+            <a th:href="@{/web/measurements}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Active Measurements
+            </a>
         </div>
-    </nav>
 
-<div class="container py-5">
-    <h2>Deleted Measurements</h2>
-
-    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${success}"></div>
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}"></div>
-
-    <div class="mb-4">
-        <a th:href="@{/web/measurements}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Active Measurements
-        </a>
-    </div>
-
-    <div class="table-responsive">
-        <table class="table table-striped align-middle">
-            <thead>
-            <tr>
-                <th scope="col">Measurement ID</th>
-                <th scope="col">Unit</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Timestamp</th>
-                <th scope="col">Location</th>
-                <th scope="col">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="m : ${deletedMeasurements}">
-                <td th:text="${m.measurementId}"></td>
-                <td th:text="${m.measurementUnit}"></td>
-                <td th:text="${m.amount}"></td>
-                <td th:text="${#temporals.format(m.timestamp, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                <td th:text="${m.location != null ? m.location.cityName : 'N/A'}"></td>
-                <td>
-                    <div class="btn-group">
-                        <!-- Restore button -->
-                        <button type="button"
-                                class="btn btn-success btn-sm restore-button"
-                                th:data-restore-url="@{'/web/measurements/restore/' + ${m.measurementId}}"
-                                data-item-type="Measurement"
-                                th:data-item-details="${m.measurementUnit != null ? m.measurementUnit : 'this measurement'}">
-                            <i class="fas fa-undo"></i> Restore
-                        </button>
-                        <sec:authorize access="hasRole('ADMIN')">
-                            <!-- Perm Delete -->
+        <!-- Table of deleted measurements -->
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                <tr>
+                    <th scope="col">Measurement ID</th>
+                    <th scope="col">Unit</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Timestamp</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="m : ${deletedMeasurements}">
+                    <td th:text="${m.measurementId}"></td>
+                    <td th:text="${m.measurementUnit}"></td>
+                    <td th:text="${m.amount}"></td>
+                    <td th:text="${#temporals.format(m.timestamp, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td th:text="${m.location != null ? m.location.cityName : 'N/A'}"></td>
+                    <td>
+                        <div class="btn-group">
+                            <!-- Restore button -->
                             <button type="button"
-                                    class="btn btn-danger btn-sm delete-permanent-button"
-                                    th:data-delete-url="@{'/web/measurements/delete-permanent/' + ${m.measurementId}}"
+                                    class="btn btn-success btn-sm restore-button"
+                                    th:data-restore-url="@{'/web/measurements/restore/' + ${m.measurementId}}"
                                     data-item-type="Measurement"
                                     th:data-item-details="${m.measurementUnit != null ? m.measurementUnit : 'this measurement'}">
-                                <i class="fas fa-trash-alt"></i> Delete Permanently
+                                <i class="fas fa-undo"></i> Restore
                             </button>
-                        </sec:authorize>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                            <sec:authorize access="hasRole('ADMIN')">
+                                <!-- Perm Delete -->
+                                <button type="button"
+                                        class="btn btn-danger btn-sm delete-permanent-button"
+                                        th:data-delete-url="@{'/web/measurements/delete-permanent/' + ${m.measurementId}}"
+                                        data-item-type="Measurement"
+                                        th:data-item-details="${m.measurementUnit != null ? m.measurementUnit : 'this measurement'}">
+                                    <i class="fas fa-trash-alt"></i> Delete Permanently
+                                </button>
+                            </sec:authorize>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${#lists.isEmpty(deletedMeasurements)}" class="mt-4">
+            <p class="text-center">No deleted measurements found.</p>
+        </div>
     </div>
 
-    <div th:if="${#lists.isEmpty(deletedMeasurements)}" class="mt-4">
-        <p class="text-center">No deleted measurements found.</p>
-    </div>
-</div>
+    <!-- Include Footer Fragment -->
+    <div th:replace="fragments/footer :: footer"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script th:src="@{/js/scripts.js}"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:src="@{/js/scripts.js}"></script>
 </body>
 </html>
