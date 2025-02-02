@@ -22,46 +22,40 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <!-- Container -->
-
     <div class="container py-4 flex-grow-1">
         <h2>Files / Images</h2>
 
         <!-- Flash messages -->
-        <div th:if="${success}" class="alert alert-success" role="alert"
-             th:text="${success}"></div>
-        <div th:if="${error}" class="alert alert-danger" role="alert"
-             th:text="${error}"></div>
-             <div class="mb-4">
-                <a th:href="@{/web/images/new(search=${search})}" class="btn btn-success">
-                    <i class="fas fa-plus"></i> Add New Image
-                </a>
-                <a th:href="@{/web/images/trash(search=${search})}" class="btn btn-secondary">
-                    <i class="fas fa-trash"></i> View Trash
-                </a>
-            </div>
+        <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+        <div class="mb-4">
+            <a th:href="@{/web/images/new(search=${search})}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Add New Image
+            </a>
+            <a th:href="@{/web/images/trash(search=${search})}" class="btn btn-secondary">
+                <i class="fas fa-trash"></i> View Trash
+            </a>
+        </div>
 
         <!-- Unified Search form -->
         <form th:action="@{/web/images}" method="get" class="mb-3">
             <div class="row g-3 align-items-end">
                 <div class="col-md-6">
                     <label for="search" class="form-label">Search</label>
-                    <input type="text" id="search" name="search"
-                           class="form-control"
-                           th:value="${search}" 
-                           placeholder="Search by ID, Owner, or Content Type" />
+                    <input type="text" id="search" name="search" class="form-control"
+                           th:value="${search}" placeholder="Search by ID, Owner, or Content Type" />
                 </div>
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-search"></i> Search
                     </button>
-                    <button type="button" class="btn btn-secondary"
-                            onclick="window.location.href='/web/images'">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/web/images'">
                         <i class="fas fa-times"></i> Clear
                     </button>
                 </div>
             </div>
         </form>
-
 
         <!-- Table of images -->
         <div class="table-responsive" th:if="${images != null and !#lists.isEmpty(images)}">
@@ -83,7 +77,7 @@
                         <td style="width:120px;">
                             <th:block th:if="${img.contentType != null}">
                                 <th:block th:if="${img.contentType.startsWith('image/')}">
-                                    <img th:if="${img.base64Data}"
+                                    <img th:if="${img.base64Data != null}"
                                          th:src="${'data:' + img.contentType + ';base64,' + img.base64Data}"
                                          class="img-thumbnail img-thumb" />
                                 </th:block>
@@ -98,7 +92,7 @@
                         <td th:text="${img.owner != null ? img.owner : 'N/A'}"></td>
                         <td th:text="${img.title != null ? img.title : 'No Title'}"></td>
                         <td th:text="${img.contentType}"></td>
-                        <td th:text="${#temporals.format(img.uploadDate, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${img.uploadDate != null ? #temporals.format(img.uploadDate, 'yyyy-MM-dd HH:mm') : 'N/A'}"></td>
                         <td>
                             <div class="btn-group">
                                 <!-- View (modal) -->
@@ -108,13 +102,10 @@
                                         th:data-bs-target="'#viewModal__' + ${img.imageId}">
                                     <i class="fas fa-eye"></i> View
                                 </button>
-
                                 <!-- Edit -->
-                                <a th:href="@{/web/images/edit/{id}(id=${img.imageId}, search=${search})}"
-                                   class="btn btn-warning btn-sm">
+                                <a th:href="@{/web/images/edit/{id}(id=${img.imageId}, search=${search})}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
-
                                 <!-- Soft Delete -->
                                 <button type="button"
                                         class="btn btn-danger btn-sm delete-button"
@@ -131,24 +122,17 @@
 
             <!-- "View" modals for each row -->
             <div th:each="img : ${images}">
-                <div class="modal fade"
-                     th:id="'viewModal__' + ${img.imageId}"
-                     tabindex="-1"
-                     aria-hidden="true">
+                <div class="modal fade" th:id="'viewModal__' + ${img.imageId}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content bg-dark text-white">
                             <div class="modal-header">
-                                <h5 class="modal-title"
-                                    th:text="'Preview: ' + (img.title != null ? img.title : 'Image')"></h5>
-                                <button type="button"
-                                        class="btn-close btn-close-white"
-                                        data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+                                <h5 class="modal-title" th:text="'Preview: ' + (img.title != null ? img.title : 'Image')"></h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body text-center">
                                 <th:block th:if="${img.contentType != null}">
                                     <th:block th:if="${img.contentType.startsWith('image/')}">
-                                        <img th:if="${img.base64Data}"
+                                        <img th:if="${img.base64Data != null}"
                                              th:src="${'data:' + img.contentType + ';base64,' + img.base64Data}"
                                              class="img-fluid" />
                                     </th:block>
@@ -158,7 +142,6 @@
                                             PDF file preview not available.
                                         </iframe>
                                     </th:block>
-                                    
                                     <th:block th:if="${img.contentType == 'application/msword'}">
                                         <p><i class="fas fa-file-word fa-2x"></i> Word file preview not available.</p>
                                     </th:block>
@@ -169,16 +152,16 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
+        <!-- Message when no images exist -->
         <div th:if="${images == null or #lists.isEmpty(images)}" class="mt-4 text-center">
             <p>No files found.</p>
         </div>
     </div>
 
-      <!-- Include Footer Fragment -->
-      <div th:replace="~{fragments/footer :: footer}"></div>
+    <!-- Include Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
