@@ -1,25 +1,32 @@
 package com.wefky.RESTfulWeb.controller;
 
-import com.wefky.RESTfulWeb.entity.Image;
-import com.wefky.RESTfulWeb.service.ImageService;
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 
+import com.wefky.RESTfulWeb.entity.Image;
+import com.wefky.RESTfulWeb.service.ImageService;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Controller for handling web requests related to images.
@@ -66,7 +73,7 @@ public class ImagesWebController {
     /**
      * List active images, possibly filtered by a single search term.
      */
-    @GetMapping
+    @GetMapping("/web/images")
     public String listImages(
             @RequestParam(required = false) String search,
             HttpServletRequest request,
