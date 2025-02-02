@@ -53,18 +53,7 @@ public class ImagesWebController {
         } catch (Exception e) {
             logger.error("Error fetching images: ", e);
             ra.addFlashAttribute("error", "An error occurred while fetching images: " + e.getMessage());
-            try {
-                List<Image> images = imageService.searchImages(null);
-                model.addAttribute("images", images);
-                model.addAttribute("search", null);
-                List<String> possibleContentTypes = imageService.getDistinctContentTypes();
-                possibleContentTypes.add(0, "");
-                model.addAttribute("possibleContentTypes", possibleContentTypes);
-            } catch (Exception innerEx) {
-                logger.error("Error fetching all active images after initial error: ", innerEx);
-                return "redirect:/";
-            }
-            return "images";
+            return "redirect:/";
         }
     }
 
@@ -85,18 +74,7 @@ public class ImagesWebController {
         } catch (Exception e) {
             logger.error("Error fetching deleted images: ", e);
             ra.addFlashAttribute("error", "An error occurred while fetching deleted images: " + e.getMessage());
-            try {
-                List<Image> images = imageService.searchDeletedImages(null);
-                model.addAttribute("images", images);
-                model.addAttribute("search", null);
-                List<String> possibleContentTypes = imageService.getDistinctContentTypes();
-                possibleContentTypes.add(0, "");
-                model.addAttribute("possibleContentTypes", possibleContentTypes);
-            } catch (Exception innerEx) {
-                logger.error("Error fetching all deleted images after initial error: ", innerEx);
-                return "redirect:/web/images";
-            }
-            return "imagesTrash";
+            return "redirect:/web/images";
         }
     }
 
@@ -117,11 +95,7 @@ public class ImagesWebController {
             Optional<Image> opt = imageService.getImageById(id);
             if (opt.isEmpty()) {
                 ra.addFlashAttribute("error", "File not found.");
-                String redirectUrl = "/web/images";
-                if (search != null && !search.isEmpty()) {
-                    redirectUrl += "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
-                }
-                return "redirect:" + redirectUrl;
+                return "redirect:/web/images" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
             }
             model.addAttribute("image", opt.get());
             model.addAttribute("mode", "edit");
@@ -130,11 +104,7 @@ public class ImagesWebController {
         } catch (Exception e) {
             logger.error("Error showing edit form: ", e);
             ra.addFlashAttribute("error", "Cannot show edit form: " + e.getMessage());
-            String redirectUrl = "/web/images";
-            if (search != null && !search.isEmpty()) {
-                redirectUrl += "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
-            }
-            return "redirect:" + redirectUrl;
+            return "redirect:/web/images";
         }
     }
 
@@ -159,11 +129,7 @@ public class ImagesWebController {
                 Optional<Image> opt = imageService.getImageById(image.getImageId());
                 if (opt.isEmpty()) {
                     ra.addFlashAttribute("error", "File to update not found.");
-                    String redirectUrl = "/web/images";
-                    if (search != null && !search.isEmpty()) {
-                        redirectUrl += "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
-                    }
-                    return "redirect:" + redirectUrl;
+                    return "redirect:/web/images" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
                 }
                 img = opt.get();
             } else {
@@ -174,34 +140,23 @@ public class ImagesWebController {
             img.setDescription(image.getDescription());
             img.setContentType(image.getContentType());
             if (file != null && !file.isEmpty()) {
-                byte[] bytes = file.getBytes();
-                img.setData(bytes);
+                img.setData(file.getBytes());
             }
             imageService.saveImage(img);
             ra.addFlashAttribute("success", "File saved successfully!");
-            String redirectUrl = "/web/images";
-            if (search != null && !search.isEmpty()) {
-                redirectUrl += "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
-            }
-            return "redirect:" + redirectUrl;
+            return "redirect:/web/images" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
         } catch (IOException ex) {
             logger.error("IO error reading file upload", ex);
             ra.addFlashAttribute("error", "Failed to read the file upload: " + ex.getMessage());
-            String redirectUrl = "/web/images";
-            if (search != null && !search.isEmpty()) {
-                redirectUrl += "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
-            }
-            return "redirect:" + redirectUrl;
+            return "redirect:/web/images";
         } catch (Exception e) {
             logger.error("Error saving file", e);
             ra.addFlashAttribute("error", "Error saving file: " + e.getMessage());
-            String redirectUrl = (image.getImageId() != null)
-                    ? "/web/images/edit/" + image.getImageId()
-                    : "/web/images/new";
-            if (search != null && !search.isEmpty()) {
-                redirectUrl += "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
+            if (image.getImageId() != null) {
+                return "redirect:/web/images/edit/" + image.getImageId() + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
+            } else {
+                return "redirect:/web/images/new" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
             }
-            return "redirect:" + redirectUrl;
         }
     }
 
@@ -216,11 +171,7 @@ public class ImagesWebController {
             logger.error("Error soft deleting file", e);
             ra.addFlashAttribute("error", "Failed to delete file.");
         }
-        String redirectUrl = "/web/images";
-        if (search != null && !search.trim().isEmpty() && !"null".equalsIgnoreCase(search.trim())) {
-            redirectUrl += "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
-        }
-        return "redirect:" + redirectUrl;
+        return "redirect:/web/images" + (search != null && !search.trim().isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
     }
 
     @PostMapping("/restore/{id}")
@@ -234,11 +185,7 @@ public class ImagesWebController {
             logger.error("Error restoring file", e);
             ra.addFlashAttribute("error", "Failed to restore file.");
         }
-        String redirectUrl = "/web/images/trash";
-        if (search != null && !search.isEmpty()) {
-            redirectUrl += "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
-        }
-        return "redirect:" + redirectUrl;
+        return "redirect:/web/images/trash" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
     }
 
     @Secured("ROLE_ADMIN")
@@ -253,10 +200,6 @@ public class ImagesWebController {
             logger.error("Error permanently deleting file", e);
             ra.addFlashAttribute("error", "Failed to permanently delete file.");
         }
-        String redirectUrl = "/web/images/trash";
-        if (search != null && !search.isEmpty()) {
-            redirectUrl += "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
-        }
-        return "redirect:" + redirectUrl;
+        return "redirect:/web/images/trash" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
     }
 }

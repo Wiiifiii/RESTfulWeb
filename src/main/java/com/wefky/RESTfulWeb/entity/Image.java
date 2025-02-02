@@ -1,13 +1,12 @@
 package com.wefky.RESTfulWeb.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import lombok.*;
 
 /**
  * Represents an image entity stored in the database.
- * Contains metadata and binary data (as a byte array) for an image.
  */
 @Entity
 @Table(name = "images")
@@ -23,7 +22,7 @@ public class Image {
     private Long imageId;
 
     @NotBlank(message = "Owner is required.")
-    @Column(name = "owner", length = 100)
+    @Column(name = "owner", length = 100, nullable = false)
     private String owner;
 
     @Lob
@@ -35,7 +34,7 @@ public class Image {
     private boolean deleted = false;
 
     @NotBlank(message = "Content Type is required.")
-    @Column(name = "content_type", length = 50)
+    @Column(name = "content_type", length = 50, nullable = false)
     private String contentType;
 
     @Column(name = "title", length = 255)
@@ -47,6 +46,9 @@ public class Image {
     @Column(name = "upload_date", nullable = false)
     private LocalDateTime uploadDate;
 
+    /**
+     * Transient field to hold the Base64-encoded image data for display purposes.
+     */
     @Transient
     private String base64Data;
 }

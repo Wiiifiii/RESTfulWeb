@@ -30,18 +30,16 @@ public class ImageService {
             return images;
         }
         Long searchId = null;
-        String searchText = null;
         try {
             searchId = Long.parseLong(search);
         } catch (NumberFormatException e) {
-            // Not a number; treat as text.
+            // Not a number, treat search as text
         }
         List<Image> images;
         if (searchId != null) {
             images = imageRepository.searchImages(searchId, search);
         } else {
-            searchText = search.trim();
-            images = imageRepository.searchImages(null, searchText);
+            images = imageRepository.searchImages(null, search.trim());
         }
         populateBase64(images);
         return images;
@@ -55,18 +53,16 @@ public class ImageService {
             return images;
         }
         Long searchId = null;
-        String searchText = null;
         try {
             searchId = Long.parseLong(search);
         } catch (NumberFormatException e) {
-            // Not a number; treat as text.
+            // Not a number, treat as text
         }
         List<Image> images;
         if (searchId != null) {
             images = imageRepository.searchDeletedImages(searchId, search);
         } else {
-            searchText = search.trim();
-            images = imageRepository.searchDeletedImages(null, searchText);
+            images = imageRepository.searchDeletedImages(null, search.trim());
         }
         populateBase64(images);
         return images;
@@ -95,7 +91,7 @@ public class ImageService {
         imageRepository.findById(id).ifPresent(image -> {
             image.setDeleted(true);
             imageRepository.save(image);
-            logger.info("Image with ID {} soft deleted.", id);
+            logger.info("Image with ID {} soft-deleted.", id);
         });
     }
 
@@ -104,7 +100,7 @@ public class ImageService {
             imageRepository.deleteById(id);
             logger.info("Image with ID {} permanently deleted.", id);
         } else {
-            logger.warn("Attempted to permanently delete non-existent image with ID {}.", id);
+            logger.warn("Attempt to delete non-existent image with ID {}.", id);
         }
     }
 
@@ -121,22 +117,17 @@ public class ImageService {
         return imageRepository.findDistinctContentTypes();
     }
 
+    // --- Helper Methods to populate Base64 data ---
     private void populateBase64(Image img) {
-        if (img.getData() != null && img.getContentType() != null) {
-            if (img.getContentType().startsWith("image/")) {
-                String encoded = Base64.getEncoder().encodeToString(img.getData());
-                img.setBase64Data(encoded);
-            } else {
-                img.setBase64Data(null);
-            }
+        if (img.getData() != null && img.getContentType() != null && img.getContentType().startsWith("image/")) {
+            String encoded = Base64.getEncoder().encodeToString(img.getData());
+            img.setBase64Data(encoded);
         } else {
             img.setBase64Data(null);
         }
     }
 
     private void populateBase64(List<Image> images) {
-        for (Image img : images) {
-            populateBase64(img);
-        }
+        images.forEach(this::populateBase64);
     }
 }

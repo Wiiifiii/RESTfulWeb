@@ -20,9 +20,6 @@ import com.wefky.RESTfulWeb.service.ImageService;
 
 import lombok.RequiredArgsConstructor;
 
-/**
- * REST controller for managing images.
- */
 @RestController
 @RequestMapping("/api/images")
 @RequiredArgsConstructor
@@ -38,22 +35,17 @@ public class ImageRestController {
             return ResponseEntity.ok(images);
         } catch (Exception e) {
             logger.error("Error fetching images via REST API: ", e);
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(500).build();
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Image> getImageById(@PathVariable Long id) {
         try {
-            Optional<Image> opt = imageService.searchImages(null).stream()
-                    .filter(img -> img.getImageId().equals(id))
-                    .findFirst();
-            if (opt.isEmpty() || opt.get().isDeleted()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(opt.get());
+            Optional<Image> opt = imageService.getImageById(id);
+            return opt.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
-            logger.error("Error fetching image by ID via REST API: ", e);
+            logger.error("Error fetching image by ID: ", e);
             return ResponseEntity.status(500).build();
         }
     }
@@ -61,37 +53,22 @@ public class ImageRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteImage(@PathVariable Long id) {
         try {
-            Optional<Image> opt = imageService.searchImages(null).stream()
-                    .filter(img -> img.getImageId().equals(id))
-                    .findFirst();
-            if (opt.isEmpty() || opt.get().isDeleted()) {
-                return ResponseEntity.notFound().build();
-            }
             imageService.softDeleteImage(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            logger.error("Error soft deleting image via REST API: ", e);
+            logger.error("Error soft deleting image: ", e);
             return ResponseEntity.status(500).build();
         }
     }
 
-    @Secured("ROLE_ADMIN")
     @PostMapping("/{id}/restore")
     public ResponseEntity<Image> restoreImage(@PathVariable Long id) {
         try {
-            Optional<Image> opt = imageService.searchDeletedImages(null).stream()
-                    .filter(img -> img.getImageId().equals(id))
-                    .findFirst();
-            if (opt.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
             imageService.restoreImage(id);
-            Optional<Image> restored = imageService.searchImages(null).stream()
-                    .filter(img -> img.getImageId().equals(id))
-                    .findFirst();
+            Optional<Image> restored = imageService.getImageById(id);
             return restored.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
-            logger.error("Error restoring image via REST API: ", e);
+            logger.error("Error restoring image: ", e);
             return ResponseEntity.status(500).build();
         }
     }
@@ -100,13 +77,10 @@ public class ImageRestController {
     @DeleteMapping("/{id}/permanent")
     public ResponseEntity<Void> permanentlyDeleteImage(@PathVariable Long id) {
         try {
-            if (!imageService.searchImages(null).stream().anyMatch(img -> img.getImageId().equals(id))) {
-                return ResponseEntity.notFound().build();
-            }
             imageService.permanentlyDeleteImage(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            logger.error("Error permanently deleting image via REST API: ", e);
+            logger.error("Error permanently deleting image: ", e);
             return ResponseEntity.status(500).build();
         }
     }

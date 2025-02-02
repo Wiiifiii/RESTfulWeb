@@ -8,9 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 import com.wefky.RESTfulWeb.entity.Image;
 
-/**
- * Repository interface for managing Image entities.
- */
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
     @Query("SELECT i FROM Image i WHERE i.deleted = false")
@@ -27,10 +24,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
             (:text IS NOT NULL AND LOWER(i.contentType) = LOWER(:text))
         )
     """)
-    List<Image> searchImages(
-            @Param("id") Long id,
-            @Param("text") String text
-    );
+    List<Image> searchImages(@Param("id") Long id, @Param("text") String text);
 
     @Query("""
         SELECT i FROM Image i 
@@ -40,10 +34,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
             (:text IS NOT NULL AND LOWER(i.contentType) = LOWER(:text))
         )
     """)
-    List<Image> searchDeletedImages(
-            @Param("id") Long id,
-            @Param("text") String text
-    );
+    List<Image> searchDeletedImages(@Param("id") Long id, @Param("text") String text);
 
     @Query("SELECT DISTINCT i.contentType FROM Image i WHERE i.deleted = false")
     List<String> findDistinctContentTypes();
