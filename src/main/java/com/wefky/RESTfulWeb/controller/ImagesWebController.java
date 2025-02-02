@@ -73,7 +73,7 @@ public class ImagesWebController {
     /**
      * List active images, possibly filtered by a single search term.
      */
-    @GetMapping("/web/images")
+    @GetMapping
     public String listImages(
             @RequestParam(required = false) String search,
             HttpServletRequest request,
