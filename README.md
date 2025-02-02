@@ -34,6 +34,7 @@ A web application for managing **locations**, **measurements**, and **images**. 
    - Used backticks for URLs (e.g., `/web/locations`).
 
 3. **Screenshots**:
-   - ![image](https://github.com/user-attachments/assets/7b5c1a5c-0ca9-4605-b786-55712e91c67a)
+   - ![image](https://github.com/user-attachments/assets/83239e7c-5d10-421e-920f-9d9512cab785)
+
 
 ---
