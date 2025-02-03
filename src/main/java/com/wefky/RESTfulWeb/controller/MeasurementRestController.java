@@ -72,7 +72,7 @@ public class MeasurementRestController {
 
     @PostMapping
     public ResponseEntity<Measurement> createMeasurement(@RequestBody Measurement measurement) {
-        // Ensure the measurement timestamp is set automatically.
+        // Auto-set the timestamp if not provided.
         if (measurement.getTimestamp() == null) {
             measurement.setTimestamp(LocalDateTime.now());
         }

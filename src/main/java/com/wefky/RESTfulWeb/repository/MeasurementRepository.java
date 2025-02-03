@@ -14,10 +14,11 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
     @Query("SELECT m FROM Measurement m WHERE m.deleted = false")
     List<Measurement> findAllActive();
 
-    // Native query for filtering active measurements by unit, timestamp, and city.
+    // Native query for filtering active measurements.
+    // Note the correction in the JOIN clause: it now uses m.location_id instead of m.location_id_fk.
     @Query(value = "SELECT m.* " +
             "FROM measurements m " +
-            "JOIN locations l ON l.location_id = m.location_id_fk " +
+            "JOIN locations l ON l.location_id = m.location_id " +
             "WHERE m.deleted = false " +
             "  AND lower(cast(m.measurement_unit as text)) LIKE lower(CONCAT('%', COALESCE(:measurementUnit, ''), '%')) " +
             "  AND m.timestamp >= COALESCE(:start, m.timestamp) " +
@@ -32,7 +33,7 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
     @Query("SELECT m FROM Measurement m WHERE m.deleted = true")
     List<Measurement> findAllDeleted();
 
-    // JPQL query for filtering deleted measurements by unit, timestamp, and city.
+    // JPQL query for filtering deleted measurements.
     @Query("""
         SELECT m FROM Measurement m
         WHERE m.deleted = true
