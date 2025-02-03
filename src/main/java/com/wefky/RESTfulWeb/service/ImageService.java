@@ -114,11 +114,11 @@ public class ImageService {
     // --- Helper Methods to populate Base64 data ---
     private void populateBase64(Image img) {
         if (img.getData() != null && img.getContentType() != null &&
-            (img.getContentType().startsWith("image/") ||
-             img.getContentType().equalsIgnoreCase("application/pdf") ||
-             img.getContentType().equalsIgnoreCase("application/msword") ||
-             img.getContentType().equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-            )) {
+                (img.getContentType().startsWith("image/") ||
+                        img.getContentType().equalsIgnoreCase("application/pdf") ||
+                        img.getContentType().equalsIgnoreCase("application/msword") ||
+                        img.getContentType().equalsIgnoreCase(
+                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))) {
             String encoded = Base64.getEncoder().encodeToString(img.getData());
             img.setBase64Data(encoded);
         } else {
@@ -129,4 +129,15 @@ public class ImageService {
     private void populateBase64(List<Image> images) {
         images.forEach(this::populateBase64);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<Image> getImageByIdIncludingDeleted(Long id) {
+        Optional<Image> opt = imageRepository.findById(id);
+        if (opt.isPresent()) {
+            populateBase64(opt.get());
+            return opt;
+        }
+        return Optional.empty();
+    }
+
 }
