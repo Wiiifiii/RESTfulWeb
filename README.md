@@ -45,7 +45,21 @@ A web-based, database-backed file management system and data portal built using 
 
 ## Project Structure
 
-RESTfulWeb/ ├── src/ │ ├── main/ │ │ ├── java/com/wefky/RESTfulWeb/ │ │ │ ├── config/ # Security, Thymeleaf, and other configurations │ │ │ ├── controller/ # REST and Web controllers (for images, locations, measurements, etc.) │ │ │ ├── entity/ # JPA entities (Image, Location, Measurement, etc.) │ │ │ ├── repository/ # Spring Data repositories │ │ │ └── service/ # Service layer for business logic │ │ └── resources/ │ │ ├── application.properties │ │ └── templates/ # Thymeleaf HTML templates │ └── test/ ├── pom.xml └── README.md
+RESTfulWeb/ 
+├── src/ 
+│ ├── main/ 
+│ │ ├── java/com/wefky/RESTfulWeb/ 
+│ │ │ ├── config/ # Security, Thymeleaf, and other configurations 
+│ │ │ ├── controller/ # REST and Web controllers (for images, locations, measurements, etc.) 
+│ │ │ ├── entity/ # JPA entities (Image, Location, Measurement, etc.) 
+│ │ │ ├── repository/ # Spring Data repositories 
+│ │ │ └── service/ # Service layer for business logic 
+│ │ └── resources/ 
+│ │ ├── application.properties 
+│ │ └── templates/ # Thymeleaf HTML templates 
+│ └── test/ 
+├── pom.xml 
+└── README.md
 
 ## Installation & Setup
 
