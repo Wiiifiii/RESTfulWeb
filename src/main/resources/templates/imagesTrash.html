@@ -1,7 +1,50 @@
+<!--
+    File: imagesTrash.html
+    Location: src/main/resources/templates/imagesTrash.html
+    Description: Thymeleaf template for displaying a trash (deleted images/files) view in a web application.
+    
+    Overview:
+    - Declares the document type and uses the "dark-theme" CSS class for styling.
+    - Specifies Thymeleaf XML namespaces as well as Spring Security extensions for conditional rendering.
+    
+    Head Section:
+    - Sets the title to "Deleted Files/Images (Trash)".
+    - Includes meta tags for character encoding, viewport settings, and CSRF protection tokens.
+    - Loads external CSS libraries including Bootstrap for layout and FontAwesome for icons.
+    - Links to a custom CSS file for additional styles.
+    
+    Body Section:
+    - Includes a reusable navbar fragment for site navigation.
+    - Contains a container with:
+        - A headline for the deleted items page.
+        - Alert messages for displaying feedback (success or error) using dynamic Thymeleaf expressions.
+        - A search form allowing filtering of deleted files based on ID, owner, or content type.
+        - A navigation button ("Back to Active") to return to the active files view.
+        - A responsive table that dynamically displays deleted images/files:
+            • Each row shows file attributes like ID, owner, title, content type, and upload date.
+            • Displays either a thumbnail preview for images or an icon for non-image file types.
+            • Provides a set of action buttons for each file:
+                - View: Opens a modal with a content preview.
+                - Restore: Offers the ability to restore deleted files.
+                - Permanently Delete: Available only for users with the ADMIN role.
+    - Each file includes an associated modal for detailed preview:
+        • For images, displays a full-size image.
+        • For PDFs, shows the document in an iframe with a backup link.
+        • For Word documents, shows an icon with a link to view the document.
+    - Concludes with a fallback message when no deleted files are found.
+    
+    Footer and Scripts:
+    - Includes a footer fragment for consistent bottom-of-page content.
+    - Loads Bootstrap's JS bundle and SweetAlert2 for interactive alerts, along with a custom JS file for page-specific functionality.
+    
+    Usage:
+    - Designed to operate within a Spring MVC environment with Thymeleaf as the templating engine.
+    - Utilizes Thymeleaf's conditional and iterative rendering to display dynamic content based on the server model.
+-->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      class="dark-theme">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    class="dark-theme">
+
 <head>
     <title>Deleted Files/Images (Trash)</title>
     <meta charset="UTF-8">
@@ -16,22 +59,24 @@
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
+
 <body class="d-flex flex-column min-vh-100">
-    <!-- Include Navbar Fragment -->
+    <!-- Navbar Fragment -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
-    
+
     <!-- Main Container -->
     <div class="container py-4 flex-grow-1">
         <h2>Deleted Files/Images (Trash)</h2>
         <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
-        
+
         <!-- Search Form -->
         <form th:action="@{/web/images/trash}" method="get" class="mb-3">
             <div class="row g-3 align-items-end">
                 <div class="col-md-6">
                     <label for="search" class="form-label">Search</label>
-                    <input type="text" id="search" name="search" class="form-control" th:value="${search}" placeholder="Search by ID, Owner, or Content Type" />
+                    <input type="text" id="search" name="search" class="form-control" th:value="${search}"
+                        placeholder="Search by ID, Owner, or Content Type" />
                 </div>
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-primary">
@@ -43,13 +88,13 @@
                 </div>
             </div>
         </form>
-        
+
         <div class="mb-4">
             <a th:href="@{/web/images(search=${search})}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back to Active
             </a>
         </div>
-        
+
         <!-- Trash Files Table -->
         <div class="table-responsive" th:if="${images != null and !#lists.isEmpty(images)}">
             <table class="table table-striped align-middle text-white">
@@ -70,12 +115,14 @@
                         <td style="width:120px;">
                             <th:block th:if="${img.contentType != null}">
                                 <th:block th:if="${img.contentType.startsWith('image/')}">
-                                    <img th:src="@{'/api/images/' + ${img.imageId} + '/file-all'}" class="img-thumbnail img-thumb" alt="Thumbnail" />
+                                    <img th:src="@{'/api/images/' + ${img.imageId} + '/file-all'}"
+                                        class="img-thumbnail img-thumb" alt="Thumbnail" />
                                 </th:block>
                                 <th:block th:if="${img.contentType == 'application/pdf'}">
                                     <i class="fas fa-file-pdf fa-2x"></i>
                                 </th:block>
-                                <th:block th:if="${img.contentType == 'application/msword' or img.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
+                                <th:block
+                                    th:if="${img.contentType == 'application/msword' or img.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
                                     <i class="fas fa-file-word fa-2x"></i>
                                 </th:block>
                             </th:block>
@@ -87,22 +134,23 @@
                         <td>
                             <div class="btn-group">
                                 <!-- View Modal Button -->
-                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" th:data-bs-target="'#viewModal__' + ${img.imageId}">
+                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
+                                    th:data-bs-target="'#viewModal__' + ${img.imageId}">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 <!-- Restore Button -->
                                 <button type="button" class="btn btn-success btn-sm restore-button"
-                                        th:data-restore-url="@{'/web/images/restore/' + ${img.imageId} + '?search=' + ${search}}"
-                                        data-item-type="File"
-                                        th:data-item-details="${img.title != null ? img.title : 'File'}">
+                                    th:data-restore-url="@{'/web/images/restore/' + ${img.imageId} + '?search=' + ${search}}"
+                                    data-item-type="File"
+                                    th:data-item-details="${img.title != null ? img.title : 'File'}">
                                     <i class="fas fa-undo"></i> Restore
                                 </button>
                                 <!-- Permanently Delete (Admin Only) -->
                                 <sec:authorize access="hasRole('ADMIN')">
                                     <button type="button" class="btn btn-danger btn-sm delete-permanent-button"
-                                            th:data-delete-url="@{'/web/images/delete-permanent/' + ${img.imageId} + '?search=' + ${search}}"
-                                            data-item-type="File"
-                                            th:data-item-details="${img.title != null ? img.title : 'File'}">
+                                        th:data-delete-url="@{'/web/images/delete-permanent/' + ${img.imageId} + '?search=' + ${search}}"
+                                        data-item-type="File"
+                                        th:data-item-details="${img.title != null ? img.title : 'File'}">
                                         <i class="fas fa-trash-alt"></i> Delete Permanently
                                     </button>
                                 </sec:authorize>
@@ -111,31 +159,39 @@
                     </tr>
                 </tbody>
             </table>
-            
+
             <!-- View Modal for Each File -->
             <div th:each="img : ${images}">
                 <div class="modal fade" th:id="'viewModal__' + ${img.imageId}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content bg-dark text-white">
                             <div class="modal-header">
-                                <h5 class="modal-title" th:text="'Preview: ' + (img.title != null ? img.title : 'File')"></h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 class="modal-title"
+                                    th:text="'Preview: ' + (img.title != null ? img.title : 'File')"></h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
                             <div class="modal-body text-center">
                                 <th:block th:if="${img.contentType != null}">
                                     <th:block th:if="${img.contentType.startsWith('image/')}">
-                                        <img th:src="@{'/api/images/' + ${img.imageId} + '/file-all'}" class="img-fluid" alt="Image Preview" />
+                                        <img th:src="@{'/api/images/' + ${img.imageId} + '/file-all'}" class="img-fluid"
+                                            alt="Image Preview" />
                                     </th:block>
                                     <th:block th:if="${img.contentType == 'application/pdf'}">
-                                        <iframe th:src="@{'/api/images/' + ${img.imageId} + '/file-all'}" style="width:100%;height:500px;" frameborder="0">
+                                        <iframe th:src="@{'/api/images/' + ${img.imageId} + '/file-all'}"
+                                            style="width:100%;height:500px;" frameborder="0">
                                             PDF preview not available.
                                         </iframe>
-                                        <p>If the PDF does not display, <a th:href="@{'/api/images/' + ${img.imageId} + '/file-all'}" target="_blank">click here to open it in a new tab</a>.</p>
+                                        <p>If the PDF does not display, <a
+                                                th:href="@{'/api/images/' + ${img.imageId} + '/file-all'}"
+                                                target="_blank">click here to open it in a new tab</a>.</p>
                                     </th:block>
-                                    <th:block th:if="${img.contentType == 'application/msword' or img.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
+                                    <th:block
+                                        th:if="${img.contentType == 'application/msword' or img.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
                                         <p>
                                             <i class="fas fa-file-word fa-2x"></i>
-                                            <a th:href="@{'/api/images/' + ${img.imageId} + '/file-all'}" target="_blank">View Document</a>
+                                            <a th:href="@{'/api/images/' + ${img.imageId} + '/file-all'}"
+                                                target="_blank">View Document</a>
                                         </p>
                                     </th:block>
                                 </th:block>
@@ -146,16 +202,16 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Message When No Files Exist -->
         <div th:if="${images == null or #lists.isEmpty(images)}" class="mt-4 text-center">
             <p>No deleted files found.</p>
         </div>
     </div>
-    
-    <!-- Include Footer Fragment -->
+
+    <!-- Footer Fragment -->
     <div th:replace="~{fragments/footer :: footer}"></div>
-    
+
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- SweetAlert2 -->
@@ -163,4 +219,5 @@
     <!-- Custom JS -->
     <script th:src="@{/js/scripts.js}"></script>
 </body>
+
 </html>

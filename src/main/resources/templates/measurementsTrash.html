@@ -1,6 +1,41 @@
+<!-- 
+    File: measurementsTrash.html
+    Location: src/main/resources/templates/measurementsTrash.html
+
+    Description:
+    ------------
+    This HTML template provides a user interface for viewing and managing deleted measurements in the application.
+    
+    Key Features:
+    -------------
+    - Uses Thymeleaf for server-side templating and dynamic content rendering.
+    - Integrates Spring Security (via sec:authorize tag) to conditionally display administrative actions.
+    - Displays flash messages for success or error feedback.
+    - Provides a filter form allowing users to filter deleted measurements by measurement unit, city name, start date, and end date.
+    - Renders a responsive table that lists each deleted measurement with details such as:
+            • Measurement ID
+            • Measurement Unit
+            • Amount
+            • Timestamp (formatted as dd/MM/yyyy HH:mm:ss)
+            • Location (with a fallback to 'N/A' if not available)
+    - Includes action buttons for restoring measurements and, if the user has ADMIN role, permanently deleting them.
+    - Utilizes Bootstrap for styling, FontAwesome for icons, Flatpickr for date input handling, and SweetAlert for alert modals.
+    - Loads common layout fragments (navbar and footer) to maintain consistency across the application.
+    
+    Usage:
+    ------
+    This template is designed to work with the corresponding Spring MVC controller that provides the necessary model attributes
+    including 'deletedMeasurements', filtering parameters, and CSRF token details. Users are able to interact with the measurement
+    restoration and deletion functionalities through this interface.
+    
+    Note:
+    -----
+    Ensure that required external resources (CSS and JS files) are accessible through the provided CDN links, and proper configuration 
+    is in place for the Thymeleaf processing of dynamic content.
+-->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <title>Deleted Measurements</title>
     <meta charset="UTF-8">
@@ -16,6 +51,7 @@
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
+
 <body class="d-flex flex-column min-vh-100">
     <!-- Include Navbar Fragment -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
@@ -45,29 +81,30 @@
                 <div class="col-md-3">
                     <label for="measurementUnit" class="form-label">Measurement Unit:</label>
                     <input type="text" id="measurementUnit" name="measurementUnit" class="form-control"
-                           th:value="${measurementUnit}" placeholder="e.g. Celsius">
+                        th:value="${measurementUnit}" placeholder="e.g. Celsius">
                 </div>
                 <div class="col-md-3">
                     <label for="cityName" class="form-label">City Name:</label>
-                    <input type="text" id="cityName" name="cityName" class="form-control"
-                           th:value="${cityName}" placeholder="e.g. Paris">
+                    <input type="text" id="cityName" name="cityName" class="form-control" th:value="${cityName}"
+                        placeholder="e.g. Paris">
                 </div>
                 <div class="col-md-3">
                     <label for="startDate" class="form-label">Start Date:</label>
                     <input type="text" id="startDate" name="startDate" class="form-control datetime-picker"
-                           th:value="${startDate}" placeholder="dd/MM/yyyy">
+                        th:value="${startDate}" placeholder="dd/MM/yyyy">
                 </div>
                 <div class="col-md-3">
                     <label for="endDate" class="form-label">End Date:</label>
                     <input type="text" id="endDate" name="endDate" class="form-control datetime-picker"
-                           th:value="${endDate}" placeholder="dd/MM/yyyy">
+                        th:value="${endDate}" placeholder="dd/MM/yyyy">
                 </div>
             </div>
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-filter"></i> Filter
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="window.location.href='/web/measurements/trash'">
+                <button type="button" class="btn btn-secondary"
+                    onclick="window.location.href='/web/measurements/trash'">
                     <i class="fas fa-times"></i> Clear
                 </button>
             </div>
@@ -97,17 +134,17 @@
                             <div class="btn-group">
                                 <!-- Restore Button -->
                                 <button type="button" class="btn btn-success btn-sm restore-button"
-                                        th:data-restore-url="@{'/web/measurements/restore/' + ${m.measurementId}}"
-                                        data-item-type="Measurement"
-                                        th:data-item-details="${m.measurementUnit != null ? m.measurementUnit : 'this measurement'}">
+                                    th:data-restore-url="@{'/web/measurements/restore/' + ${m.measurementId}}"
+                                    data-item-type="Measurement"
+                                    th:data-item-details="${m.measurementUnit != null ? m.measurementUnit : 'this measurement'}">
                                     <i class="fas fa-undo"></i> Restore
                                 </button>
                                 <sec:authorize access="hasRole('ADMIN')">
                                     <!-- Permanently Delete Button -->
                                     <button type="button" class="btn btn-danger btn-sm delete-permanent-button"
-                                            th:data-delete-url="@{'/web/measurements/delete-permanent/' + ${m.measurementId}}"
-                                            data-item-type="Measurement"
-                                            th:data-item-details="${m.measurementUnit != null ? m.measurementUnit : 'this measurement'}">
+                                        th:data-delete-url="@{'/web/measurements/delete-permanent/' + ${m.measurementId}}"
+                                        data-item-type="Measurement"
+                                        th:data-item-details="${m.measurementUnit != null ? m.measurementUnit : 'this measurement'}">
                                         <i class="fas fa-trash-alt"></i> Delete Permanently
                                     </button>
                                 </sec:authorize>
@@ -133,7 +170,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fi.js"></script>
     <script th:src="@{/js/scripts.js}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             flatpickr(".datetime-picker", {
                 enableTime: false,
                 dateFormat: "d/m/Y",
@@ -142,4 +179,5 @@
         });
     </script>
 </body>
+
 </html>

@@ -1,3 +1,47 @@
+<!-- 
+File: locations.html
+Location: src/main/resources/templates/locations.html
+Documentation:
+
+This HTML template is a Thymeleaf view for managing "Locations" in a RESTful web application.
+
+Key Features:
+1. Head Section:
+    - Sets the document type and includes Thymeleaf XML namespaces.
+    - Defines metadata such as title, character set, and viewport for responsiveness.
+    - Includes CSRF meta tags required for form submissions.
+    - Links to external stylesheets for Bootstrap, FontAwesome, and custom styles.
+
+2. Body Section:
+    - Uses a flexbox layout (with classes like "d-flex" and "min-vh-100") to achieve a sticky footer design.
+    - Dynamically includes a navigation bar fragment using Thymeleaf's th:replace.
+    - Displays inline flash alerts for success or error messages using Bootstrap's alert classes.
+    - Provides action buttons:
+         • "Add New Location" to navigate to the new location creation view.
+         • "View Trash" to navigate to the trash page where deleted locations might be viewed or restored.
+    
+3. Filter Form:
+    - Contains input fields to filter locations by various parameters:
+         • City Name
+         • Postal Code
+         • Minimum Latitude
+         • Maximum Latitude
+    - Supports filtering with a submit button and provides a clear button to reset filters.
+    
+4. Data Table:
+    - Constructs a responsive table to list location details including ID, Postal Code, City Name, Latitude, and Longitude.
+    - Uses Thymeleaf's th:each for iterating through and displaying each location.
+    - Includes action buttons per row for:
+         • Editing the location (navigates to an edit page).
+         • Initiating deletion of the location, with data attributes used by JavaScript (e.g., SweetAlert2) to confirm the action.
+    - Displays a fallback message when no locations are available.
+
+5. Footer and Scripts:
+    - Dynamically includes a footer fragment.
+    - References external JavaScript libraries: Bootstrap Bundle for components, SweetAlert2 for interactive alerts, and custom JavaScript.
+
+Overall, this template implements dynamic content rendering, form handling with CSRF protection, and utilizes external UI libraries to create a user-friendly interface for managing locations.
+-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 

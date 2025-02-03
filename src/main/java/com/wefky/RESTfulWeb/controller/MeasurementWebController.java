@@ -40,6 +40,18 @@ public class MeasurementWebController {
     // Date formatter for dates only (dd/MM/yyyy)
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    /**
+     * Handles GET requests to list measurements with optional filters.
+     *
+     * @param measurementUnit     Optional measurement unit to filter by.
+     * @param startDate           Optional start date to filter by (expected format: dd/MM/yyyy).
+     * @param endDate             Optional end date to filter by (expected format: dd/MM/yyyy).
+     * @param cityName            Optional city name to filter by.
+     * @param request             The HttpServletRequest object.
+     * @param model               The Model object to pass attributes to the view.
+     * @param redirectAttributes  The RedirectAttributes object to pass flash attributes.
+     * @return                    The name of the view to render.
+     */
     @GetMapping
     public String listMeasurements(
             @RequestParam(required = false) String measurementUnit,
@@ -99,11 +111,18 @@ public class MeasurementWebController {
         }
     }
 
+    /**
+     * Handles GET requests to "/new" and returns the view for creating a new measurement.
+     * 
+     * @param request the HttpServletRequest object containing the client's request
+     * @param model the Model object used to pass attributes to the view
+     * @return the name of the view to be rendered, in this case "measurementForm"
+     */
     @GetMapping("/new")
     public String newMeasurementForm(HttpServletRequest request, Model model) {
         model.addAttribute("currentUri", request.getRequestURI());
         Measurement measurement = new Measurement();
-        // Auto-set timestamp; user does not need to input it.
+      
         measurement.setTimestamp(LocalDateTime.now());
         model.addAttribute("measurement", measurement);
         model.addAttribute("mode", "new");
@@ -111,6 +130,15 @@ public class MeasurementWebController {
         return "measurementForm";
     }
 
+    /**
+     * Handles the GET request to display the edit measurement form.
+     *
+     * @param id The ID of the measurement to be edited.
+     * @param request The HttpServletRequest object.
+     * @param model The Model object to pass attributes to the view.
+     * @param redirectAttributes The RedirectAttributes object to pass flash attributes.
+     * @return The name of the view to be rendered.
+     */
     @GetMapping("/edit/{id}")
     public String editMeasurementForm(@PathVariable Long id,
                                       HttpServletRequest request,
@@ -134,15 +162,25 @@ public class MeasurementWebController {
         }
     }
 
+    /**
+     * Handles the saving of a Measurement object. If the measurement's timestamp is null,
+     * it sets the current timestamp. If the measurement has an ID, it checks if the measurement
+     * exists in the database. If not, it redirects with an error message. Otherwise, it saves
+     * the measurement and redirects with a success message.
+     *
+     * @param measurement The Measurement object to be saved.
+     * @param redirectAttributes Attributes for a redirect scenario.
+     * @return A redirect URL to the measurements page or the edit/new measurement page in case of an error.
+     */
     @PostMapping("/save")
     public String saveMeasurement(@ModelAttribute Measurement measurement,
                                   RedirectAttributes redirectAttributes) {
         try {
-            // Auto-set timestamp if not provided.
+           
             if (measurement.getTimestamp() == null) {
                 measurement.setTimestamp(LocalDateTime.now());
             }
-            // If updating, ensure the measurement exists.
+          
             if (measurement.getMeasurementId() != null) {
                 Optional<Measurement> existing = measurementService.getMeasurementById(measurement.getMeasurementId());
                 if (existing.isEmpty()) {
@@ -164,6 +202,13 @@ public class MeasurementWebController {
         }
     }
 
+    /**
+     * Handles the soft deletion of a measurement.
+     * 
+     * @param id the ID of the measurement to be deleted
+     * @param redirectAttributes used to pass flash attributes to the redirected page
+     * @return a redirect URL to the measurements page
+     */
     @PostMapping("/delete/{id}")
     public String softDeleteMeasurement(@PathVariable Long id,
                                         RedirectAttributes redirectAttributes) {
@@ -178,6 +223,18 @@ public class MeasurementWebController {
         }
     }
 
+    /**
+     * Handles GET requests to the "/trash" endpoint to view deleted measurements.
+     * 
+     * @param measurementUnit   Optional query parameter to filter by measurement unit.
+     * @param startDate         Optional query parameter to filter by start date (format: dd/MM/yyyy).
+     * @param endDate           Optional query parameter to filter by end date (format: dd/MM/yyyy).
+     * @param cityName          Optional query parameter to filter by city name.
+     * @param request           HttpServletRequest object to get the current URI.
+     * @param model             Model object to pass attributes to the view.
+     * @param redirectAttributes RedirectAttributes object to add flash attributes for redirection.
+     * @return                  The name of the view to be rendered, or a redirect URL in case of errors.
+     */
     @GetMapping("/trash")
     public String viewTrash(
             @RequestParam(required = false) String measurementUnit,
@@ -237,6 +294,13 @@ public class MeasurementWebController {
         }
     }
 
+    /**
+     * Handles the restoration of a measurement by its ID.
+     *
+     * @param id the ID of the measurement to be restored
+     * @param redirectAttributes attributes for a redirect scenario
+     * @return the redirect URL to the trash page
+     */
     @PostMapping("/restore/{id}")
     public String restoreMeasurement(@PathVariable Long id,
                                      RedirectAttributes redirectAttributes) {
@@ -251,6 +315,17 @@ public class MeasurementWebController {
         }
     }
 
+    /**
+     * Permanently deletes a measurement by its ID.
+     * 
+     * This method is secured and can only be accessed by users with the "ROLE_ADMIN" authority.
+     * It attempts to delete the measurement permanently and adds a success message to the redirect attributes.
+     * If an error occurs during the deletion process, it logs the error and adds an error message to the redirect attributes.
+     * 
+     * @param id the ID of the measurement to be permanently deleted
+     * @param redirectAttributes the attributes for a redirect scenario
+     * @return a redirect URL to the trash view of measurements
+     */
     @Secured("ROLE_ADMIN")
     @PostMapping("/delete-permanent/{id}")
     public String permanentlyDeleteMeasurement(@PathVariable Long id,

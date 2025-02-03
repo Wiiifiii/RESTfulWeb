@@ -1,12 +1,22 @@
 package com.wefky.RESTfulWeb.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 /**
  * Entity representing a Measurement.
@@ -43,28 +53,67 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Measurement {
 
+    /**
+     * Represents the unique identifier for the measurement entity.
+     * This field is automatically generated using the IDENTITY strategy.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "measurement_id")
     private Long measurementId;
-
+    /**
+     * Represents the unit of measurement for the measurement.
+     * This field is mandatory and cannot be blank.
+     * It is mapped to the "measurement_unit" column in the database.
+     * 
+     * @NotBlank ensures that the measurement unit is not null or empty.
+     * @Column specifies the column details in the database.
+     */
     @NotBlank(message = "Measurement Unit is required.")
     @Column(name = "measurement_unit", nullable = false, columnDefinition = "text")
     private String measurementUnit;
-
+    /**
+     * Represents the amount of the measurement.
+     * This field is mandatory and must be a positive value.
+     * It is mapped to the "amount" column in the database.
+     * 
+     * @NotNull ensures that the amount is not null.
+     * @DecimalMin specifies that the amount must be greater than 0.
+     * @Column specifies the column details in the database.
+     */
     @NotNull(message = "Amount is required.")
     @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be positive.")
     @Column(name = "amount", nullable = false)
     private Double amount;
-
+    /**
+     * Represents the timestamp when the measurement was taken.
+     * This field is mandatory and cannot be null.
+     * It is mapped to the "timestamp" column in the database.
+     * 
+     * @NotNull ensures that the timestamp is not null.
+     * @Column specifies the column details in the database.
+     */
     @NotNull(message = "Timestamp is required.")
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
-
+    /**
+     * Represents the location associated with the measurement.
+     * This field is fetched eagerly.
+     * It is mapped to the "location_id" column in the database.
+     * 
+     * @ManyToOne specifies the many-to-one relationship with the Location entity.
+     * @JoinColumn specifies the mapping between the field and the database column.
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "location_id", referencedColumnName = "location_id")
     private Location location;
-
+    /**
+     * Represents a flag indicating if the measurement has been deleted.
+     * This field is mapped to the "deleted" column in the database and is not nullable.
+     * Default value is false.
+     * 
+     * @Column specifies the column details in the database.
+     */
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 }

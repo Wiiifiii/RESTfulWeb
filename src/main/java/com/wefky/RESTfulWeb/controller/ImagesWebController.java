@@ -50,6 +50,15 @@ public class ImagesWebController {
         return "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
     }
 
+    /**
+     * Handles GET requests to list images. Optionally filters images based on a search query.
+     *
+     * @param search the search query to filter images (optional)
+     * @param request the HttpServletRequest object
+     * @param model the Model object to pass attributes to the view
+     * @param ra the RedirectAttributes object to pass flash attributes
+     * @return the name of the view to render
+     */
     @GetMapping
     public String listImages(@RequestParam(required = false) String search,
                              HttpServletRequest request,
@@ -71,6 +80,15 @@ public class ImagesWebController {
         }
     }
 
+    /**
+     * Handles GET requests to the "/trash" endpoint to view deleted images.
+     *
+     * @param search Optional search parameter to filter deleted images.
+     * @param request HttpServletRequest object to get the current URI.
+     * @param model Model object to pass attributes to the view.
+     * @param ra RedirectAttributes object to add flash attributes in case of redirection.
+     * @return The name of the view to render, either "imagesTrash" or a redirect to "/web/images" in case of an error.
+     */
     @GetMapping("/trash")
     public String viewTrash(@RequestParam(required = false) String search,
                             HttpServletRequest request,
@@ -92,6 +110,13 @@ public class ImagesWebController {
         }
     }
 
+    /**
+     * Handles GET requests to the "/new" endpoint to display a form for creating a new image.
+     *
+     * @param search an optional search parameter to pre-fill the form (can be null)
+     * @param model  the model to hold attributes for the view
+     * @return the name of the view template to render ("imageForm")
+     */
     @GetMapping("/new")
     public String newImageForm(@RequestParam(required = false) String search, Model model) {
         model.addAttribute("image", new Image());
@@ -100,6 +125,15 @@ public class ImagesWebController {
         return "imageForm";
     }
 
+    /**
+     * Handles the GET request to show the edit form for an image.
+     *
+     * @param id the ID of the image to be edited
+     * @param search an optional search query parameter
+     * @param model the model to pass attributes to the view
+     * @param ra the redirect attributes to pass flash attributes
+     * @return the name of the view to be rendered
+     */
     @GetMapping("/edit/{id}")
     public String editImageForm(@PathVariable Long id,
                                 @RequestParam(required = false) String search,
@@ -122,6 +156,18 @@ public class ImagesWebController {
         }
     }
 
+    /**
+     * Handles the saving of an image. This method processes the form submission for saving an image,
+     * either creating a new image or updating an existing one.
+     *
+     * @param image          The image object populated from the form.
+     * @param bindingResult  The result of binding the form parameters to the image object.
+     * @param file           The uploaded file, if any.
+     * @param search         The search query string, if any.
+     * @param ra             Redirect attributes for passing messages.
+     * @param model          The model to hold attributes for the view.
+     * @return               The view name to redirect to.
+     */
     @PostMapping("/save")
     public String saveImage(@ModelAttribute("image") @Valid Image image,
                             BindingResult bindingResult,
@@ -178,6 +224,14 @@ public class ImagesWebController {
         }
     }
 
+    /**
+     * Handles the soft deletion of an image by its ID.
+     *
+     * @param id the ID of the image to be soft deleted
+     * @param search an optional search query parameter
+     * @param ra RedirectAttributes to add flash attributes for success or error messages
+     * @return a redirect URL to the images page with the search query if provided
+     */
     @PostMapping("/delete/{id}")
     public String softDelete(@PathVariable Long id,
                              @RequestParam(required = false) String search,
@@ -192,6 +246,14 @@ public class ImagesWebController {
         return "redirect:/web/images" + getSearchQuery(search);
     }
 
+    /**
+     * Handles the restoration of an image by its ID.
+     *
+     * @param id the ID of the image to be restored
+     * @param search an optional search query parameter
+     * @param ra RedirectAttributes to add flash attributes for success or error messages
+     * @return a redirect URL to the trash page with the search query appended
+     */
     @PostMapping("/restore/{id}")
     public String restore(@PathVariable Long id,
                           @RequestParam(required = false) String search,
@@ -206,6 +268,18 @@ public class ImagesWebController {
         return "redirect:/web/images/trash" + getSearchQuery(search);
     }
 
+    /**
+     * Permanently deletes an image with the given ID.
+     * 
+     * This method is secured and requires the user to have the "ROLE_ADMIN" authority.
+     * It handles the deletion of the image and adds a success or error message to the
+     * RedirectAttributes based on the outcome.
+     * 
+     * @param id the ID of the image to be permanently deleted
+     * @param search an optional search query parameter to be appended to the redirect URL
+     * @param ra RedirectAttributes to add flash attributes for success or error messages
+     * @return a redirect URL to the trash page with the search query appended if provided
+     */
     @Secured("ROLE_ADMIN")
     @PostMapping("/delete-permanent/{id}")
     public String permanentlyDelete(@PathVariable Long id,
@@ -221,7 +295,14 @@ public class ImagesWebController {
         return "redirect:/web/images/trash" + getSearchQuery(search);
     }
 
-    // New endpoint to retrieve a file including deleted ones.
+  
+    /**
+     * Handles HTTP GET requests to retrieve an image file, including deleted ones, by its ID.
+     *
+     * @param id the ID of the image to retrieve
+     * @return a ResponseEntity containing the image data as a byte array, with appropriate headers and content type,
+     *         or a 404 Not Found response if the image does not exist
+     */
     @GetMapping("/{id}/file-all")
     public ResponseEntity<byte[]> getFileAll(@PathVariable Long id) {
         Optional<Image> opt = imageService.getImageByIdIncludingDeleted(id);

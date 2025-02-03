@@ -1,7 +1,33 @@
+<!--
+File: images.html
+Location: src/main/resources/templates/images.html
+Description:
+This Thymeleaf template is designed to manage and display a list of image and file records. It provides functionalities for:
+    - Displaying files/images with details such as ID, owner, title, content type, and upload date.
+    - Previewing image files using thumbnails and modal dialogs.
+    - Handling PDF and Word document previews through appropriate icons and embedded viewers.
+    - Searching for files by ID, owner, or content type using a unified search form.
+    - Managing file operations including adding, editing, deleting, and viewing items in a trash section.
+    - Displaying flash messages for user notifications (success/error).
+
+Features:
+    - Responsive design implemented with Bootstrap.
+    - Icon support provided by FontAwesome.
+    - Secure integration of CSRF tokens.
+    - Modular template structure with separate navbar and footer fragments.
+    - Enhanced file preview experience using modal dialogs.
+    - Conditional rendering based on content type and file availability.
+
+Dependencies:
+    - Bootstrap CSS and JS from CDN.
+    - FontAwesome for icons.
+    - SweetAlert2 for confirmation dialogs.
+    - Thymeleaf template engine for dynamic HTML rendering.
+-->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      class="dark-theme">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    class="dark-theme">
+
 <head>
     <title>Files/Images</title>
     <meta charset="UTF-8">
@@ -16,17 +42,18 @@
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
+
 <body class="d-flex flex-column min-vh-100">
-    <!-- Include Navbar Fragment -->
+    <!-- Navbar Fragment -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
-    
+
     <!-- Main Container -->
     <div class="container py-4 flex-grow-1">
         <h2>Files / Images</h2>
         <!-- Flash Messages -->
         <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
-        
+
         <div class="mb-4">
             <a th:href="@{/web/images/new(search=${search})}" class="btn btn-success">
                 <i class="fas fa-plus"></i> Add New File
@@ -35,13 +62,14 @@
                 <i class="fas fa-trash"></i> View Trash
             </a>
         </div>
-        
+
         <!-- Unified Search Form -->
         <form th:action="@{/web/images}" method="get" class="mb-3">
             <div class="row g-3 align-items-end">
                 <div class="col-md-6">
                     <label for="search" class="form-label">Search</label>
-                    <input type="text" id="search" name="search" class="form-control" th:value="${search}" placeholder="Search by ID, Owner, or Content Type" />
+                    <input type="text" id="search" name="search" class="form-control" th:value="${search}"
+                        placeholder="Search by ID, Owner, or Content Type" />
                 </div>
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-primary">
@@ -53,7 +81,7 @@
                 </div>
             </div>
         </form>
-        
+
         <!-- Files Table -->
         <div class="table-responsive" th:if="${images != null and !#lists.isEmpty(images)}">
             <table class="table table-striped align-middle text-white">
@@ -74,12 +102,14 @@
                         <td style="width:120px;">
                             <th:block th:if="${img.contentType != null}">
                                 <th:block th:if="${img.contentType.startsWith('image/')}">
-                                    <img th:src="@{'/api/images/' + ${img.imageId} + '/file'}" class="img-thumbnail img-thumb" alt="Thumbnail" />
+                                    <img th:src="@{'/api/images/' + ${img.imageId} + '/file'}"
+                                        class="img-thumbnail img-thumb" alt="Thumbnail" />
                                 </th:block>
                                 <th:block th:if="${img.contentType == 'application/pdf'}">
                                     <i class="fas fa-file-pdf fa-2x"></i>
                                 </th:block>
-                                <th:block th:if="${img.contentType == 'application/msword' or img.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
+                                <th:block
+                                    th:if="${img.contentType == 'application/msword' or img.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
                                     <i class="fas fa-file-word fa-2x"></i>
                                 </th:block>
                             </th:block>
@@ -87,16 +117,23 @@
                         <td th:text="${img.owner != null ? img.owner : 'N/A'}"></td>
                         <td th:text="${img.title != null ? img.title : 'No Title'}"></td>
                         <td th:text="${img.contentType}"></td>
-                        <td th:text="${img.uploadDate != null ? #temporals.format(img.uploadDate, 'yyyy-MM-dd HH:mm') : 'N/A'}"></td>
+                        <td
+                            th:text="${img.uploadDate != null ? #temporals.format(img.uploadDate, 'yyyy-MM-dd HH:mm') : 'N/A'}">
+                        </td>
                         <td>
                             <div class="btn-group">
-                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" th:data-bs-target="'#viewModal__' + ${img.imageId}">
+                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
+                                    th:data-bs-target="'#viewModal__' + ${img.imageId}">
                                     <i class="fas fa-eye"></i> View
                                 </button>
-                                <a th:href="@{/web/images/edit/{id}(id=${img.imageId}, search=${search})}" class="btn btn-warning btn-sm">
+                                <a th:href="@{/web/images/edit/{id}(id=${img.imageId}, search=${search})}"
+                                    class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
-                                <button type="button" class="btn btn-danger btn-sm delete-button" th:data-delete-url="@{'/web/images/delete/' + ${img.imageId} + '?search=' + ${search}}" data-item-type="File" th:data-item-details="${img.title != null ? img.title : 'File'}">
+                                <button type="button" class="btn btn-danger btn-sm delete-button"
+                                    th:data-delete-url="@{'/web/images/delete/' + ${img.imageId} + '?search=' + ${search}}"
+                                    data-item-type="File"
+                                    th:data-item-details="${img.title != null ? img.title : 'File'}">
                                     <i class="fas fa-trash"></i> Delete
                                 </button>
                             </div>
@@ -104,31 +141,39 @@
                     </tr>
                 </tbody>
             </table>
-            
+
             <!-- View Modal for Each File -->
             <div th:each="img : ${images}">
                 <div class="modal fade" th:id="'viewModal__' + ${img.imageId}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content bg-dark text-white">
                             <div class="modal-header">
-                                <h5 class="modal-title" th:text="'Preview: ' + (img.title != null ? img.title : 'File')"></h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 class="modal-title"
+                                    th:text="'Preview: ' + (img.title != null ? img.title : 'File')"></h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
                             <div class="modal-body text-center">
                                 <th:block th:if="${img.contentType != null}">
                                     <th:block th:if="${img.contentType.startsWith('image/')}">
-                                        <img th:src="@{'/api/images/' + ${img.imageId} + '/file'}" class="img-fluid" alt="Image Preview" />
+                                        <img th:src="@{'/api/images/' + ${img.imageId} + '/file'}" class="img-fluid"
+                                            alt="Image Preview" />
                                     </th:block>
                                     <th:block th:if="${img.contentType == 'application/pdf'}">
-                                        <iframe th:src="@{'/api/images/' + ${img.imageId} + '/file'}" style="width:100%;height:500px;" frameborder="0">
+                                        <iframe th:src="@{'/api/images/' + ${img.imageId} + '/file'}"
+                                            style="width:100%;height:500px;" frameborder="0">
                                             PDF preview not available.
                                         </iframe>
-                                        <p>If the PDF does not display, <a th:href="@{'/api/images/' + ${img.imageId} + '/file'}" target="_blank">click here to open it in a new tab</a>.</p>
+                                        <p>If the PDF does not display, <a
+                                                th:href="@{'/api/images/' + ${img.imageId} + '/file'}"
+                                                target="_blank">click here to open it in a new tab</a>.</p>
                                     </th:block>
-                                    <th:block th:if="${img.contentType == 'application/msword' or img.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
+                                    <th:block
+                                        th:if="${img.contentType == 'application/msword' or img.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
                                         <p>
                                             <i class="fas fa-file-word fa-2x"></i>
-                                            <a th:href="@{'/api/images/' + ${img.imageId} + '/file'}" target="_blank">View Document</a>
+                                            <a th:href="@{'/api/images/' + ${img.imageId} + '/file'}"
+                                                target="_blank">View Document</a>
                                         </p>
                                     </th:block>
                                 </th:block>
@@ -139,16 +184,16 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Message When No Files Exist -->
         <div th:if="${images == null or #lists.isEmpty(images)}" class="mt-4 text-center">
             <p>No files found.</p>
         </div>
     </div>
-    
-    <!-- Include Footer Fragment -->
+
+    <!-- Footer Fragment -->
     <div th:replace="~{fragments/footer :: footer}"></div>
-    
+
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- SweetAlert2 -->
@@ -156,4 +201,5 @@
     <!-- Custom JS -->
     <script th:src="@{/js/scripts.js}"></script>
 </body>
+
 </html>

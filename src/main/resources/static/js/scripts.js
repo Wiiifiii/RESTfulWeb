@@ -10,9 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return { csrfToken, csrfHeader };
     }
 
-    // ------------------------------
     // SweetAlert for Delete Buttons
-    // ------------------------------
     const deleteButtons = document.querySelectorAll('.delete-button');
     deleteButtons.forEach(function (button) {
         button.addEventListener('click', function (e) {
@@ -66,9 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // -------------------------------
     // SweetAlert for Restore Buttons
-    // -------------------------------
     const restoreButtons = document.querySelectorAll('.restore-button');
     restoreButtons.forEach(function (button) {
         button.addEventListener('click', function (e) {
@@ -122,9 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // ---------------------------------------
     // SweetAlert for Permanently Delete Buttons (ADMIN ONLY)
-    // ---------------------------------------
     const deletePermanentButtons = document.querySelectorAll('.delete-permanent-button');
     deletePermanentButtons.forEach(function (button) {
         button.addEventListener('click', function (e) {

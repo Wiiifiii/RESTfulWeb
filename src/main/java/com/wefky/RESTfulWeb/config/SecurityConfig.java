@@ -97,7 +97,7 @@ public class SecurityConfig {
 
         return http.build();
     }
-
+    // Redirect to /access-denied on access denied
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {

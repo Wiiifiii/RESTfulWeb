@@ -1,7 +1,38 @@
+<!--
+File: imageForm.html
+Location: /d:/GitHub/RESTfulWeb/src/main/resources/templates/imageForm.html
+
+Description:
+This Thymeleaf template renders a form for creating or editing file metadata and uploading files. It is used in a RESTful web application where users can upload or modify images and documents.
+
+Features:
+- Mode-based rendering: The template adjusts content based on the "mode" variable (edit or new).
+- File Preview: In edit mode, a preview is displayed if a current file exists. If the file is an image, it shows a thumbnail; if it's a PDF or a Word document, it shows a corresponding FontAwesome icon.
+- Form Fields: 
+    • Owner (required)
+    • Title (optional)
+    • Description (optional)
+    • Content Type selection for specifying the file's MIME type (e.g., image/jpeg, image/png, application/pdf, application/msword).
+    • File input for uploading a new file, with a note that leaving it blank will retain the current file.
+- CSRF Protection: Includes a CSRF token field to secure form submissions.
+- Hidden Fields: 
+    • File ID is conditionally included in edit mode.
+    • A search parameter is preserved to maintain the context between submissions.
+- External Dependencies: 
+    • Bootstrap for responsive layout and styling.
+    • FontAwesome for icon support.
+    • Thymeleaf for template rendering and logic.
+    • Fragments for navbar and footer are included via Thymeleaf’s fragment mechanism.
+
+Usage:
+- In new file mode, the template renders an empty form for file upload.
+- In edit mode, it pre-populates fields with existing file details and displays a preview of the current file.
+- Upon submission, the form sends data via POST to the "/web/images/save" endpoint with multipart/form-data encoding.
+-->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      class="dark-theme">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    class="dark-theme">
+
 <head>
     <title th:text="${mode} == 'edit' ? 'Edit File' : 'New File'">File Form</title>
     <meta charset="UTF-8">
@@ -13,8 +44,9 @@
     <!-- Custom CSS -->
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
+
 <body class="d-flex flex-column min-vh-100">
-    <!-- Include Navbar Fragment -->
+    <!-- Navbar Fragment -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <!-- Main Container -->
@@ -27,7 +59,8 @@
             <label class="form-label fw-bold">Current File Preview:</label>
             <div>
                 <th:block th:if="${image.contentType.startsWith('image/')}">
-                    <img th:src="@{'/api/images/' + ${image.imageId} + '/file'}" class="img-thumbnail img-thumb" alt="File Preview" />
+                    <img th:src="@{'/api/images/' + ${image.imageId} + '/file'}" class="img-thumbnail img-thumb"
+                        alt="File Preview" />
                 </th:block>
                 <th:block th:if="${image.contentType == 'application/pdf'}">
                     <i class="fas fa-file-pdf fa-2x"></i> (PDF file)
@@ -53,19 +86,22 @@
             <!-- Owner Field -->
             <div class="mb-3">
                 <label for="owner" class="form-label">Owner</label>
-                <input type="text" id="owner" name="owner" class="form-control" th:value="${image.owner}" placeholder="e.g. mario" required />
+                <input type="text" id="owner" name="owner" class="form-control" th:value="${image.owner}"
+                    placeholder="e.g. mario" required />
             </div>
 
             <!-- Title Field -->
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
-                <input type="text" id="title" name="title" class="form-control" th:value="${image.title}" placeholder="File title (optional)" />
+                <input type="text" id="title" name="title" class="form-control" th:value="${image.title}"
+                    placeholder="File title (optional)" />
             </div>
 
             <!-- Description Field -->
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea id="description" name="description" rows="3" class="form-control" th:text="${image.description}" placeholder="Enter a description"></textarea>
+                <textarea id="description" name="description" rows="3" class="form-control"
+                    th:text="${image.description}" placeholder="Enter a description"></textarea>
             </div>
 
             <!-- Content Type Selection -->
@@ -75,8 +111,10 @@
                     <option value="" th:if="${image.contentType == null or image.contentType == ''}">--Select--</option>
                     <option value="image/jpeg" th:selected="${image.contentType == 'image/jpeg'}">image/jpeg</option>
                     <option value="image/png" th:selected="${image.contentType == 'image/png'}">image/png</option>
-                    <option value="application/pdf" th:selected="${image.contentType == 'application/pdf'}">application/pdf</option>
-                    <option value="application/msword" th:selected="${image.contentType == 'application/msword'}">application/msword</option>
+                    <option value="application/pdf" th:selected="${image.contentType == 'application/pdf'}">
+                        application/pdf</option>
+                    <option value="application/msword" th:selected="${image.contentType == 'application/msword'}">
+                        application/msword</option>
                 </select>
             </div>
 
@@ -99,10 +137,11 @@
         </form>
     </div>
 
-    <!-- Include Footer Fragment -->
+    <!-- Footer Fragment -->
     <div th:replace="~{fragments/footer :: footer}"></div>
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

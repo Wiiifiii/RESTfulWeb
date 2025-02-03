@@ -1,3 +1,22 @@
+<!-- 
+File: locationForm.html
+Location: src/main/resources/templates/locationForm.html
+
+Description:
+This Thymeleaf template renders a form used for creating and editing location records. It conditionally sets 
+the page title and header based on the mode ('edit' or 'new') and includes Bootstrap, FontAwesome, and custom CSS
+for styling. The form provides input fields for postal code, city name, latitude, and longitude, and it manages 
+CSRF protection by including tokens in meta tags and hidden form inputs. The template also integrates reusable 
+fragments for the navigation bar and footer, and it displays inline flash alerts for success and error messages based 
+on the presence of corresponding model attributes.
+
+Usage:
+- For creating a new location, render the template with mode not equal to 'edit'; fields will be empty by default.
+- For editing an existing location, include the location object with its properties and set mode to 'edit'; the form 
+    pre-populates using the provided location data, and includes a hidden field for the location ID.
+- Upon submission, the form posts data to the endpoint '/web/locations/save'.
+
+-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
@@ -17,7 +36,7 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-    <!-- Include Navbar Fragment -->
+    <!-- Navbar Fragment -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <!-- Inline Flash Alerts -->
@@ -71,7 +90,7 @@
         </form>
     </div>
 
-    <!-- Include Footer Fragment -->
+    <!-- Footer Fragment -->
     <div th:replace="~{fragments/footer :: footer}"></div>
 
     <!-- Scripts -->

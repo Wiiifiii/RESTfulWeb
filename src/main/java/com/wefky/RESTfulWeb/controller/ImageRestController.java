@@ -40,6 +40,11 @@ public class ImageRestController {
             return ResponseEntity.status(500).build();
         }
     }
+    /**
+     * Endpoint to retrieve an image by ID.
+     * @param id
+     * @return
+     */
 
     @GetMapping("/{id}")
     public ResponseEntity<Image> getImageById(@PathVariable Long id) {
@@ -87,7 +92,13 @@ public class ImageRestController {
             return ResponseEntity.notFound().build();
         }
     }
+   
 
+    /**
+     * Endpoint to soft delete an image by ID.
+     * @param id the ID of the image to be soft deleted
+     * @return a ResponseEntity with no content if successful, or an error status if an exception occurs
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteImage(@PathVariable Long id) {
         try {
@@ -99,6 +110,14 @@ public class ImageRestController {
         }
     }
 
+    /**
+     * Restores an image with the given ID.
+     *
+     * @param id the ID of the image to be restored
+     * @return a ResponseEntity containing the restored image if successful,
+     *         or a 404 Not Found status if the image does not exist,
+     *         or a 500 Internal Server Error status if an error occurs during restoration
+     */
     @PostMapping("/{id}/restore")
     public ResponseEntity<Image> restoreImage(@PathVariable Long id) {
         try {
@@ -111,6 +130,15 @@ public class ImageRestController {
         }
     }
 
+    /**
+     * Permanently deletes an image by its ID.
+     * 
+     * This endpoint is secured and requires the user to have the "ROLE_ADMIN" authority.
+     * 
+     * @param id the ID of the image to be permanently deleted
+     * @return a ResponseEntity with no content if the deletion is successful,
+     *         or a ResponseEntity with a 500 status code if an error occurs
+     */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}/permanent")
     public ResponseEntity<Void> permanentlyDeleteImage(@PathVariable Long id) {

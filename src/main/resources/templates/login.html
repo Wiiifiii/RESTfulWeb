@@ -1,3 +1,28 @@
+<!--
+    FILE: login.html
+    LOCATION: src/main/resources/templates/login.html
+    Documentation Comment for login.html
+
+    File: login.html (Located at /d:/GitHub/RESTfulWeb/src/main/resources/templates/login.html)
+
+    Description:
+        This is the login page for the RESTful Web application. It is implemented using HTML5 and Thymeleaf,
+        with Spring Security integration for authentication.
+
+    Key Features:
+        • Incorporates Thymeleaf namespaces for templating (th:) and Spring Security extras (sec:).
+        • Uses Bootstrap 5.3.0 for styling and layout along with Font Awesome for icons.
+        • Includes a navbar and footer loaded as Thymeleaf fragments (from fragments/navbar and fragments/footer).
+        • Contains a login form with inputs for "username" and "password".
+        • Utilizes a hidden CSRF token input to protect against cross-site request forgery.
+        • Displays conditional alert messages based on URL parameters (error, logout, registered) to inform the user about authentication states.
+        • Provides a link to the registration page for new users.
+        • External scripts and styles are linked, including custom CSS (styles.css) and JS (scripts.js) referenced using Thymeleaf's URL resolution.
+
+    Usage:
+        Rendered by the Spring Boot application when accessing the login endpoint, it offers a user-friendly interface
+        for authentication, ensuring appropriate user notifications and security via CSRF protection.
+-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
@@ -11,6 +36,9 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body class="dark-theme">
+    <!-- Navbar Fragment -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <!-- Main Container -->
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card login-card shadow-lg border-0" style="width: 100%; max-width: 400px;">
             <div class="card-body">
@@ -47,7 +75,7 @@
             </div>
         </div>
     </div>
-    <!-- Include Footer Fragment -->
+    <!-- Footer Fragment -->
     <div th:replace="~{fragments/footer :: footer}"></div>
     
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

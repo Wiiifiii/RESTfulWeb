@@ -1,42 +1,78 @@
 package com.wefky.RESTfulWeb.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.Set;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Represents a User in the system.
  */
-@Entity // Specifies that the class is an entity and is mapped to a database table.
-@Table(name = "users") // Specifies the name of the database table to be used for mapping.
-@Getter // Lombok annotation to generate getter methods for all fields.
-@Setter // Lombok annotation to generate setter methods for all fields.
-@NoArgsConstructor // Lombok annotation to generate a no-argument constructor.
-@AllArgsConstructor // Lombok annotation to generate a constructor with all fields as parameters.
-@Builder // Lombok annotation to implement the builder pattern for the class.
-@EqualsAndHashCode(onlyExplicitlyIncluded = true) // Lombok annotation to generate equals and hashCode methods, including only explicitly specified fields.
-@ToString(exclude = "roles") // Lombok annotation to generate a toString method, excluding the 'roles' field to prevent recursive calls.
+@Entity 
+@Table(name = "users") 
+@Getter 
+@Setter 
+@NoArgsConstructor 
+@AllArgsConstructor 
+@Builder 
+@EqualsAndHashCode(onlyExplicitlyIncluded = true) 
+@ToString(exclude = "roles") 
 public class User {
 
-    @Id // Specifies the primary key of an entity.
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Provides the specification of generation strategies for the primary keys.
-    @EqualsAndHashCode.Include // Include only 'id' in the generated equals and hashCode methods.
+    /**
+     * Represents the unique identifier for the user entity.
+     * This field is automatically generated using the IDENTITY strategy.
+     */
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    @EqualsAndHashCode.Include 
     private Long id;
-
-    @Column(nullable = false, unique = true) // Specifies the mapped column for a persistent property or field, with constraints.
+    /**
+     * Represents the username of the user.
+     * This field is mandatory, unique, and cannot be null.
+     * It is mapped to the 'username' column in the database.
+     */
+    @Column(nullable = false, unique = true) 
     private String username;
-
-    @Column(nullable = false) // Specifies the mapped column for a persistent property or field, with constraints.
+    /**
+     * Represents the password of the user.
+     * This field is mandatory and cannot be null.
+     * It is mapped to the 'password' column in the database.
+     */
+    @Column(nullable = false) 
     private String password;
-
-    @Column(nullable = false) // Specifies the mapped column for a persistent property or field, with constraints.
+    /**
+     * Represents the email address of the user.
+     * This field is mandatory, unique, and cannot be null.
+     * It is mapped to the 'email' column in the database.
+     */
+    @Column(nullable = false) 
     private boolean enabled;
-
-    @ManyToMany(fetch = FetchType.EAGER) // Defines a many-to-many relationship with another entity, with eager fetching.
+    /**
+     * Represents the set of roles associated with the user.
+     * This field is fetched eagerly.
+     * It is mapped by the 'users' attribute in the Role entity.
+     * ManyToMany relationship is used to represent the association between User and Role entities.
+     */
+    @ManyToMany(fetch = FetchType.EAGER) 
     @JoinTable(
-        name = "user_roles", // Specifies the name of the join table.
-        joinColumns = @JoinColumn(name = "user_id"), // Specifies the join column for this entity.
-        inverseJoinColumns = @JoinColumn(name = "role_id")) // Specifies the join column for the other entity.
-    private Set<Role> roles; // A set of roles associated with the user.
+        name = "user_roles", 
+        joinColumns = @JoinColumn(name = "user_id"), 
+        inverseJoinColumns = @JoinColumn(name = "role_id")) 
+    private Set<Role> roles; 
 }

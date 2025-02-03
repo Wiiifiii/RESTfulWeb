@@ -1,3 +1,34 @@
+<!--
+File: 500.html
+Location: src/main/resources/templates/error/500.html
+
+Overview:
+    This HTML template renders a custom 500 Internal Server Error page using Thymeleaf for server-side templating. It combines static HTML with dynamic fragments and resource linking.
+
+Key Elements:
+    1. Head Section:
+         - Sets the character encoding to UTF-8.
+         - Defines the page title as "Internal Server Error".
+         - Links to external resources:
+             * Bootstrap CSS for styling.
+             * Bootstrap Icons for iconography.
+             * A custom CSS file referenced via Thymeleaf.
+    
+    2. Body Section:
+         - Includes a Navbar fragment using Thymeleaf's 'th:replace' to load shared navigation components.
+         - Contains a central section that:
+             * Displays the error code "500" with an associated Bootstrap icon.
+             * Provides a descriptive error message ("Internal Server Error") and a brief explanation.
+             * Offers a button to redirect users back to the home page.
+         - Includes a Footer fragment similarly using Thymeleaf's 'th:replace'.
+    
+    3. Script Inclusions:
+         - Incorporates Popper.js and Bootstrap JS for dynamic behavior using CDN links.
+         - Adds a custom JavaScript file via Thymeleaf for additional client-side functionality.
+
+Usage:
+    This template is intended to be served when the server encounters an unexpected condition resulting in an internal error, ensuring a user-friendly error display.
+-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" class="error-page dark-theme">
 
@@ -14,7 +45,7 @@
 
 <body>
 
-    <!-- Include Navbar Fragment -->
+    <!-- Navbar Fragment -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <section class="py-3 py-md-5 min-vh-100 d-flex justify-content-center align-items-center">
@@ -27,7 +58,8 @@
             <a class="btn btn-primary rounded-pill px-5 fs-6 m-0" href="/" role="button">Back to Home</a>
         </div>
     </section>
-    <!-- Include Footer Fragment -->
+
+    <!-- Footer Fragment -->
     <div th:replace="~{fragments/footer :: footer}"></div>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

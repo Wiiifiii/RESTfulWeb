@@ -1,19 +1,26 @@
 package com.wefky.RESTfulWeb.controller;
 
-import com.wefky.RESTfulWeb.entity.Location;
-import com.wefky.RESTfulWeb.service.LocationService;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import java.util.Optional;
+import com.wefky.RESTfulWeb.entity.Location;
+import com.wefky.RESTfulWeb.service.LocationService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 /**
  * LocationWebController is a Spring MVC controller that handles web requests related to locations.
@@ -36,6 +43,7 @@ import java.util.Optional;
  * 
  * Each method includes error handling and logging to ensure that any issues are properly recorded and communicated to the user.
  */
+
 @Controller
 @RequestMapping("/web/locations")
 @RequiredArgsConstructor
@@ -44,6 +52,18 @@ public class LocationWebController {
     private static final Logger logger = LoggerFactory.getLogger(LocationWebController.class);
     private final LocationService locationService;
 
+    /**
+     * Handles GET requests to list locations with optional search filters.
+     *
+     * @param cityNameSearch      Optional search filter for city name.
+     * @param postalCodeSearch    Optional search filter for postal code.
+     * @param latMin              Optional search filter for minimum latitude.
+     * @param latMax              Optional search filter for maximum latitude.
+     * @param request             HttpServletRequest object to get the current URI.
+     * @param model               Model object to add attributes to the view.
+     * @param redirectAttributes  RedirectAttributes object to add flash attributes for redirection.
+     * @return                    The name of the view to be rendered, either "locations" or a redirect to "/web/locations" in case of an error.
+     */
     @GetMapping
     public String listLocations(@RequestParam(required = false) String cityNameSearch,
                                 @RequestParam(required = false) String postalCodeSearch,
@@ -77,6 +97,13 @@ public class LocationWebController {
         }
     }
 
+    /**
+     * Handles GET requests to "/new" and returns the form for creating a new location.
+     *
+     * @param request the HttpServletRequest object that contains the request the client made to the servlet
+     * @param model the Model object used to pass attributes to the view
+     * @return the name of the view template ("locationForm") to be rendered
+     */
     @GetMapping("/new")
     public String newLocationForm(HttpServletRequest request, Model model) {
         model.addAttribute("currentUri", request.getRequestURI());
@@ -85,6 +112,15 @@ public class LocationWebController {
         return "locationForm"; // returns locationForm.html
     }
 
+    /**
+     * Handles the GET request to display the edit location form.
+     *
+     * @param id the ID of the location to be edited
+     * @param request the HttpServletRequest object
+     * @param model the Model object to pass attributes to the view
+     * @param redirectAttributes the RedirectAttributes object to pass flash attributes
+     * @return the name of the view to be rendered
+     */
     @GetMapping("/edit/{id}")
     public String editLocationForm(@PathVariable Long id,
                                    HttpServletRequest request,
@@ -107,6 +143,17 @@ public class LocationWebController {
         }
     }
 
+    /**
+     * Handles the POST request to save a location.
+     * If the location ID is present, it checks if the location exists.
+     * If the location does not exist, it redirects to the locations page with an error message.
+     * If the location is saved successfully, it redirects to the locations page with a success message.
+     * If an error occurs during saving, it logs the error and redirects to the appropriate page with an error message.
+     *
+     * @param location the location object to be saved
+     * @param redirectAttributes attributes for flash messages
+     * @return the redirect URL
+     */
     @PostMapping("/save")
     public String saveLocation(@ModelAttribute Location location,
                                RedirectAttributes redirectAttributes) {
@@ -132,7 +179,14 @@ public class LocationWebController {
         }
     }
 
-    // --- Updated Delete Action as a Standard POST Form Submission ---
+  
+    /**
+     * Handles the soft deletion of a location by its ID.
+     *
+     * @param id the ID of the location to be deleted
+     * @param redirectAttributes attributes for a redirect scenario
+     * @return the redirect URL to the locations page
+     */
     @PostMapping("/delete/{id}")
     public String softDeleteLocation(@PathVariable Long id,
                                      RedirectAttributes redirectAttributes) {
@@ -147,6 +201,18 @@ public class LocationWebController {
         }
     }
 
+    /**
+     * Handles GET requests to view the trash (deleted locations).
+     * 
+     * @param cityNameSearch      Optional search parameter for filtering by city name.
+     * @param postalCodeSearch    Optional search parameter for filtering by postal code.
+     * @param latMin              Optional search parameter for filtering by minimum latitude.
+     * @param latMax              Optional search parameter for filtering by maximum latitude.
+     * @param request             The HttpServletRequest object.
+     * @param model               The Model object to pass attributes to the view.
+     * @param redirectAttributes  The RedirectAttributes object to pass flash attributes.
+     * @return                    The name of the view to be rendered, either "locationsTrash" or a redirect to "/web/locations" in case of an error.
+     */
     @GetMapping("/trash")
     public String viewTrash(@RequestParam(required = false) String cityNameSearch,
                             @RequestParam(required = false) String postalCodeSearch,
@@ -180,6 +246,13 @@ public class LocationWebController {
         }
     }
 
+    /**
+     * Restores a location by its ID.
+     *
+     * @param id the ID of the location to restore
+     * @param redirectAttributes attributes for a redirect scenario
+     * @return the redirect URL to the trash locations page
+     */
     @PostMapping("/restore/{id}")
     public String restoreLocation(@PathVariable Long id,
                                   RedirectAttributes redirectAttributes) {
@@ -194,6 +267,17 @@ public class LocationWebController {
         }
     }
 
+    /**
+     * Permanently deletes a location by its ID.
+     * 
+     * This method is secured and can only be accessed by users with the "ROLE_ADMIN" authority.
+     * It attempts to delete the location permanently and adds a success message to the redirect attributes.
+     * If an error occurs during the deletion process, an error message is added to the redirect attributes.
+     * 
+     * @param id the ID of the location to be permanently deleted
+     * @param redirectAttributes the attributes for a redirect scenario
+     * @return a redirect URL to the trash locations page
+     */
     @Secured("ROLE_ADMIN")
     @PostMapping("/delete-permanent/{id}")
     public String permanentlyDeleteLocation(@PathVariable Long id,

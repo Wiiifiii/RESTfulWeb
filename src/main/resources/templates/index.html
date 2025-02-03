@@ -1,3 +1,25 @@
+<!--
+    File: index.html
+    Location: src/main/resources/templates/index.html
+    Description: 
+        This file serves as the main homepage for the SPRING RESTful application, providing an entry point to manage locations, measurements, and images.
+    
+    Key Features:
+        - Uses Thymeleaf for server-side templating and integrates Spring Security for secured fragment rendering.
+        - Imports external assets:
+                - Bootstrap CSS/JS for responsive design and component styling.
+                - FontAwesome for icons within the cards.
+                - SweetAlert2 for enhanced alert/notification displays.
+        - Dynamically includes reusable components:
+                - Navbar (via th:replace="~{fragments/navbar :: navbar}")
+                - Footer (via th:replace="~{fragments/footer :: footer}")
+        - Main content structure:
+                - A welcome section with a brief application description.
+                - A grid layout with three cards:
+                        1. Locations - Manages postal codes, city names, and coordinates.
+                        2. Measurements - Records and tracks location-based measurements.
+                        3. Images - Uploads, manages, and associates images with users.
+-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
     class="dark-theme">
@@ -15,7 +37,7 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-    <!-- Include Navbar Fragment -->
+    <!-- Navbar Fragment -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <!-- Main Container -->
@@ -77,7 +99,7 @@
         </div>
     </main>
 
-    <!-- Include Footer Fragment -->
+    <!-- Footer Fragment -->
     <div th:replace="~{fragments/footer :: footer}"></div>
 
     <!-- Scripts -->

@@ -69,6 +69,16 @@ public class LocationRestController {
     /**
      * GET active locations with optional filters.
      */
+    /**
+     * Retrieves a list of locations based on the provided filters.
+     * If no filters are provided, returns all active locations.
+     *
+     * @param cityName   Optional filter by city name.
+     * @param postalCode Optional filter by postal code.
+     * @param latMin     Optional filter by minimum latitude.
+     * @param latMax     Optional filter by maximum latitude.
+     * @return A list of locations matching the provided filters, or all active locations if no filters are provided.
+     */
     @GetMapping
     public List<Location> getAllLocations(
             @RequestParam(required = false) String cityName,
@@ -95,6 +105,13 @@ public class LocationRestController {
     /**
      * GET location by ID.
      */
+    /**
+     * Retrieves a location by its ID.
+     *
+     * @param id the ID of the location to retrieve
+     * @return a ResponseEntity containing the location if found and not deleted,
+     *         or a ResponseEntity with a 404 Not Found status if the location is not found or is deleted
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Location> getLocation(@PathVariable Long id) {
         Optional<Location> opt = locationRepository.findById(id);
@@ -107,6 +124,16 @@ public class LocationRestController {
     /**
      * POST create new location.
      */
+    /**
+     * Creates a new location.
+     * 
+     * This method handles HTTP POST requests to create a new location. It sets the
+     * location ID to null and the deleted flag to false before saving the location
+     * to the repository.
+     * 
+     * @param location the location to be created
+     * @return a ResponseEntity containing the saved location
+     */
     @PostMapping
     public ResponseEntity<Location> createLocation(@RequestBody Location location) {
         location.setLocationId(null);
@@ -117,6 +144,13 @@ public class LocationRestController {
 
     /**
      * PUT update existing location.
+     */
+    /**
+     * Updates an existing location with the provided details.
+     *
+     * @param id the ID of the location to update
+     * @param updated the updated location details
+     * @return a ResponseEntity containing the updated location if found, or a 404 Not Found status if the location does not exist or is marked as deleted
      */
     @PutMapping("/{id}")
     public ResponseEntity<Location> updateLocation(@PathVariable Long id, @RequestBody Location updated) {
@@ -136,6 +170,13 @@ public class LocationRestController {
     /**
      * DELETE (Soft Delete) location.
      */
+    /**
+     * Soft deletes a location by setting its 'deleted' flag to true.
+     *
+     * @param id the ID of the location to be soft deleted
+     * @return ResponseEntity<Void> with HTTP status 204 (No Content) if the location was successfully soft deleted,
+     *         or HTTP status 404 (Not Found) if the location does not exist or is already deleted
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteLocation(@PathVariable Long id) {
         Optional<Location> opt = locationRepository.findById(id);
@@ -151,6 +192,13 @@ public class LocationRestController {
     /**
      * RESTORE location.
      */
+    /**
+     * REST endpoint to restore a deleted location.
+     *
+     * @param id the ID of the location to be restored
+     * @return ResponseEntity containing the restored Location object if successful,
+     *         or a 404 Not Found status if the location does not exist or is not marked as deleted
+     */
     @PostMapping("/{id}/restore")
     public ResponseEntity<Location> restoreLocation(@PathVariable Long id) {
         Optional<Location> opt = locationRepository.findById(id);
@@ -165,6 +213,17 @@ public class LocationRestController {
 
     /**
      * DELETE (Hard Delete) location. ADMIN ONLY.
+     */
+    /**
+     * Permanently deletes a location by its ID.
+     * 
+     * This method is secured and requires the user to have the "ROLE_ADMIN" authority.
+     * If the location with the specified ID does not exist, it returns a 404 Not Found response.
+     * If the location is successfully deleted, it returns a 204 No Content response.
+     * 
+     * @param id the ID of the location to be deleted
+     * @return a ResponseEntity with status 204 No Content if the deletion is successful,
+     *         or 404 Not Found if the location does not exist
      */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}/permanent")

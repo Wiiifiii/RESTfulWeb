@@ -1,3 +1,32 @@
+<!--
+    FILE: admin.html
+    lOCATION: src/main/resources/templates/admin.html
+
+    DESCRIPTION:
+        This file serves as the Admin Portal template for the RESTfulWeb application.
+        It is built using Thymeleaf and integrates Spring Security for secured content rendering.
+        The template presents administrative actions such as viewing deleted locations,
+        measurements, and images in a user-friendly interface.
+
+    MAIN FEATURES:
+        - Responsive design enabled by Bootstrap 5.3.
+        - Iconography provided by FontAwesome.
+        - Consistent layout and styling using global custom CSS.
+        - Reusable components: Navbar and Footer are included through Thymeleaf fragments.
+        - Dark theme styling applied across the page.
+        - Separate sections for handling different categories of deleted entities.
+
+    DEPENDENCIES:
+        - Bootstrap CSS and JS (via CDN)
+        - FontAwesome CSS (via CDN)
+        - Thymeleaf templating engine and Spring Security extras for dynamic content security.
+        - Custom JavaScript and CSS files as specified via Thymeleaf expressions.
+
+    USAGE:
+        Use this template to display the core admin functionalities for managing deleted
+        entities in the application. Update fragment paths and link URLs according to deployment
+        configurations as needed.
+-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
     class="dark-theme">
@@ -15,7 +44,7 @@
 </head>
 
 <body class="dark-theme">
-    <!-- Include Navbar Fragment -->
+    <!-- Navbar Fragment -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <!-- Main Container -->
@@ -52,7 +81,7 @@
         </div>
     </div>
 
-    <!-- Include Footer Fragment -->
+    <!-- Footer Fragment -->
     <div th:replace="~{fragments/footer :: footer}"></div>
 
     <!-- Scripts -->
