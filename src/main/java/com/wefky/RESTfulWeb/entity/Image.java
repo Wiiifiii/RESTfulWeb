@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import lombok.*;
 
 /**
- * Represents an image entity stored in the database.
+ * Represents a file entity that can be an image, PDF, or Word document.
  */
 @Entity
 @Table(name = "images")
@@ -34,7 +34,8 @@ public class Image {
     private boolean deleted = false;
 
     @NotBlank(message = "Content Type is required.")
-    @Column(name = "content_type", length = 50, nullable = false)
+    // Updated the length from 50 to 100 to allow longer MIME types (such as Word OpenXML)
+    @Column(name = "content_type", length = 100, nullable = false)
     private String contentType;
 
     @Column(name = "title", length = 255)
@@ -47,7 +48,7 @@ public class Image {
     private LocalDateTime uploadDate;
 
     /**
-     * Transient field to hold the Base64-encoded image data for display purposes.
+     * Transient field to hold the Base64–encoded file data for display purposes.
      */
     @Transient
     private String base64Data;

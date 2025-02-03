@@ -33,14 +33,11 @@ public class ImageService {
         try {
             searchId = Long.parseLong(search);
         } catch (NumberFormatException e) {
-            // Not a number, treat search as text
+            // Not a number; treat search as text.
         }
-        List<Image> images;
-        if (searchId != null) {
-            images = imageRepository.searchImages(searchId, search);
-        } else {
-            images = imageRepository.searchImages(null, search.trim());
-        }
+        List<Image> images = (searchId != null)
+                ? imageRepository.searchImages(searchId, search)
+                : imageRepository.searchImages(null, search.trim());
         populateBase64(images);
         return images;
     }
@@ -56,14 +53,11 @@ public class ImageService {
         try {
             searchId = Long.parseLong(search);
         } catch (NumberFormatException e) {
-            // Not a number, treat as text
+            // Not a number; treat as text.
         }
-        List<Image> images;
-        if (searchId != null) {
-            images = imageRepository.searchDeletedImages(searchId, search);
-        } else {
-            images = imageRepository.searchDeletedImages(null, search.trim());
-        }
+        List<Image> images = (searchId != null)
+                ? imageRepository.searchDeletedImages(searchId, search)
+                : imageRepository.searchDeletedImages(null, search.trim());
         populateBase64(images);
         return images;
     }
@@ -119,7 +113,12 @@ public class ImageService {
 
     // --- Helper Methods to populate Base64 data ---
     private void populateBase64(Image img) {
-        if (img.getData() != null && img.getContentType() != null && img.getContentType().startsWith("image/")) {
+        if (img.getData() != null && img.getContentType() != null &&
+            (img.getContentType().startsWith("image/") ||
+             img.getContentType().equalsIgnoreCase("application/pdf") ||
+             img.getContentType().equalsIgnoreCase("application/msword") ||
+             img.getContentType().equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            )) {
             String encoded = Base64.getEncoder().encodeToString(img.getData());
             img.setBase64Data(encoded);
         } else {

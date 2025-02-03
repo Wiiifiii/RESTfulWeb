@@ -36,6 +36,17 @@ public class ImagesWebController {
     private static final Logger logger = LoggerFactory.getLogger(ImagesWebController.class);
     private final ImageService imageService;
 
+    /**
+     * Helper method to build the search query parameter.
+     * Returns an empty string if the search parameter is null, empty, or equals "null" (ignoring case).
+     */
+    private String getSearchQuery(String search) {
+        if (search == null || search.trim().isEmpty() || search.trim().equalsIgnoreCase("null")) {
+            return "";
+        }
+        return "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8);
+    }
+
     @GetMapping
     public String listImages(@RequestParam(required = false) String search,
                              HttpServletRequest request,
@@ -95,7 +106,7 @@ public class ImagesWebController {
             Optional<Image> opt = imageService.getImageById(id);
             if (opt.isEmpty()) {
                 ra.addFlashAttribute("error", "File not found.");
-                return "redirect:/web/images" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
+                return "redirect:/web/images" + getSearchQuery(search);
             }
             model.addAttribute("image", opt.get());
             model.addAttribute("mode", "edit");
@@ -129,7 +140,7 @@ public class ImagesWebController {
                 Optional<Image> opt = imageService.getImageById(image.getImageId());
                 if (opt.isEmpty()) {
                     ra.addFlashAttribute("error", "File to update not found.");
-                    return "redirect:/web/images" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
+                    return "redirect:/web/images" + getSearchQuery(search);
                 }
                 img = opt.get();
             } else {
@@ -138,13 +149,17 @@ public class ImagesWebController {
             img.setOwner(image.getOwner());
             img.setTitle(image.getTitle());
             img.setDescription(image.getDescription());
+            // Use the selected content type; update it based on the uploaded file if available.
             img.setContentType(image.getContentType());
             if (file != null && !file.isEmpty()) {
                 img.setData(file.getBytes());
+                if (file.getContentType() != null && !file.getContentType().isEmpty()) {
+                    img.setContentType(file.getContentType());
+                }
             }
             imageService.saveImage(img);
             ra.addFlashAttribute("success", "File saved successfully!");
-            return "redirect:/web/images" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
+            return "redirect:/web/images" + getSearchQuery(search);
         } catch (IOException ex) {
             logger.error("IO error reading file upload", ex);
             ra.addFlashAttribute("error", "Failed to read the file upload: " + ex.getMessage());
@@ -153,9 +168,9 @@ public class ImagesWebController {
             logger.error("Error saving file", e);
             ra.addFlashAttribute("error", "Error saving file: " + e.getMessage());
             if (image.getImageId() != null) {
-                return "redirect:/web/images/edit/" + image.getImageId() + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
+                return "redirect:/web/images/edit/" + image.getImageId() + getSearchQuery(search);
             } else {
-                return "redirect:/web/images/new" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
+                return "redirect:/web/images/new" + getSearchQuery(search);
             }
         }
     }
@@ -171,7 +186,7 @@ public class ImagesWebController {
             logger.error("Error soft deleting file", e);
             ra.addFlashAttribute("error", "Failed to delete file.");
         }
-        return "redirect:/web/images" + (search != null && !search.trim().isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
+        return "redirect:/web/images" + getSearchQuery(search);
     }
 
     @PostMapping("/restore/{id}")
@@ -185,7 +200,7 @@ public class ImagesWebController {
             logger.error("Error restoring file", e);
             ra.addFlashAttribute("error", "Failed to restore file.");
         }
-        return "redirect:/web/images/trash" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
+        return "redirect:/web/images/trash" + getSearchQuery(search);
     }
 
     @Secured("ROLE_ADMIN")
@@ -200,6 +215,6 @@ public class ImagesWebController {
             logger.error("Error permanently deleting file", e);
             ra.addFlashAttribute("error", "Failed to permanently delete file.");
         }
-        return "redirect:/web/images/trash" + (search != null && !search.isEmpty() ? "?search=" + UriUtils.encode(search, StandardCharsets.UTF_8) : "");
+        return "redirect:/web/images/trash" + getSearchQuery(search);
     }
 }

@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,6 +49,24 @@ public class ImageRestController {
         } catch (Exception e) {
             logger.error("Error fetching image by ID: ", e);
             return ResponseEntity.status(500).build();
+        }
+    }
+    
+    /**
+     * New endpoint: returns the file content for the given image ID.
+     */
+    @GetMapping("/{id}/file")
+    public ResponseEntity<byte[]> getFile(@PathVariable Long id) {
+        Optional<Image> opt = imageService.getImageById(id);
+        if (opt.isPresent()) {
+            Image image = opt.get();
+            return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(image.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" + (image.getTitle() != null ? image.getTitle() : "file") + "\"")
+                .body(image.getData());
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 

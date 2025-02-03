@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Function to get CSRF token and header from meta tags
     function getCsrfToken() {
-        const csrfToken = document.querySelector('meta[name="_csrf"]') 
-            ? document.querySelector('meta[name="_csrf"]').getAttribute('content') 
+        const csrfToken = document.querySelector('meta[name="_csrf"]')
+            ? document.querySelector('meta[name="_csrf"]').getAttribute('content')
             : null;
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]') 
-            ? document.querySelector('meta[name="_csrf_header"]').getAttribute('content') 
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')
+            ? document.querySelector('meta[name="_csrf_header"]').getAttribute('content')
             : null;
         return { csrfToken, csrfHeader };
     }
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 `The ${itemType.toLowerCase()} has been deleted.`,
                                 'success'
                             ).then(() => {
-                                window.location.href = '/web/measurements';
+                                window.location.href = '/web/images';
                             });
                         } else {
                             return response.text().then(text => { throw new Error(text) });

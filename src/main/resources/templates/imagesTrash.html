@@ -50,7 +50,7 @@
             </a>
         </div>
         
-        <!-- Trash Images Table -->
+        <!-- Trash Files Table -->
         <div class="table-responsive" th:if="${images != null and !#lists.isEmpty(images)}">
             <table class="table table-striped align-middle text-white">
                 <thead class="bg-dark">
@@ -70,14 +70,12 @@
                         <td style="width:120px;">
                             <th:block th:if="${img.contentType != null}">
                                 <th:block th:if="${img.contentType.startsWith('image/')}">
-                                    <img th:if="${img.base64Data != null}"
-                                         th:src="${'data:' + img.contentType + ';base64,' + img.base64Data}"
-                                         class="img-thumbnail img-thumb" />
+                                    <img th:src="@{'/api/images/' + ${img.imageId} + '/file'}" class="img-thumbnail img-thumb" alt="Thumbnail" />
                                 </th:block>
                                 <th:block th:if="${img.contentType == 'application/pdf'}">
                                     <i class="fas fa-file-pdf fa-2x"></i>
                                 </th:block>
-                                <th:block th:if="${img.contentType == 'application/msword'}">
+                                <th:block th:if="${img.contentType == 'application/msword' or img.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
                                     <i class="fas fa-file-word fa-2x"></i>
                                 </th:block>
                             </th:block>
@@ -95,7 +93,7 @@
                                 <!-- Restore -->
                                 <button type="button" class="btn btn-success btn-sm restore-button"
                                         th:data-restore-url="@{'/web/images/restore/' + ${img.imageId} + '?search=' + ${search}}"
-                                        data-item-type="Image"
+                                        data-item-type="File"
                                         th:data-item-details="${img.title != null ? img.title : 'File'}">
                                     <i class="fas fa-undo"></i> Restore
                                 </button>
@@ -103,7 +101,7 @@
                                 <sec:authorize access="hasRole('ADMIN')">
                                     <button type="button" class="btn btn-danger btn-sm delete-permanent-button"
                                             th:data-delete-url="@{'/web/images/delete-permanent/' + ${img.imageId} + '?search=' + ${search}}"
-                                            data-item-type="Image"
+                                            data-item-type="File"
                                             th:data-item-details="${img.title != null ? img.title : 'File'}">
                                         <i class="fas fa-trash-alt"></i> Delete Permanently
                                     </button>
@@ -120,24 +118,25 @@
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content bg-dark text-white">
                             <div class="modal-header">
-                                <h5 class="modal-title" th:text="'Preview: ' + (img.title != null ? img.title : 'Image')"></h5>
+                                <h5 class="modal-title" th:text="'Preview: ' + (img.title != null ? img.title : 'File')"></h5>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body text-center">
                                 <th:block th:if="${img.contentType != null}">
                                     <th:block th:if="${img.contentType.startsWith('image/')}">
-                                        <img th:if="${img.base64Data != null}"
-                                             th:src="${'data:' + img.contentType + ';base64,' + img.base64Data}"
-                                             class="img-fluid" />
+                                        <img th:src="@{'/api/images/' + ${img.imageId} + '/file'}" class="img-fluid" alt="Image Preview" />
                                     </th:block>
                                     <th:block th:if="${img.contentType == 'application/pdf'}">
-                                        <iframe th:src="${'data:application/pdf;base64,' + img.base64Data}"
-                                                style="width:100%;height:500px;" frameborder="0">
-                                            PDF file preview not available.
+                                        <iframe th:src="@{'/api/images/' + ${img.imageId} + '/file'}" style="width:100%;height:500px;" frameborder="0">
+                                            PDF preview not available.
                                         </iframe>
+                                        <p>If the PDF does not display, <a th:href="@{'/api/images/' + ${img.imageId} + '/file'}" target="_blank">click here to open it in a new tab</a>.</p>
                                     </th:block>
-                                    <th:block th:if="${img.contentType == 'application/msword'}">
-                                        <p><i class="fas fa-file-word fa-2x"></i> Word file preview not available.</p>
+                                    <th:block th:if="${img.contentType == 'application/msword' or img.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
+                                        <p>
+                                            <i class="fas fa-file-word fa-2x"></i>
+                                            <a th:href="@{'/api/images/' + ${img.imageId} + '/file'}" target="_blank">View Document</a>
+                                        </p>
                                     </th:block>
                                 </th:block>
                                 <p class="mt-3" th:text="${img.description}"></p>
