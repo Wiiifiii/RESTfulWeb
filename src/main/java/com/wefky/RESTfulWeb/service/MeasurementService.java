@@ -28,8 +28,8 @@ public class MeasurementService {
     }
 
     @Transactional(readOnly = true)
-    public List<Measurement> filterMeasurements(String measurementUnit, LocalDateTime startDate, LocalDateTime endDate, String cityName, Double minAmount, Double maxAmount) {
-        return measurementRepository.filterMeasurementsNative(measurementUnit, startDate, endDate, cityName, minAmount, maxAmount);
+    public List<Measurement> filterMeasurements(String measurementUnit, LocalDateTime startDate, LocalDateTime endDate, String cityName) {
+        return measurementRepository.filterMeasurementsNative(measurementUnit, startDate, endDate, cityName);
     }
 
     @Transactional(readOnly = true)
@@ -39,6 +39,10 @@ public class MeasurementService {
 
     @Transactional
     public Measurement saveMeasurement(Measurement measurement) {
+        // Auto-set the timestamp if not provided.
+        if (measurement.getTimestamp() == null) {
+            measurement.setTimestamp(LocalDateTime.now());
+        }
         return measurementRepository.save(measurement);
     }
 
@@ -67,8 +71,8 @@ public class MeasurementService {
     }
 
     @Transactional(readOnly = true)
-    public List<Measurement> filterDeletedMeasurements(String measurementUnit, LocalDateTime start, LocalDateTime end, String cityName, Double minAmount, Double maxAmount) {
-        return measurementRepository.findAllDeleted(measurementUnit, start, end, cityName, minAmount, maxAmount);
+    public List<Measurement> filterDeletedMeasurements(String measurementUnit, LocalDateTime start, LocalDateTime end, String cityName) {
+        return measurementRepository.findAllDeleted(measurementUnit, start, end, cityName);
     }
 
     @Transactional

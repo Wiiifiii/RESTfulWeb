@@ -37,18 +37,15 @@ public class MeasurementWebController {
     private final MeasurementService measurementService;
     private final LocationService locationService;
 
-    // Formatters for date-time input
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    // Date formatter for dates only (dd/MM/yyyy)
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @GetMapping
     public String listMeasurements(
             @RequestParam(required = false) String measurementUnit,
-            @RequestParam(required = false) String startDate, // raw string input
-            @RequestParam(required = false) String endDate,   // raw string input
+            @RequestParam(required = false) String startDate, // expecting dd/MM/yyyy
+            @RequestParam(required = false) String endDate,   // expecting dd/MM/yyyy
             @RequestParam(required = false) String cityName,
-            @RequestParam(required = false) String minAmount,
-            @RequestParam(required = false) String maxAmount,
             HttpServletRequest request,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -57,43 +54,25 @@ public class MeasurementWebController {
 
             LocalDateTime startDateTime = null;
             LocalDateTime endDateTime = null;
-            Double minAmountVal = null;
-            Double maxAmountVal = null;
             try {
                 if (startDate != null && !startDate.isBlank()) {
-                    if (startDate.trim().length() == 10) {
-                        LocalDate datePart = LocalDate.parse(startDate, dateFormatter);
-                        startDateTime = datePart.atStartOfDay();
-                    } else {
-                        startDateTime = LocalDateTime.parse(startDate, dateTimeFormatter);
-                    }
+                    LocalDate datePart = LocalDate.parse(startDate, dateFormatter);
+                    startDateTime = datePart.atStartOfDay();
                 }
                 if (endDate != null && !endDate.isBlank()) {
-                    if (endDate.trim().length() == 10) {
-                        LocalDate datePart = LocalDate.parse(endDate, dateFormatter);
-                        endDateTime = datePart.atTime(LocalTime.MAX);
-                    } else {
-                        endDateTime = LocalDateTime.parse(endDate, dateTimeFormatter);
-                    }
+                    LocalDate datePart = LocalDate.parse(endDate, dateFormatter);
+                    endDateTime = datePart.atTime(LocalTime.MAX);
                 }
-                if (minAmount != null && !minAmount.isBlank()) {
-                    minAmountVal = Double.parseDouble(minAmount);
-                }
-                if (maxAmount != null && !maxAmount.isBlank()) {
-                    maxAmountVal = Double.parseDouble(maxAmount);
-                }
-            } catch (DateTimeParseException | NumberFormatException e) {
-                logger.error("Error parsing filter values: ", e);
-                redirectAttributes.addFlashAttribute("error", "Invalid date or amount format. Please use correct formats.");
+            } catch (DateTimeParseException e) {
+                logger.error("Error parsing date filter values: ", e);
+                redirectAttributes.addFlashAttribute("error", "Invalid date format. Please use dd/MM/yyyy.");
                 return "redirect:/web/measurements";
             }
 
             boolean noFilters = (measurementUnit == null || measurementUnit.isBlank())
                     && startDateTime == null
                     && endDateTime == null
-                    && (cityName == null || cityName.isBlank())
-                    && minAmountVal == null
-                    && maxAmountVal == null;
+                    && (cityName == null || cityName.isBlank());
 
             List<Measurement> measurements;
             if (noFilters) {
@@ -103,9 +82,7 @@ public class MeasurementWebController {
                         (measurementUnit == null || measurementUnit.isBlank()) ? null : measurementUnit,
                         startDateTime,
                         endDateTime,
-                        (cityName == null || cityName.isBlank()) ? null : cityName,
-                        minAmountVal,
-                        maxAmountVal
+                        (cityName == null || cityName.isBlank()) ? null : cityName
                 );
             }
 
@@ -114,8 +91,6 @@ public class MeasurementWebController {
             model.addAttribute("startDate", startDate);
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
-            model.addAttribute("minAmount", minAmount);
-            model.addAttribute("maxAmount", maxAmount);
             return "measurements";
         } catch (Exception e) {
             logger.error("Error fetching measurements: ", e);
@@ -127,7 +102,10 @@ public class MeasurementWebController {
     @GetMapping("/new")
     public String newMeasurementForm(HttpServletRequest request, Model model) {
         model.addAttribute("currentUri", request.getRequestURI());
-        model.addAttribute("measurement", new Measurement());
+        Measurement measurement = new Measurement();
+        // Auto-set timestamp; user does not need to input it.
+        measurement.setTimestamp(LocalDateTime.now());
+        model.addAttribute("measurement", measurement);
         model.addAttribute("mode", "new");
         model.addAttribute("allLocations", locationService.getAllActiveLocations());
         return "measurementForm";
@@ -160,6 +138,11 @@ public class MeasurementWebController {
     public String saveMeasurement(@ModelAttribute Measurement measurement,
                                   RedirectAttributes redirectAttributes) {
         try {
+            // Auto-set timestamp if not provided.
+            if (measurement.getTimestamp() == null) {
+                measurement.setTimestamp(LocalDateTime.now());
+            }
+            // If updating, ensure the measurement exists.
             if (measurement.getMeasurementId() != null) {
                 Optional<Measurement> existing = measurementService.getMeasurementById(measurement.getMeasurementId());
                 if (existing.isEmpty()) {
@@ -201,8 +184,6 @@ public class MeasurementWebController {
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
             @RequestParam(required = false) String cityName,
-            @RequestParam(required = false) String minAmount,
-            @RequestParam(required = false) String maxAmount,
             HttpServletRequest request,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -211,43 +192,25 @@ public class MeasurementWebController {
 
             LocalDateTime startDateTime = null;
             LocalDateTime endDateTime = null;
-            Double minAmountVal = null;
-            Double maxAmountVal = null;
             try {
                 if (startDate != null && !startDate.isBlank()) {
-                    if (startDate.trim().length() == 10) {
-                        LocalDate datePart = LocalDate.parse(startDate, dateFormatter);
-                        startDateTime = datePart.atStartOfDay();
-                    } else {
-                        startDateTime = LocalDateTime.parse(startDate, dateTimeFormatter);
-                    }
+                    LocalDate datePart = LocalDate.parse(startDate, dateFormatter);
+                    startDateTime = datePart.atStartOfDay();
                 }
                 if (endDate != null && !endDate.isBlank()) {
-                    if (endDate.trim().length() == 10) {
-                        LocalDate datePart = LocalDate.parse(endDate, dateFormatter);
-                        endDateTime = datePart.atTime(LocalTime.MAX);
-                    } else {
-                        endDateTime = LocalDateTime.parse(endDate, dateTimeFormatter);
-                    }
+                    LocalDate datePart = LocalDate.parse(endDate, dateFormatter);
+                    endDateTime = datePart.atTime(LocalTime.MAX);
                 }
-                if (minAmount != null && !minAmount.isBlank()) {
-                    minAmountVal = Double.parseDouble(minAmount);
-                }
-                if (maxAmount != null && !maxAmount.isBlank()) {
-                    maxAmountVal = Double.parseDouble(maxAmount);
-                }
-            } catch (DateTimeParseException | NumberFormatException e) {
-                logger.error("Error parsing filter values: ", e);
-                redirectAttributes.addFlashAttribute("error", "Invalid date or amount format. Please use correct formats.");
+            } catch (DateTimeParseException e) {
+                logger.error("Error parsing date filter values: ", e);
+                redirectAttributes.addFlashAttribute("error", "Invalid date format. Please use dd/MM/yyyy.");
                 return "redirect:/web/measurements/trash";
             }
 
             boolean noFilters = (measurementUnit == null || measurementUnit.isBlank())
                     && startDateTime == null
                     && endDateTime == null
-                    && (cityName == null || cityName.isBlank())
-                    && minAmountVal == null
-                    && maxAmountVal == null;
+                    && (cityName == null || cityName.isBlank());
 
             List<Measurement> deletedMeasurements;
             if (noFilters) {
@@ -257,9 +220,7 @@ public class MeasurementWebController {
                         (measurementUnit == null || measurementUnit.isBlank()) ? null : measurementUnit,
                         startDateTime,
                         endDateTime,
-                        (cityName == null || cityName.isBlank()) ? null : cityName,
-                        minAmountVal,
-                        maxAmountVal
+                        (cityName == null || cityName.isBlank()) ? null : cityName
                 );
             }
 
@@ -268,8 +229,6 @@ public class MeasurementWebController {
             model.addAttribute("startDate", startDate);
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
-            model.addAttribute("minAmount", minAmount);
-            model.addAttribute("maxAmount", maxAmount);
             return "measurementsTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted measurements: ", e);

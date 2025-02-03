@@ -42,35 +42,25 @@
         <!-- Filter Form -->
         <form th:action="@{/web/measurements/trash}" method="get" class="mb-4">
             <div class="row g-3">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label for="measurementUnit" class="form-label">Measurement Unit:</label>
                     <input type="text" id="measurementUnit" name="measurementUnit" class="form-control"
                            th:value="${measurementUnit}" placeholder="e.g. Celsius">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label for="cityName" class="form-label">City Name:</label>
                     <input type="text" id="cityName" name="cityName" class="form-control"
                            th:value="${cityName}" placeholder="e.g. Paris">
                 </div>
-                <div class="col-md-2">
-                    <label for="minAmount" class="form-label">Min Amount:</label>
-                    <input type="number" step="0.000001" id="minAmount" name="minAmount" class="form-control"
-                           th:value="${minAmount}" placeholder="e.g. 10">
-                </div>
-                <div class="col-md-2">
-                    <label for="maxAmount" class="form-label">Max Amount:</label>
-                    <input type="number" step="0.000001" id="maxAmount" name="maxAmount" class="form-control"
-                           th:value="${maxAmount}" placeholder="e.g. 100">
-                </div>
-                <div class="col-md-2">
-                    <label for="startDate" class="form-label">Start Date/Time:</label>
+                <div class="col-md-3">
+                    <label for="startDate" class="form-label">Start Date:</label>
                     <input type="text" id="startDate" name="startDate" class="form-control datetime-picker"
-                           th:value="${startDate}" placeholder="dd/MM/yyyy or dd/MM/yyyy HH:mm">
+                           th:value="${startDate}" placeholder="dd/MM/yyyy">
                 </div>
-                <div class="col-md-2">
-                    <label for="endDate" class="form-label">End Date/Time:</label>
+                <div class="col-md-3">
+                    <label for="endDate" class="form-label">End Date:</label>
                     <input type="text" id="endDate" name="endDate" class="form-control datetime-picker"
-                           th:value="${endDate}" placeholder="dd/MM/yyyy or dd/MM/yyyy HH:mm">
+                           th:value="${endDate}" placeholder="dd/MM/yyyy">
                 </div>
             </div>
             <div class="mt-3">
@@ -105,7 +95,7 @@
                         <td th:text="${m.location != null ? m.location.cityName : 'N/A'}"></td>
                         <td>
                             <div class="btn-group">
-                                <!-- Restore Button (SweetAlert triggered) -->
+                                <!-- Restore Button -->
                                 <button type="button" class="btn btn-success btn-sm restore-button"
                                         th:data-restore-url="@{'/web/measurements/restore/' + ${m.measurementId}}"
                                         data-item-type="Measurement"
@@ -113,7 +103,7 @@
                                     <i class="fas fa-undo"></i> Restore
                                 </button>
                                 <sec:authorize access="hasRole('ADMIN')">
-                                    <!-- Permanently Delete Button (SweetAlert triggered) -->
+                                    <!-- Permanently Delete Button -->
                                     <button type="button" class="btn btn-danger btn-sm delete-permanent-button"
                                             th:data-delete-url="@{'/web/measurements/delete-permanent/' + ${m.measurementId}}"
                                             data-item-type="Measurement"
@@ -145,9 +135,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             flatpickr(".datetime-picker", {
-                enableTime: true,
-                dateFormat: "d/m/Y H:i",
-                time_24hr: true,
+                enableTime: false,
+                dateFormat: "d/m/Y",
                 locale: "fi"
             });
         });

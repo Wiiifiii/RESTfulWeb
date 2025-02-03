@@ -14,7 +14,7 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
     @Query("SELECT m FROM Measurement m WHERE m.deleted = false")
     List<Measurement> findAllActive();
 
-    // Native query for filtering active measurements with unit, time period, city, and amount range.
+    // Native query for filtering active measurements by unit, timestamp, and city.
     @Query(value = "SELECT m.* " +
             "FROM measurements m " +
             "JOIN locations l ON l.location_id = m.location_id_fk " +
@@ -22,21 +22,17 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
             "  AND lower(cast(m.measurement_unit as text)) LIKE lower(CONCAT('%', COALESCE(:measurementUnit, ''), '%')) " +
             "  AND m.timestamp >= COALESCE(:start, m.timestamp) " +
             "  AND m.timestamp <= COALESCE(:end, m.timestamp) " +
-            "  AND lower(l.city_name) LIKE lower(CONCAT('%', COALESCE(:cityName, ''), '%')) " +
-            "  AND m.amount >= COALESCE(:minAmount, m.amount) " +
-            "  AND m.amount <= COALESCE(:maxAmount, m.amount)", nativeQuery = true)
+            "  AND lower(l.city_name) LIKE lower(CONCAT('%', COALESCE(:cityName, ''), '%'))", nativeQuery = true)
     List<Measurement> filterMeasurementsNative(
             @Param("measurementUnit") String measurementUnit,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
-            @Param("cityName") String cityName,
-            @Param("minAmount") Double minAmount,
-            @Param("maxAmount") Double maxAmount);
+            @Param("cityName") String cityName);
 
     @Query("SELECT m FROM Measurement m WHERE m.deleted = true")
     List<Measurement> findAllDeleted();
 
-    // JPQL query for filtering deleted measurements.
+    // JPQL query for filtering deleted measurements by unit, timestamp, and city.
     @Query("""
         SELECT m FROM Measurement m
         WHERE m.deleted = true
@@ -44,13 +40,9 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
           AND (:start IS NULL OR m.timestamp >= :start)
           AND (:end IS NULL OR m.timestamp <= :end)
           AND (:cityName IS NULL OR LOWER(m.location.cityName) LIKE LOWER(CONCAT('%', :cityName, '%')))
-          AND (:minAmount IS NULL OR m.amount >= :minAmount)
-          AND (:maxAmount IS NULL OR m.amount <= :maxAmount)
     """)
     List<Measurement> findAllDeleted(@Param("measurementUnit") String measurementUnit,
                                      @Param("start") LocalDateTime start,
                                      @Param("end") LocalDateTime end,
-                                     @Param("cityName") String cityName,
-                                     @Param("minAmount") Double minAmount,
-                                     @Param("maxAmount") Double maxAmount);
+                                     @Param("cityName") String cityName);
 }

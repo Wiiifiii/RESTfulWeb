@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title th:text="${mode} == 'edit' ? 'Edit Measurement' : 'New Measurement'"></title>
+    <title th:text="${mode} == 'edit' ? 'Edit Measurement' : 'New Measurement'">Measurement Form</title>
     <meta charset="UTF-8">
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
@@ -44,11 +44,7 @@
                        th:value="${measurement.amount}" placeholder="e.g. 12.345" required />
             </div>
 
-            <div class="mb-3">
-                <label for="timestamp" class="form-label">Timestamp:</label>
-                <input type="datetime-local" id="timestamp" name="timestamp" class="form-control"
-                       th:value="${measurement.timestamp != null ? #temporals.format(measurement.timestamp, 'yyyy-MM-dd''T''HH:mm:ss') : ''}" required />
-            </div>
+            <!-- No timestamp input; it is auto-set -->
 
             <!-- Location Selection -->
             <div class="mb-3">
@@ -75,7 +71,7 @@
     <!-- Include Footer Fragment -->
     <div th:replace="~{fragments/footer :: footer}"></div>
 
-    <!-- Scripts -->
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

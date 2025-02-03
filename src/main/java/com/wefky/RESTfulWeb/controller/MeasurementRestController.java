@@ -1,6 +1,8 @@
 package com.wefky.RESTfulWeb.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,29 +37,25 @@ public class MeasurementRestController {
     @GetMapping
     public ResponseEntity<List<Measurement>> getAllMeasurements(
             @RequestParam(required = false) String measurementUnit,
-            @RequestParam(required = false) @DateTimeFormat(pattern="dd/MM/yyyy HH:mm:ss") LocalDateTime start,
-            @RequestParam(required = false) @DateTimeFormat(pattern="dd/MM/yyyy HH:mm:ss") LocalDateTime end,
-            @RequestParam(required = false) String cityName,
-            @RequestParam(required = false) Double minAmount,
-            @RequestParam(required = false) Double maxAmount
+            @RequestParam(required = false) @DateTimeFormat(pattern="dd/MM/yyyy") LocalDate start,
+            @RequestParam(required = false) @DateTimeFormat(pattern="dd/MM/yyyy") LocalDate end,
+            @RequestParam(required = false) String cityName
     ) {
+        LocalDateTime startDateTime = (start != null) ? start.atStartOfDay() : null;
+        LocalDateTime endDateTime = (end != null) ? end.atTime(LocalTime.MAX) : null;
         boolean noFilters = (measurementUnit == null || measurementUnit.isEmpty())
-                && start == null
-                && end == null
-                && (cityName == null || cityName.isEmpty())
-                && minAmount == null
-                && maxAmount == null;
+                && startDateTime == null
+                && endDateTime == null
+                && (cityName == null || cityName.isEmpty());
         if (noFilters) {
             List<Measurement> measurements = measurementRepository.findAllActive();
             return ResponseEntity.ok(measurements);
         } else {
             List<Measurement> measurements = measurementRepository.filterMeasurementsNative(
                     (measurementUnit == null || measurementUnit.isEmpty()) ? null : measurementUnit,
-                    start,
-                    end,
-                    (cityName == null || cityName.isEmpty()) ? null : cityName,
-                    minAmount,
-                    maxAmount
+                    startDateTime,
+                    endDateTime,
+                    (cityName == null || cityName.isEmpty()) ? null : cityName
             );
             return ResponseEntity.ok(measurements);
         }
@@ -74,6 +72,10 @@ public class MeasurementRestController {
 
     @PostMapping
     public ResponseEntity<Measurement> createMeasurement(@RequestBody Measurement measurement) {
+        // Ensure the measurement timestamp is set automatically.
+        if (measurement.getTimestamp() == null) {
+            measurement.setTimestamp(LocalDateTime.now());
+        }
         measurement.setMeasurementId(null);
         measurement.setDeleted(false);
         Measurement saved = measurementRepository.save(measurement);
