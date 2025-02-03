@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       class="dark-theme">
 <head>
-    <title>Deleted Files/Images</title>
+    <title>Deleted Files/Images (Trash)</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- CSRF Meta Tags -->
@@ -70,7 +70,7 @@
                         <td style="width:120px;">
                             <th:block th:if="${img.contentType != null}">
                                 <th:block th:if="${img.contentType.startsWith('image/')}">
-                                    <img th:src="@{'/api/images/' + ${img.imageId} + '/file'}" class="img-thumbnail img-thumb" alt="Thumbnail" />
+                                    <img th:src="@{'/api/images/' + ${img.imageId} + '/file-all'}" class="img-thumbnail img-thumb" alt="Thumbnail" />
                                 </th:block>
                                 <th:block th:if="${img.contentType == 'application/pdf'}">
                                     <i class="fas fa-file-pdf fa-2x"></i>
@@ -86,18 +86,18 @@
                         <td th:text="${#temporals.format(img.uploadDate, 'yyyy-MM-dd HH:mm')}"></td>
                         <td>
                             <div class="btn-group">
-                                <!-- View Modal -->
+                                <!-- View Modal Button -->
                                 <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" th:data-bs-target="'#viewModal__' + ${img.imageId}">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <!-- Restore -->
+                                <!-- Restore Button -->
                                 <button type="button" class="btn btn-success btn-sm restore-button"
                                         th:data-restore-url="@{'/web/images/restore/' + ${img.imageId} + '?search=' + ${search}}"
                                         data-item-type="File"
                                         th:data-item-details="${img.title != null ? img.title : 'File'}">
                                     <i class="fas fa-undo"></i> Restore
                                 </button>
-                                <!-- Permanently Delete (ADMIN ONLY) -->
+                                <!-- Permanently Delete (Admin Only) -->
                                 <sec:authorize access="hasRole('ADMIN')">
                                     <button type="button" class="btn btn-danger btn-sm delete-permanent-button"
                                             th:data-delete-url="@{'/web/images/delete-permanent/' + ${img.imageId} + '?search=' + ${search}}"
@@ -112,7 +112,7 @@
                 </tbody>
             </table>
             
-            <!-- View Modals -->
+            <!-- View Modal for Each File -->
             <div th:each="img : ${images}">
                 <div class="modal fade" th:id="'viewModal__' + ${img.imageId}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -139,7 +139,6 @@
                                         </p>
                                     </th:block>
                                 </th:block>
-                                
                                 <p class="mt-3" th:text="${img.description}"></p>
                             </div>
                         </div>
@@ -148,6 +147,7 @@
             </div>
         </div>
         
+        <!-- Message When No Files Exist -->
         <div th:if="${images == null or #lists.isEmpty(images)}" class="mt-4 text-center">
             <p>No deleted files found.</p>
         </div>

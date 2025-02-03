@@ -53,7 +53,7 @@ public class ImageRestController {
     }
     
     /**
-     * New endpoint: returns the file content for the given image ID.
+     * Endpoint to retrieve a file (only non-deleted files).
      */
     @GetMapping("/{id}/file")
     public ResponseEntity<byte[]> getFile(@PathVariable Long id) {
@@ -61,10 +61,10 @@ public class ImageRestController {
         if (opt.isPresent()) {
             Image image = opt.get();
             return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(image.getContentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"" + (image.getTitle() != null ? image.getTitle() : "file") + "\"")
-                .body(image.getData());
+                    .contentType(MediaType.parseMediaType(image.getContentType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename=\"" + (image.getTitle() != null ? image.getTitle() : "file") + "\"")
+                    .body(image.getData());
         } else {
             return ResponseEntity.notFound().build();
         }

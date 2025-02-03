@@ -221,20 +221,19 @@ public class ImagesWebController {
         return "redirect:/web/images/trash" + getSearchQuery(search);
     }
 
-
+    // New endpoint to retrieve a file including deleted ones.
     @GetMapping("/{id}/file-all")
-public ResponseEntity<byte[]> getFileAll(@PathVariable Long id) {
-    Optional<Image> opt = imageService.getImageByIdIncludingDeleted(id);
-    if(opt.isPresent()){
-        Image image = opt.get();
-        return ResponseEntity.ok()
-            .contentType(MediaType.parseMediaType(image.getContentType()))
-            .header(HttpHeaders.CONTENT_DISPOSITION,
-                    "inline; filename=\"" + (image.getTitle() != null ? image.getTitle() : "file") + "\"")
-            .body(image.getData());
-    } else {
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<byte[]> getFileAll(@PathVariable Long id) {
+        Optional<Image> opt = imageService.getImageByIdIncludingDeleted(id);
+        if (opt.isPresent()) {
+            Image image = opt.get();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(image.getContentType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename=\"" + (image.getTitle() != null ? image.getTitle() : "file") + "\"")
+                    .body(image.getData());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-}
-
 }

@@ -14,30 +14,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.wefky.RESTfulWeb.service.MyUserDetailsService;
 
-/**
- * Security configuration class for the RESTful web application.
- * 
- * Security Settings:
- * - Public routes: login, register, static resources, and access-denied page are accessible without authentication.
- * - ADMIN routes: restricted to users with the ADMIN role.
- * - POST requests for delete-permanent endpoints: restricted to Admins.
- * - POST requests for soft-delete endpoints: require authentication.
- * - API routes (including file retrieval via /api/images/{id}/file): require authentication.
- * - Web routes require authentication.
- * - Any other request requires authentication.
- *
- * Form Login:
- * - Uses a custom login page and redirects to /web/images upon successful login.
- *
- * Logout:
- * - Configures logout with a custom URL and success URL.
- *
- * CSRF:
- * - CSRF protection is disabled for API endpoints.
- *
- * Access Denied Handling:
- * - Redirects to a custom access-denied page.
- */
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
@@ -85,7 +61,7 @@ public class SecurityConfig {
                         "/web/locations/delete/**",
                         "/web/measurements/delete/**").authenticated()
 
-                // API routes (including the file retrieval endpoint) require authentication
+                // API routes (including file retrieval endpoints) require authentication
                 .requestMatchers("/api/**").authenticated()
 
                 // Web routes require authentication
