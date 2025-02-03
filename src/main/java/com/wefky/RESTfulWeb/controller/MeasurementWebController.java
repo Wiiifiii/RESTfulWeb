@@ -1,18 +1,5 @@
 package com.wefky.RESTfulWeb.controller;
 
-import com.wefky.RESTfulWeb.entity.Measurement;
-import com.wefky.RESTfulWeb.service.LocationService;
-import com.wefky.RESTfulWeb.service.MeasurementService;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,40 +8,26 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * MeasurementWebController is a Spring MVC controller that handles web requests related to measurements.
- * It provides endpoints for listing, creating, editing, deleting, and restoring measurements.
- * 
- * Endpoints:
- * - GET /web/measurements: List all active measurements with optional filters.
- * - GET /web/measurements/new: Display form for creating a new measurement.
- * - GET /web/measurements/edit/{id}: Display form for editing an existing measurement.
- * - POST /web/measurements/save: Save a new or edited measurement.
- * - POST /web/measurements/delete/{id}: Soft delete a measurement.
- * - GET /web/measurements/trash: List all soft-deleted measurements with optional filters.
- * - POST /web/measurements/restore/{id}: Restore a soft-deleted measurement.
- * - POST /web/measurements/delete-permanent/{id}: Permanently delete a measurement (requires ROLE_ADMIN).
- * 
- * Dependencies:
- * - MeasurementService: Service for handling measurement-related operations.
- * - LocationService: Service for handling location-related operations.
- * 
- * Date-Time Formatters:
- * - dateTimeFormatter: Formatter for full date-time input (pattern: "dd/MM/yyyy HH:mm").
- * - dateFormatter: Formatter for date-only input (pattern: "dd/MM/yyyy").
- * 
- * Error Handling:
- * - Catches and logs exceptions, and sets error messages in redirect attributes.
- * 
- * Logging:
- * - Uses SLF4J Logger for logging errors and important actions.
- * 
- * Annotations:
- * - @Controller: Marks this class as a Spring MVC controller.
- * - @RequestMapping("/web/measurements"): Maps requests to /web/measurements to this controller.
- * - @RequiredArgsConstructor: Generates a constructor with required arguments (final fields).
- * - @Secured("ROLE_ADMIN"): Secures the permanently delete endpoint to users with ROLE_ADMIN.
- */
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.wefky.RESTfulWeb.entity.Measurement;
+import com.wefky.RESTfulWeb.service.LocationService;
+import com.wefky.RESTfulWeb.service.MeasurementService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+
 @Controller
 @RequestMapping("/web/measurements")
 @RequiredArgsConstructor
@@ -64,7 +37,7 @@ public class MeasurementWebController {
     private final MeasurementService measurementService;
     private final LocationService locationService;
 
-    // Formatters for date-time input (both full date-time and date-only)
+    // Formatters for date-time input
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -74,6 +47,8 @@ public class MeasurementWebController {
             @RequestParam(required = false) String startDate, // raw string input
             @RequestParam(required = false) String endDate,   // raw string input
             @RequestParam(required = false) String cityName,
+            @RequestParam(required = false) String minAmount,
+            @RequestParam(required = false) String maxAmount,
             HttpServletRequest request,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -82,6 +57,8 @@ public class MeasurementWebController {
 
             LocalDateTime startDateTime = null;
             LocalDateTime endDateTime = null;
+            Double minAmountVal = null;
+            Double maxAmountVal = null;
             try {
                 if (startDate != null && !startDate.isBlank()) {
                     if (startDate.trim().length() == 10) {
@@ -99,16 +76,24 @@ public class MeasurementWebController {
                         endDateTime = LocalDateTime.parse(endDate, dateTimeFormatter);
                     }
                 }
-            } catch (DateTimeParseException dtpe) {
-                logger.error("Error parsing date filter values: ", dtpe);
-                redirectAttributes.addFlashAttribute("error", "Invalid date format. Please use dd/MM/yyyy or dd/MM/yyyy HH:mm.");
+                if (minAmount != null && !minAmount.isBlank()) {
+                    minAmountVal = Double.parseDouble(minAmount);
+                }
+                if (maxAmount != null && !maxAmount.isBlank()) {
+                    maxAmountVal = Double.parseDouble(maxAmount);
+                }
+            } catch (DateTimeParseException | NumberFormatException e) {
+                logger.error("Error parsing filter values: ", e);
+                redirectAttributes.addFlashAttribute("error", "Invalid date or amount format. Please use correct formats.");
                 return "redirect:/web/measurements";
             }
 
             boolean noFilters = (measurementUnit == null || measurementUnit.isBlank())
                     && startDateTime == null
                     && endDateTime == null
-                    && (cityName == null || cityName.isBlank());
+                    && (cityName == null || cityName.isBlank())
+                    && minAmountVal == null
+                    && maxAmountVal == null;
 
             List<Measurement> measurements;
             if (noFilters) {
@@ -118,7 +103,9 @@ public class MeasurementWebController {
                         (measurementUnit == null || measurementUnit.isBlank()) ? null : measurementUnit,
                         startDateTime,
                         endDateTime,
-                        (cityName == null || cityName.isBlank()) ? null : cityName
+                        (cityName == null || cityName.isBlank()) ? null : cityName,
+                        minAmountVal,
+                        maxAmountVal
                 );
             }
 
@@ -127,7 +114,9 @@ public class MeasurementWebController {
             model.addAttribute("startDate", startDate);
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
-            return "measurements"; // returns measurements.html
+            model.addAttribute("minAmount", minAmount);
+            model.addAttribute("maxAmount", maxAmount);
+            return "measurements";
         } catch (Exception e) {
             logger.error("Error fetching measurements: ", e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching measurements.");
@@ -141,7 +130,7 @@ public class MeasurementWebController {
         model.addAttribute("measurement", new Measurement());
         model.addAttribute("mode", "new");
         model.addAttribute("allLocations", locationService.getAllActiveLocations());
-        return "measurementForm"; // returns measurementForm.html
+        return "measurementForm";
     }
 
     @GetMapping("/edit/{id}")
@@ -209,9 +198,11 @@ public class MeasurementWebController {
     @GetMapping("/trash")
     public String viewTrash(
             @RequestParam(required = false) String measurementUnit,
-            @RequestParam(required = false) String startDate, // raw string input
-            @RequestParam(required = false) String endDate,   // raw string input
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
             @RequestParam(required = false) String cityName,
+            @RequestParam(required = false) String minAmount,
+            @RequestParam(required = false) String maxAmount,
             HttpServletRequest request,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -220,6 +211,8 @@ public class MeasurementWebController {
 
             LocalDateTime startDateTime = null;
             LocalDateTime endDateTime = null;
+            Double minAmountVal = null;
+            Double maxAmountVal = null;
             try {
                 if (startDate != null && !startDate.isBlank()) {
                     if (startDate.trim().length() == 10) {
@@ -237,29 +230,37 @@ public class MeasurementWebController {
                         endDateTime = LocalDateTime.parse(endDate, dateTimeFormatter);
                     }
                 }
-            } catch (DateTimeParseException dtpe) {
-                logger.error("Error parsing date filter values: ", dtpe);
-                redirectAttributes.addFlashAttribute("error", "Invalid date format. Please use dd/MM/yyyy or dd/MM/yyyy HH:mm.");
+                if (minAmount != null && !minAmount.isBlank()) {
+                    minAmountVal = Double.parseDouble(minAmount);
+                }
+                if (maxAmount != null && !maxAmount.isBlank()) {
+                    maxAmountVal = Double.parseDouble(maxAmount);
+                }
+            } catch (DateTimeParseException | NumberFormatException e) {
+                logger.error("Error parsing filter values: ", e);
+                redirectAttributes.addFlashAttribute("error", "Invalid date or amount format. Please use correct formats.");
                 return "redirect:/web/measurements/trash";
             }
 
             boolean noFilters = (measurementUnit == null || measurementUnit.isBlank())
                     && startDateTime == null
                     && endDateTime == null
-                    && (cityName == null || cityName.isBlank());
+                    && (cityName == null || cityName.isBlank())
+                    && minAmountVal == null
+                    && maxAmountVal == null;
 
             List<Measurement> deletedMeasurements;
             if (noFilters) {
                 deletedMeasurements = measurementService.getAllDeletedMeasurements();
             } else {
-                deletedMeasurements = measurementService.filterMeasurements(
+                deletedMeasurements = measurementService.filterDeletedMeasurements(
                         (measurementUnit == null || measurementUnit.isBlank()) ? null : measurementUnit,
                         startDateTime,
                         endDateTime,
-                        (cityName == null || cityName.isBlank()) ? null : cityName
+                        (cityName == null || cityName.isBlank()) ? null : cityName,
+                        minAmountVal,
+                        maxAmountVal
                 );
-                // Keep only deleted measurements.
-                deletedMeasurements = deletedMeasurements.stream().filter(Measurement::isDeleted).toList();
             }
 
             model.addAttribute("deletedMeasurements", deletedMeasurements);
@@ -267,6 +268,8 @@ public class MeasurementWebController {
             model.addAttribute("startDate", startDate);
             model.addAttribute("endDate", endDate);
             model.addAttribute("cityName", cityName);
+            model.addAttribute("minAmount", minAmount);
+            model.addAttribute("maxAmount", maxAmount);
             return "measurementsTrash";
         } catch (Exception e) {
             logger.error("Error fetching deleted measurements: ", e);
