@@ -60,7 +60,7 @@ RESTfulWeb/ ├── src/ │ ├── main/ │ │ ├── java/com/wefky/
 2. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/your-username/RESTfulWeb.git
+   [git clone https://github.com/Wiiifiii/RESTfulWeb.git
    cd RESTfulWeb
 3. Configure the Database:
 Update your src/main/resources/application.properties with your local PostgreSQL settings:
@@ -78,15 +78,15 @@ Heroku Deployment
 Install the Heroku CLI.
 Follow Heroku CLI installation instructions.
 2. Create a Heroku App:
-   heroku create your-app-name
+   heroku create spring-restful-app
 3. Add Heroku Postgres:
    Heroku automatically sets DATABASE_URL. Also, set the Spring profile:
-   heroku addons:create heroku-postgresql:hobby-dev --app your-app-name
+   heroku addons:create heroku-postgresql:hobby-dev --spring-restful-app
 5. Set Environment Variables:
    git push heroku main
 7. Deploy to Heroku:
 8. Open the App:
-   heroku open --app your-app-name
+   heroku open --app spring-restful-app
 Usage
 Authentication & Security
 Login Required:
