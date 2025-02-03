@@ -69,6 +69,24 @@ public class ImageRestController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    /**
+     * New endpoint: retrieves file data even if the image is marked as deleted.
+     */
+    @GetMapping("/{id}/file-all")
+    public ResponseEntity<byte[]> getFileAll(@PathVariable Long id) {
+        Optional<Image> opt = imageService.getImageByIdIncludingDeleted(id);
+        if (opt.isPresent()) {
+            Image image = opt.get();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(image.getContentType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename=\"" + (image.getTitle() != null ? image.getTitle() : "file") + "\"")
+                    .body(image.getData());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteImage(@PathVariable Long id) {

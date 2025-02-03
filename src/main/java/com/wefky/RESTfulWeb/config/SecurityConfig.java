@@ -71,11 +71,11 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
         );
 
-        // Configure form login with custom login page and default success URL
+        // Configure form login with custom login page and default success URL set to home page (/)
         http.formLogin(form -> form
                 .loginPage("/login")
                 .permitAll()
-                .defaultSuccessUrl("/web/images", true)
+                .defaultSuccessUrl("/", true)
         );
 
         // Configure logout
