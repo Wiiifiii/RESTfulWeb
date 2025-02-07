@@ -6,8 +6,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -31,7 +29,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MeasurementRestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MeasurementRestController.class);
     private final MeasurementRepository measurementRepository;
 
     /**

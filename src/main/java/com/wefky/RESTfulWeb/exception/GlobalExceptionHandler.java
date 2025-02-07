@@ -9,30 +9,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-/**
- * GlobalExceptionHandler is a controller advice class that handles exceptions thrown by the application.
- * It provides centralized exception handling across all @RequestMapping methods.
- * 
- * This class contains three exception handler methods:
- * 
- * 1. handleAccessDeniedException: Handles AccessDeniedException separately.
- *    - Logs the error.
- *    - Returns the "access-denied" view (templates/access-denied.html) with HTTP status 403.
- * 
- * 2. handleNotFoundException: Handles 404 errors.
- *    - Logs the error.
- *    - Returns the "error/404" view (templates/error/404.html) with HTTP status 404.
- * 
- * 3. handleAllExceptions: A catch-all handler for any other exceptions.
- *    - Logs the error.
- *    - Returns the "error/500" view (templates/error/500.html) with HTTP status 500.
- */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    // Handle access-denied exceptions separately
+    // Handle AccessDeniedException (403) using a custom access-denied page
     @ExceptionHandler(AccessDeniedException.class)
     public ModelAndView handleAccessDeniedException(AccessDeniedException ex) {
         logger.error("Access denied: {}", ex.getMessage());
@@ -42,13 +24,13 @@ public class GlobalExceptionHandler {
         return mav;
     }
 
-    // Handle 404 errors (if configured to throw NoHandlerFoundException)
+    // Handle 404 errors (Not Found)
     @ExceptionHandler(NoHandlerFoundException.class)
     public ModelAndView handleNotFoundException(NoHandlerFoundException ex) {
         logger.error("Page not found: {}", ex.getMessage());
         ModelAndView mav = new ModelAndView("error/404"); // renders templates/error/404.html
         mav.setStatus(HttpStatus.NOT_FOUND);
-        mav.addObject("errorMessage", "The requested page was not found.");
+        mav.addObject("errorMessage", "The page you are looking for was not found.");
         return mav;
     }
 
