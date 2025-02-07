@@ -41,7 +41,6 @@ public class ImagesWebController {
 
     /**
      * Helper method to build the search query parameter.
-     * Returns an empty string if the search parameter is null, empty, or equals "null" (ignoring case).
      */
     private String getSearchQuery(String search) {
         if (search == null || search.trim().isEmpty() || search.trim().equalsIgnoreCase("null")) {
@@ -51,71 +50,41 @@ public class ImagesWebController {
     }
 
     /**
-     * Handles GET requests to list images. Optionally filters images based on a search query.
-     *
-     * @param search the search query to filter images (optional)
-     * @param request the HttpServletRequest object
-     * @param model the Model object to pass attributes to the view
-     * @param ra the RedirectAttributes object to pass flash attributes
-     * @return the name of the view to render
+     * Handles GET requests to list images.
      */
     @GetMapping
     public String listImages(@RequestParam(required = false) String search,
                              HttpServletRequest request,
-                             Model model,
-                             RedirectAttributes ra) {
+                             Model model) {
         model.addAttribute("currentUri", request.getRequestURI());
-        try {
-            List<Image> images = imageService.searchImages(search);
-            model.addAttribute("images", images);
-            model.addAttribute("search", search);
-            List<String> possibleContentTypes = imageService.getDistinctContentTypes();
-            possibleContentTypes.add(0, "");
-            model.addAttribute("possibleContentTypes", possibleContentTypes);
-            return "images";
-        } catch (Exception e) {
-            logger.error("Error fetching images: ", e);
-            ra.addFlashAttribute("error", "An error occurred while fetching images: " + e.getMessage());
-            return "redirect:/";
-        }
+        List<Image> images = imageService.searchImages(search);
+        model.addAttribute("images", images);
+        model.addAttribute("search", search);
+        List<String> possibleContentTypes = imageService.getDistinctContentTypes();
+        possibleContentTypes.add(0, "");
+        model.addAttribute("possibleContentTypes", possibleContentTypes);
+        return "images";
     }
 
     /**
-     * Handles GET requests to the "/trash" endpoint to view deleted images.
-     *
-     * @param search Optional search parameter to filter deleted images.
-     * @param request HttpServletRequest object to get the current URI.
-     * @param model Model object to pass attributes to the view.
-     * @param ra RedirectAttributes object to add flash attributes in case of redirection.
-     * @return The name of the view to render, either "imagesTrash" or a redirect to "/web/images" in case of an error.
+     * Handles GET requests to view deleted images.
      */
     @GetMapping("/trash")
     public String viewTrash(@RequestParam(required = false) String search,
                             HttpServletRequest request,
-                            Model model,
-                            RedirectAttributes ra) {
+                            Model model) {
         model.addAttribute("currentUri", request.getRequestURI());
-        try {
-            List<Image> images = imageService.searchDeletedImages(search);
-            model.addAttribute("images", images);
-            model.addAttribute("search", search);
-            List<String> possibleContentTypes = imageService.getDistinctContentTypes();
-            possibleContentTypes.add(0, "");
-            model.addAttribute("possibleContentTypes", possibleContentTypes);
-            return "imagesTrash";
-        } catch (Exception e) {
-            logger.error("Error fetching deleted images: ", e);
-            ra.addFlashAttribute("error", "An error occurred while fetching deleted images: " + e.getMessage());
-            return "redirect:/web/images";
-        }
+        List<Image> images = imageService.searchDeletedImages(search);
+        model.addAttribute("images", images);
+        model.addAttribute("search", search);
+        List<String> possibleContentTypes = imageService.getDistinctContentTypes();
+        possibleContentTypes.add(0, "");
+        model.addAttribute("possibleContentTypes", possibleContentTypes);
+        return "imagesTrash";
     }
 
     /**
-     * Handles GET requests to the "/new" endpoint to display a form for creating a new image.
-     *
-     * @param search an optional search parameter to pre-fill the form (can be null)
-     * @param model  the model to hold attributes for the view
-     * @return the name of the view template to render ("imageForm")
+     * Displays the form for creating a new image.
      */
     @GetMapping("/new")
     public String newImageForm(@RequestParam(required = false) String search, Model model) {
@@ -126,47 +95,25 @@ public class ImagesWebController {
     }
 
     /**
-     * Handles the GET request to show the edit form for an image.
-     *
-     * @param id the ID of the image to be edited
-     * @param search an optional search query parameter
-     * @param model the model to pass attributes to the view
-     * @param ra the redirect attributes to pass flash attributes
-     * @return the name of the view to be rendered
+     * Displays the edit form for an image.
      */
     @GetMapping("/edit/{id}")
     public String editImageForm(@PathVariable Long id,
                                 @RequestParam(required = false) String search,
-                                Model model,
-                                RedirectAttributes ra) {
-        try {
-            Optional<Image> opt = imageService.getImageById(id);
-            if (opt.isEmpty()) {
-                ra.addFlashAttribute("error", "File not found.");
-                return "redirect:/web/images" + getSearchQuery(search);
-            }
-            model.addAttribute("image", opt.get());
-            model.addAttribute("mode", "edit");
-            model.addAttribute("search", search);
-            return "imageForm";
-        } catch (Exception e) {
-            logger.error("Error showing edit form: ", e);
-            ra.addFlashAttribute("error", "Cannot show edit form: " + e.getMessage());
-            return "redirect:/web/images";
+                                Model model) {
+        Optional<Image> opt = imageService.getImageById(id);
+        if (opt.isEmpty()) {
+            // Propagate error to GlobalExceptionHandler
+            throw new RuntimeException("File not found.");
         }
+        model.addAttribute("image", opt.get());
+        model.addAttribute("mode", "edit");
+        model.addAttribute("search", search);
+        return "imageForm";
     }
 
     /**
-     * Handles the saving of an image. This method processes the form submission for saving an image,
-     * either creating a new image or updating an existing one.
-     *
-     * @param image          The image object populated from the form.
-     * @param bindingResult  The result of binding the form parameters to the image object.
-     * @param file           The uploaded file, if any.
-     * @param search         The search query string, if any.
-     * @param ra             Redirect attributes for passing messages.
-     * @param model          The model to hold attributes for the view.
-     * @return               The view name to redirect to.
+     * Handles saving an image.
      */
     @PostMapping("/save")
     public String saveImage(@ModelAttribute("image") @Valid Image image,
@@ -174,7 +121,7 @@ public class ImagesWebController {
                             @RequestParam(required = false) MultipartFile file,
                             @RequestParam(required = false) String search,
                             RedirectAttributes ra,
-                            Model model) {
+                            Model model) throws IOException {
         if (bindingResult.hasErrors()) {
             model.addAttribute("mode", image.getImageId() != null ? "edit" : "new");
             List<String> possibleContentTypes = imageService.getDistinctContentTypes();
@@ -183,124 +130,70 @@ public class ImagesWebController {
             model.addAttribute("search", search);
             return "imageForm";
         }
-        try {
-            Image img;
-            if (image.getImageId() != null) {
-                Optional<Image> opt = imageService.getImageById(image.getImageId());
-                if (opt.isEmpty()) {
-                    ra.addFlashAttribute("error", "File to update not found.");
-                    return "redirect:/web/images" + getSearchQuery(search);
-                }
-                img = opt.get();
-            } else {
-                img = new Image();
+        Image img;
+        if (image.getImageId() != null) {
+            Optional<Image> opt = imageService.getImageById(image.getImageId());
+            if (opt.isEmpty()) {
+                throw new RuntimeException("File to update not found.");
             }
-            img.setOwner(image.getOwner());
-            img.setTitle(image.getTitle());
-            img.setDescription(image.getDescription());
-            img.setContentType(image.getContentType());
-            if (file != null && !file.isEmpty()) {
-                img.setData(file.getBytes());
-                if (file.getContentType() != null && !file.getContentType().isEmpty()) {
-                    img.setContentType(file.getContentType());
-                }
-            }
-            imageService.saveImage(img);
-            ra.addFlashAttribute("success", "File saved successfully!");
-            return "redirect:/web/images" + getSearchQuery(search);
-        } catch (IOException ex) {
-            logger.error("IO error reading file upload", ex);
-            ra.addFlashAttribute("error", "Failed to read the file upload: " + ex.getMessage());
-            return "redirect:/web/images";
-        } catch (Exception e) {
-            logger.error("Error saving file", e);
-            ra.addFlashAttribute("error", "Error saving file: " + e.getMessage());
-            if (image.getImageId() != null) {
-                return "redirect:/web/images/edit/" + image.getImageId() + getSearchQuery(search);
-            } else {
-                return "redirect:/web/images/new" + getSearchQuery(search);
+            img = opt.get();
+        } else {
+            img = new Image();
+        }
+        img.setOwner(image.getOwner());
+        img.setTitle(image.getTitle());
+        img.setDescription(image.getDescription());
+        img.setContentType(image.getContentType());
+        if (file != null && !file.isEmpty()) {
+            img.setData(file.getBytes());
+            if (file.getContentType() != null && !file.getContentType().isEmpty()) {
+                img.setContentType(file.getContentType());
             }
         }
+        imageService.saveImage(img);
+        ra.addFlashAttribute("success", "File saved successfully!");
+        return "redirect:/web/images" + getSearchQuery(search);
     }
 
     /**
-     * Handles the soft deletion of an image by its ID.
-     *
-     * @param id the ID of the image to be soft deleted
-     * @param search an optional search query parameter
-     * @param ra RedirectAttributes to add flash attributes for success or error messages
-     * @return a redirect URL to the images page with the search query if provided
+     * Soft-deletes an image.
      */
     @PostMapping("/delete/{id}")
     public String softDelete(@PathVariable Long id,
                              @RequestParam(required = false) String search,
                              RedirectAttributes ra) {
-        try {
-            imageService.softDeleteImage(id);
-            ra.addFlashAttribute("success", "File deleted!");
-        } catch (Exception e) {
-            logger.error("Error soft deleting file", e);
-            ra.addFlashAttribute("error", "Failed to delete file.");
-        }
+        imageService.softDeleteImage(id);
+        ra.addFlashAttribute("success", "File deleted!");
         return "redirect:/web/images" + getSearchQuery(search);
     }
 
     /**
-     * Handles the restoration of an image by its ID.
-     *
-     * @param id the ID of the image to be restored
-     * @param search an optional search query parameter
-     * @param ra RedirectAttributes to add flash attributes for success or error messages
-     * @return a redirect URL to the trash page with the search query appended
+     * Restores a soft-deleted image.
      */
     @PostMapping("/restore/{id}")
     public String restore(@PathVariable Long id,
                           @RequestParam(required = false) String search,
                           RedirectAttributes ra) {
-        try {
-            imageService.restoreImage(id);
-            ra.addFlashAttribute("success", "File restored!");
-        } catch (Exception e) {
-            logger.error("Error restoring file", e);
-            ra.addFlashAttribute("error", "Failed to restore file.");
-        }
+        imageService.restoreImage(id);
+        ra.addFlashAttribute("success", "File restored!");
         return "redirect:/web/images/trash" + getSearchQuery(search);
     }
 
     /**
-     * Permanently deletes an image with the given ID.
-     * 
-     * This method is secured and requires the user to have the "ROLE_ADMIN" authority.
-     * It handles the deletion of the image and adds a success or error message to the
-     * RedirectAttributes based on the outcome.
-     * 
-     * @param id the ID of the image to be permanently deleted
-     * @param search an optional search query parameter to be appended to the redirect URL
-     * @param ra RedirectAttributes to add flash attributes for success or error messages
-     * @return a redirect URL to the trash page with the search query appended if provided
+     * Permanently deletes an image (admin only).
      */
     @Secured("ROLE_ADMIN")
     @PostMapping("/delete-permanent/{id}")
     public String permanentlyDelete(@PathVariable Long id,
                                     @RequestParam(required = false) String search,
                                     RedirectAttributes ra) {
-        try {
-            imageService.permanentlyDeleteImage(id);
-            ra.addFlashAttribute("success", "File permanently deleted!");
-        } catch (Exception e) {
-            logger.error("Error permanently deleting file", e);
-            ra.addFlashAttribute("error", "Failed to permanently delete file.");
-        }
+        imageService.permanentlyDeleteImage(id);
+        ra.addFlashAttribute("success", "File permanently deleted!");
         return "redirect:/web/images/trash" + getSearchQuery(search);
     }
 
-  
     /**
-     * Handles HTTP GET requests to retrieve an image file, including deleted ones, by its ID.
-     *
-     * @param id the ID of the image to retrieve
-     * @return a ResponseEntity containing the image data as a byte array, with appropriate headers and content type,
-     *         or a 404 Not Found response if the image does not exist
+     * Retrieves an image file (including deleted ones) by its ID.
      */
     @GetMapping("/{id}/file-all")
     public ResponseEntity<byte[]> getFileAll(@PathVariable Long id) {
@@ -313,7 +206,7 @@ public class ImagesWebController {
                             "inline; filename=\"" + (image.getTitle() != null ? image.getTitle() : "file") + "\"")
                     .body(image.getData());
         } else {
-            return ResponseEntity.notFound().build();
+            throw new RuntimeException("Image not found.");
         }
     }
 }
