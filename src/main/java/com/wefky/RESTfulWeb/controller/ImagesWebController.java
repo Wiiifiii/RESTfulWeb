@@ -198,7 +198,6 @@ public class ImagesWebController {
             img.setOwner(image.getOwner());
             img.setTitle(image.getTitle());
             img.setDescription(image.getDescription());
-            // Use the selected content type; update it based on the uploaded file if available.
             img.setContentType(image.getContentType());
             if (file != null && !file.isEmpty()) {
                 img.setData(file.getBytes());

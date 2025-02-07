@@ -175,9 +175,9 @@ textarea.form-control {
 }
 
 /* Icon Colors */
-.icon-locations { color: #0d6efd; }      /* Bootstrap primary blue */
-.icon-measurements { color: #198754; }    /* Bootstrap success green */
-.icon-images { color: #fd7e14; }          /* Bootstrap orange */
+.icon-locations { color: #0d6efd; }     
+.icon-measurements { color: #198754; }   
+.icon-images { color: #fd7e14; }        
 
 /* App Description Section */
 .app-description {
